@@ -1,0 +1,12 @@
+* CircuitPilot RC low-pass filter
+Vin in 0 AC 1
+R1 in out 3345.48437527
+C1 out 0 4.74602846544e-09
+.control
+set wr_singlescale
+set wr_vecnames
+ac dec 100 10 10000000
+wrdata ac_results.dat vdb(out) vp(out)
+quit
+.endc
+.end

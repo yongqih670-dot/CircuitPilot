@@ -4,12 +4,21 @@ from pathlib import Path
 import pytest
 
 from circuitpilot.analysis import find_cutoff_frequency
+from circuitpilot.circuit_optimizer import run_circuit_optimization
 from circuitpilot.netlist import RCFilterConfig, write_rc_lowpass_netlist
 from circuitpilot.parameter_sweep import run_parameter_sweep
 from circuitpilot.parser import parse_ac_output
 from circuitpilot.simulator import resolve_ngspice_executable, run_ngspice
 from circuitpilot.sweep_config import SweepConfig
 from circuitpilot.circuit_config import ACAnalysisConfig, CircuitType
+from circuitpilot.optimization_config import (
+    ObjectiveConfig,
+    ObjectiveGoal,
+    ObjectiveMetric,
+    OptimizationConfig,
+    OptimizerSettings,
+    ParameterBounds,
+)
 
 
 NGSPICE_EXECUTABLE = resolve_ngspice_executable("ngspice")
@@ -70,3 +79,40 @@ def test_real_ngspice_two_point_parameter_sweep(tmp_path: Path) -> None:
     assert all(result.succeeded for result in results)
     assert results[0].simulated_cutoff_frequency_hz == pytest.approx(1_000.0, rel=0.02)
     assert results[0].relative_error < results[1].relative_error  # type: ignore[operator]
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    NGSPICE_EXECUTABLE is None,
+    reason="a local ngspice executable is required for this integration test",
+)
+def test_real_ngspice_scipy_optimization_loop(tmp_path: Path) -> None:
+    config = OptimizationConfig(
+        circuit_type=CircuitType.RC_LOWPASS,
+        resistance=ParameterBounds(900.0, 1_100.0),
+        capacitance=ParameterBounds(140e-9, 180e-9),
+        objective=ObjectiveConfig(
+            ObjectiveMetric.BANDWIDTH,
+            ObjectiveGoal.TARGET,
+            target_value=1_000.0,
+        ),
+        analysis=ACAnalysisConfig(10.0, 100_000.0, 50),
+        optimizer=OptimizerSettings(
+            max_iterations=1,
+            population_size=2,
+            tolerance=0.01,
+            seed=42,
+            polish=False,
+        ),
+    )
+
+    result = run_circuit_optimization(
+        config,
+        tmp_path,
+        executable=NGSPICE_EXECUTABLE or "ngspice",
+    )
+
+    assert len(result.evaluations) >= 5
+    assert result.successful_count == len(result.evaluations)
+    assert result.best_evaluation.metric_value == pytest.approx(1_000.0, rel=0.15)
+    assert result.best_evaluation.objective_value < 0.15

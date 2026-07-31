@@ -10,8 +10,28 @@ from circuitpilot.circuit_config import (
     VoltageDividerConfig,
     load_circuit_config,
 )
+from circuitpilot.circuit_optimizer import (
+    OptimizationEvaluation,
+    OptimizationResult,
+    evaluate_response_metric,
+    metric_to_objective,
+    plot_optimization_progress,
+    run_circuit_optimization,
+    save_optimization_history_csv,
+    save_optimization_summary_json,
+)
 from circuitpilot.netlist import RCFilterConfig, write_rc_lowpass_netlist
 from circuitpilot.netlist_generator import generate_netlist, write_netlist
+from circuitpilot.optimization_config import (
+    ObjectiveConfig,
+    ObjectiveGoal,
+    ObjectiveMetric,
+    OptimizationConfig,
+    OptimizerSettings,
+    ParameterBounds,
+    ParameterScale,
+    load_optimization_config,
+)
 from circuitpilot.experiment_manager import (
     ExperimentComparison,
     ExperimentRecord,
@@ -37,7 +57,7 @@ from circuitpilot.sweep_config import (
     load_sweep_config,
 )
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 __all__ = [
     "ACAnalysisResult",
@@ -47,6 +67,15 @@ __all__ = [
     "ExperimentComparison",
     "ExperimentRecord",
     "ExperimentRepository",
+    "ObjectiveConfig",
+    "ObjectiveGoal",
+    "ObjectiveMetric",
+    "OptimizationConfig",
+    "OptimizationEvaluation",
+    "OptimizationResult",
+    "OptimizerSettings",
+    "ParameterBounds",
+    "ParameterScale",
     "RCHighPassConfig",
     "RCFilterConfig",
     "RCLowPassConfig",
@@ -56,18 +85,25 @@ __all__ = [
     "VoltageDividerConfig",
     "ParameterCombination",
     "calculate_relative_error",
+    "evaluate_response_metric",
     "find_cutoff_frequency",
     "find_highpass_cutoff_frequency",
     "generate_netlist",
     "generate_parameter_combinations",
     "load_circuit_config",
+    "load_optimization_config",
     "load_sweep_config",
     "parse_ac_output",
+    "plot_optimization_progress",
     "run_ngspice",
     "resolve_ngspice_executable",
     "run_parameter_sweep",
+    "run_circuit_optimization",
     "rank_solutions",
     "save_sweep_results_csv",
+    "save_optimization_history_csv",
+    "save_optimization_summary_json",
+    "metric_to_objective",
     "write_rc_lowpass_netlist",
     "write_netlist",
 ]

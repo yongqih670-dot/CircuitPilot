@@ -3,7 +3,9 @@ from pathlib import Path
 import pytest
 
 from circuitpilot.cli import main
+from circuitpilot.circuit_optimizer import OptimizationEvaluation, OptimizationResult
 from circuitpilot.exceptions import SimulationError
+from circuitpilot.experiment_manager import ExperimentRepository
 from circuitpilot.parameter_sweep import SweepResult
 from circuitpilot.parser import ACAnalysisResult
 
@@ -165,3 +167,87 @@ top_n: 10
     assert "2 succeeded, 0 failed" in captured.out
     assert (tmp_path / "output" / "sweep_results.csv").is_file()
     assert (tmp_path / "output" / "parameter_performance.png").is_file()
+
+
+def test_main_runs_optimization_exports_artifacts_and_saves_experiment(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    config_path = tmp_path / "optimize.yaml"
+    config_path.write_text(
+        """circuit:
+  type: rc_lowpass
+objective:
+  metric: bandwidth
+  goal: target
+  target_value: 10000
+parameters:
+  R: {min: 500, max: 5000}
+  C: {min: 1e-9, max: 100e-9}
+optimizer:
+  max_iterations: 2
+  population_size: 3
+  polish: false
+""",
+        encoding="utf-8",
+    )
+    best = OptimizationEvaluation(
+        evaluation_index=2,
+        resistance_ohm=1_590.0,
+        capacitance_f=10e-9,
+        metric_value=10_007.0,
+        objective_value=0.0007,
+        status="success",
+        simulation_time_seconds=0.02,
+        run_directory=str(tmp_path / "output" / "runs" / "evaluation_00002"),
+    )
+    first = OptimizationEvaluation(
+        evaluation_index=1,
+        resistance_ohm=1_000.0,
+        capacitance_f=10e-9,
+        metric_value=15_915.0,
+        objective_value=0.5915,
+        status="success",
+        simulation_time_seconds=0.01,
+        run_directory=str(tmp_path / "output" / "runs" / "evaluation_00001"),
+    )
+    result = OptimizationResult(
+        best_evaluation=best,
+        evaluations=(first, best),
+        optimizer_success=True,
+        optimizer_message="converged",
+        iteration_count=2,
+        function_evaluation_count=2,
+        total_time_seconds=0.03,
+    )
+    monkeypatch.setattr(
+        "circuitpilot.cli.run_circuit_optimization",
+        lambda config, output_dir, **kwargs: result,
+    )
+    database_path = tmp_path / "experiments.sqlite3"
+    output_path = tmp_path / "output"
+
+    status = main(
+        [
+            "--optimize-config",
+            str(config_path),
+            "--output-dir",
+            str(output_path),
+            "--experiment-name",
+            "CLI RC optimization",
+            "--experiment-database",
+            str(database_path),
+        ]
+    )
+
+    captured = capsys.readouterr()
+    records = ExperimentRepository(database_path).list_experiments()
+    assert status == 0
+    assert "Automatic optimization completed" in captured.out
+    assert "Best resistance: 1590 ohm" in captured.out
+    assert "Experiment saved with ID" in captured.out
+    assert (output_path / "optimization_history.csv").is_file()
+    assert (output_path / "optimization_summary.json").is_file()
+    assert (output_path / "optimization_progress.png").is_file()
+    assert len(records) == 1
+    assert records[0].metrics["bandwidth_hz"] == pytest.approx(10_007.0)
+    assert records[0].metrics["relative_error"] == pytest.approx(0.0007)
