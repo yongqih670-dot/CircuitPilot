@@ -1,0 +1,10 @@
+circuit:
+  type: rc_highpass
+  parameters:
+    resistance_ohm: 1000
+    capacitance_f: 1.59154943e-7
+analysis:
+  start_frequency_hz: 10
+  stop_frequency_hz: 1000000
+  points_per_decade: 100
+
