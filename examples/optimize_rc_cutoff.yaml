@@ -1,0 +1,29 @@
+circuit:
+  type: rc_lowpass
+
+objective:
+  metric: bandwidth
+  goal: target
+  target_value: 10000
+
+parameters:
+  R:
+    min: 500
+    max: 5000
+    scale: log
+  C:
+    min: 1e-9
+    max: 100e-9
+    scale: log
+
+optimizer:
+  max_iterations: 6
+  population_size: 5
+  tolerance: 0.001
+  seed: 42
+  polish: true
+
+analysis:
+  start_frequency_hz: 10
+  stop_frequency_hz: 10000000
+  points_per_decade: 100
