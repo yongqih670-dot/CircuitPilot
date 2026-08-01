@@ -266,6 +266,7 @@ def run_circuit_optimization(
         ) from exc
 
     history: list[OptimizationEvaluation] = []
+    live_history_path = output_root / "optimization_history.csv"
     started_at = monotonic()
 
     def objective_function(coordinates: Sequence[float]) -> float:
@@ -313,6 +314,7 @@ def run_circuit_optimization(
                     error_message=str(exc),
                 )
             )
+            _write_optimization_evaluations_csv(history, live_history_path)
             return FAILED_OBJECTIVE_PENALTY
 
         history.append(
@@ -327,6 +329,7 @@ def run_circuit_optimization(
                 run_directory=portable_run_directory,
             )
         )
+        _write_optimization_evaluations_csv(history, live_history_path)
         return objective_value
 
     bounds = (
@@ -368,15 +371,16 @@ def run_circuit_optimization(
     )
 
 
-def save_optimization_history_csv(
-    result: OptimizationResult, output_path: str | Path
+def _write_optimization_evaluations_csv(
+    evaluations: Sequence[OptimizationEvaluation], output_path: str | Path
 ) -> Path:
-    """Save every successful and failed objective evaluation to CSV."""
+    """Atomically rewrite current optimization history for crash resilience."""
     destination = Path(output_path).resolve()
+    temporary = destination.with_name(f".{destination.name}.tmp")
     try:
         destination.parent.mkdir(parents=True, exist_ok=True)
         best_so_far = float("inf")
-        with destination.open("w", encoding="utf-8", newline="") as stream:
+        with temporary.open("w", encoding="utf-8", newline="") as stream:
             writer = csv.writer(stream)
             writer.writerow(
                 (
@@ -392,7 +396,7 @@ def save_optimization_history_csv(
                     "error_message",
                 )
             )
-            for evaluation in result.evaluations:
+            for evaluation in evaluations:
                 best_so_far = min(best_so_far, evaluation.objective_value)
                 writer.writerow(
                     (
@@ -410,11 +414,23 @@ def save_optimization_history_csv(
                         evaluation.error_message,
                     )
                 )
+        temporary.replace(destination)
     except OSError as exc:
+        try:
+            temporary.unlink(missing_ok=True)
+        except OSError:
+            pass
         raise OptimizationError(
             f"failed to save optimization history '{destination}': {exc}"
         ) from exc
     return destination
+
+
+def save_optimization_history_csv(
+    result: OptimizationResult, output_path: str | Path
+) -> Path:
+    """Save every successful and failed objective evaluation to CSV."""
+    return _write_optimization_evaluations_csv(result.evaluations, output_path)
 
 
 def save_optimization_summary_json(

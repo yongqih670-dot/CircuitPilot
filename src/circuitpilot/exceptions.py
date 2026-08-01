@@ -39,3 +39,7 @@ class ExperimentError(CircuitPilotError):
 
 class OptimizationError(CircuitPilotError):
     """Raised when circuit optimization or history export fails."""
+
+
+class ResearchArtifactError(CircuitPilotError):
+    """Raised when a reproducibility manifest cannot be created or verified."""

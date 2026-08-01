@@ -1,3 +1,4 @@
+import csv
 from math import pi
 from pathlib import Path
 import re
@@ -190,6 +191,43 @@ def test_optimizer_penalizes_failed_candidate_and_continues(
     assert result.successful_count == 1
     assert result.evaluations[0].error_message == "candidate failed"
     assert result.best_evaluation.evaluation_index == 2
+    history = (tmp_path / "optimization_history.csv").read_text(encoding="utf-8")
+    assert "failed" in history
+    assert "candidate failed" in history
+
+
+def test_all_failed_candidates_raise_and_leave_failure_history(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def fake_optimizer(function: object, **kwargs: object) -> SimpleNamespace:
+        values = [function((2.0, -7.0)), function((3.0, -6.8))]  # type: ignore[operator]
+        return SimpleNamespace(
+            success=False,
+            message="all failed",
+            nit=1,
+            nfev=2,
+            x=(2.0, -7.0),
+            fun=min(values),
+        )
+
+    monkeypatch.setattr(
+        "circuitpilot.circuit_optimizer.differential_evolution", fake_optimizer
+    )
+    monkeypatch.setattr(
+        "circuitpilot.circuit_optimizer.run_ngspice",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            OptimizationError("real metric unavailable")
+        ),
+    )
+
+    with pytest.raises(OptimizationError, match="all optimization evaluations failed"):
+        run_circuit_optimization(_config(), tmp_path, executable=sys.executable)
+
+    history_path = tmp_path / "optimization_history.csv"
+    rows = list(csv.DictReader(history_path.open(encoding="utf-8", newline="")))
+    assert len(rows) == 2
+    assert all(row["status"] == "failed" for row in rows)
+    assert all(row["metric_value"] == "" for row in rows)
 
 
 def test_history_summary_and_progress_plot_are_written(tmp_path: Path) -> None:
