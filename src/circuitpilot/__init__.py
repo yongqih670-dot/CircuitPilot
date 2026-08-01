@@ -45,6 +45,11 @@ from circuitpilot.parameter_sweep import (
     save_sweep_results_csv,
 )
 from circuitpilot.parser import ACAnalysisResult, parse_ac_output
+from circuitpilot.research_artifacts import (
+    RESEARCH_MANIFEST_FILENAME,
+    RESEARCH_MANIFEST_SCHEMA_VERSION,
+    write_research_manifest,
+)
 from circuitpilot.simulator import (
     SimulationResult,
     resolve_ngspice_executable,
@@ -76,6 +81,8 @@ __all__ = [
     "OptimizerSettings",
     "ParameterBounds",
     "ParameterScale",
+    "RESEARCH_MANIFEST_FILENAME",
+    "RESEARCH_MANIFEST_SCHEMA_VERSION",
     "RCHighPassConfig",
     "RCFilterConfig",
     "RCLowPassConfig",
@@ -106,4 +113,5 @@ __all__ = [
     "metric_to_objective",
     "write_rc_lowpass_netlist",
     "write_netlist",
+    "write_research_manifest",
 ]

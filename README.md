@@ -1,5 +1,7 @@
 # CircuitPilot
 
+> 研究审计状态和真实测试证据见 [RESEARCH_READINESS_REPORT.md](RESEARCH_READINESS_REPORT.md)。
+
 CircuitPilot 是一个采用 `src/` 目录结构的参数化 ngspice 电路仿真与自动优化平台。它可以从 YAML 读取单次仿真、离散参数扫描或连续优化配置，并将仿真过程与设计结果归档到 SQLite。
 
 当前第五阶段支持：
@@ -420,6 +422,29 @@ python -m circuitpilot --resistance 2200 --capacitance 47e-9 --start 10 --stop 1
 ```console
 python main.py --help
 ```
+
+## 研究可复现产物
+
+单次仿真、参数扫描和自动优化成功后，`--output-dir` 指定的目录就是该次实验的独立证据目录。研究运行应为每次实验指定一个新的目录，例如：
+
+```powershell
+python main.py --optimize-config examples\optimize_rc_cutoff.yaml `
+  --output-dir output\runs\rc_cutoff_20260801_001 `
+  --experiment-name "RC cutoff 20260801-001"
+```
+
+目录内的 `research_manifest.json` 保存完整解析后配置、参数、指标、随机种子、实际运行时间、ngspice 可执行文件位置，以及全部证据文件的 SHA-256。使用 YAML 时还会原样复制为 `input_config.yaml`；每个仿真候选的 `.cir` 网表、`ngspice.log` 和原始 `ac_results.dat` 都会保留。缺少任一类仿真证据时不会生成成功清单。
+
+`experiment create` 是保留的人工历史导入接口，其中的参数和指标由用户提供，不能作为“已由 ngspice 验证”的研究证据。研究结果应使用带 `--experiment-name` 的单次仿真、扫描或优化命令自动写入 SQLite，并以同目录的研究清单为依据。
+
+可用以下脚本在临时全新虚拟环境中安装发行包、执行真实 ngspice 优化并核验 SQLite 与研究产物：
+
+```powershell
+python scripts\clean_environment_test.py `
+  --ngspice tools\ngspice\bin\ngspice_con.exe
+```
+
+该脚本会从已声明依赖重新安装项目，因此首次执行需要能访问 Python 包索引；临时环境和运行目录在校验完成后自动清理。
 
 ## 测试
 

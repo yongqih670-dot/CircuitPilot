@@ -8,6 +8,23 @@ from circuitpilot.exceptions import SimulationError
 from circuitpilot.experiment_manager import ExperimentRepository
 from circuitpilot.parameter_sweep import SweepResult
 from circuitpilot.parser import ACAnalysisResult
+from circuitpilot.simulator import SimulationResult
+
+
+@pytest.fixture(autouse=True)
+def isolate_research_manifest_in_cli_unit_tests(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Keep CLI unit tests focused; real manifests are covered end to end."""
+    monkeypatch.setattr(
+        "circuitpilot.cli.write_research_manifest",
+        lambda output_directory, **kwargs: Path(output_directory)
+        / "research_manifest.json",
+    )
+
+
+def _successful_simulation() -> SimulationResult:
+    return SimulationResult(("ngspice",), 0, "", "", 0.01)
 
 
 def test_main_runs_complete_workflow(
@@ -18,7 +35,9 @@ def test_main_runs_complete_workflow(
         gain_db=(0.0, -3.0, -20.0),
         phase_deg=(-1.0, -45.0, -85.0),
     )
-    monkeypatch.setattr("circuitpilot.cli.run_ngspice", lambda *args, **kwargs: None)
+    monkeypatch.setattr(
+        "circuitpilot.cli.run_ngspice", lambda *args, **kwargs: _successful_simulation()
+    )
     monkeypatch.setattr("circuitpilot.cli.parse_ac_output", lambda path: response)
     monkeypatch.setattr(
         "circuitpilot.cli.plot_bode", lambda result, path, **kwargs: Path(path)
@@ -69,7 +88,9 @@ analysis:
         gain_db=(-20.0, -3.0, 0.0),
         phase_deg=(85.0, 45.0, 5.0),
     )
-    monkeypatch.setattr("circuitpilot.cli.run_ngspice", lambda *args, **kwargs: None)
+    monkeypatch.setattr(
+        "circuitpilot.cli.run_ngspice", lambda *args, **kwargs: _successful_simulation()
+    )
     monkeypatch.setattr("circuitpilot.cli.parse_ac_output", lambda path: response)
     monkeypatch.setattr(
         "circuitpilot.cli.plot_bode", lambda result, path, **kwargs: Path(path)
@@ -110,7 +131,9 @@ analysis:
         gain_db=(-12.3, -12.3, -12.3),
         phase_deg=(0.0, 0.0, 0.0),
     )
-    monkeypatch.setattr("circuitpilot.cli.run_ngspice", lambda *args, **kwargs: None)
+    monkeypatch.setattr(
+        "circuitpilot.cli.run_ngspice", lambda *args, **kwargs: _successful_simulation()
+    )
     monkeypatch.setattr("circuitpilot.cli.parse_ac_output", lambda path: response)
     monkeypatch.setattr(
         "circuitpilot.cli.plot_bode", lambda result, path, **kwargs: Path(path)
