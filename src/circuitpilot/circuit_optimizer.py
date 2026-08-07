@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 from bisect import bisect_left
-import cmath
 import csv
 from dataclasses import asdict, dataclass
 import json
-from math import isfinite, log10, radians
+from math import isfinite, log10
 from pathlib import Path
 from time import monotonic
 from typing import Any, Sequence
@@ -29,6 +28,7 @@ from circuitpilot.optimization_config import (
     OptimizationConfig,
 )
 from circuitpilot.parser import ACAnalysisResult, parse_ac_output
+from circuitpilot.power_metrics import DERIVED_RC_POWER_METRIC, derived_rc_power
 from circuitpilot.simulator import resolve_ngspice_executable, run_ngspice
 
 
@@ -146,11 +146,12 @@ def evaluate_response_metric(
     *,
     resistance_ohm: float,
 ) -> float:
-    """Evaluate the configured bandwidth, gain, or resistor-power metric.
+    """Evaluate the configured bandwidth, gain, or derived RC power metric.
 
-    Gain is measured in dB at ``evaluation_frequency_hz``. Power is the
-    resistor's average sinusoidal dissipation in watts for a 1 V peak AC
-    source. Bandwidth is the interpolated -3 dB cutoff frequency in hertz.
+    Gain is measured in dB at ``evaluation_frequency_hz``. The compatibility
+    power objective is explicitly ``derived_rc_power``: the resistor's average
+    sinusoidal dissipation for a 1 V peak AC source. It is not transistor-level
+    DC supply power. Bandwidth is the interpolated -3 dB cutoff frequency.
 
     Args:
         config: Optimization and objective definition.
@@ -179,13 +180,12 @@ def evaluate_response_metric(
     phase_deg = _interpolate_at_frequency(
         response.frequency_hz, response.phase_deg, evaluation_frequency
     )
-    transfer = cmath.rect(10.0 ** (gain_db / 20.0), radians(phase_deg))
-    resistor_voltage = (
-        1.0 - transfer
-        if config.circuit_type is CircuitType.RC_LOWPASS
-        else transfer
+    return derived_rc_power(
+        gain_db=gain_db,
+        phase_deg=phase_deg,
+        resistance_ohm=resistance_ohm,
+        circuit_type=config.circuit_type,
     )
-    return abs(resistor_voltage) ** 2 / (2.0 * resistance_ohm)
 
 
 def metric_to_objective(config: OptimizationConfig, metric_value: float) -> float:
@@ -445,6 +445,11 @@ def save_optimization_summary_json(
         "circuit_type": config.circuit_type.value,
         "objective": {
             "metric": config.objective.metric.value,
+            "metric_model": (
+                DERIVED_RC_POWER_METRIC
+                if config.objective.metric is ObjectiveMetric.POWER
+                else config.objective.metric.value
+            ),
             "goal": config.objective.goal.value,
             "target_value": config.objective.target_value,
             "evaluation_frequency_hz": config.objective.evaluation_frequency_hz,
@@ -552,7 +557,7 @@ def plot_optimization_progress(
             {
                 ObjectiveMetric.BANDWIDTH: "Bandwidth (Hz)",
                 ObjectiveMetric.GAIN: "Gain (dB)",
-                ObjectiveMetric.POWER: "Power (W)",
+                ObjectiveMetric.POWER: "Derived RC power (W)",
             }[config.objective.metric]
         )
         metric_axis.grid(True, linestyle=":", alpha=0.6)

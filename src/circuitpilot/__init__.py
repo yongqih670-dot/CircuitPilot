@@ -37,6 +37,7 @@ from circuitpilot.experiment_manager import (
     ExperimentRecord,
     ExperimentRepository,
 )
+from circuitpilot.environment_fingerprint import RESEARCH_BASELINE_VERSION
 from circuitpilot.parameter_sweep import (
     SweepResult,
     calculate_relative_error,
@@ -45,10 +46,22 @@ from circuitpilot.parameter_sweep import (
     save_sweep_results_csv,
 )
 from circuitpilot.parser import ACAnalysisResult, parse_ac_output
+from circuitpilot.power_metrics import (
+    DC_SUPPLY_POWER_METRIC,
+    DERIVED_RC_POWER_METRIC,
+    dc_supply_power,
+    derived_rc_power,
+)
 from circuitpilot.research_artifacts import (
     RESEARCH_MANIFEST_FILENAME,
     RESEARCH_MANIFEST_SCHEMA_VERSION,
     write_research_manifest,
+)
+from circuitpilot.run_directory import (
+    RUN_CONTEXT_FILENAME,
+    ResearchRunDirectory,
+    generate_run_id,
+    prepare_research_run_directory,
 )
 from circuitpilot.simulator import (
     SimulationResult,
@@ -69,6 +82,8 @@ __all__ = [
     "ACAnalysisConfig",
     "CircuitConfig",
     "CircuitType",
+    "DC_SUPPLY_POWER_METRIC",
+    "DERIVED_RC_POWER_METRIC",
     "ExperimentComparison",
     "ExperimentRecord",
     "ExperimentRepository",
@@ -83,25 +98,32 @@ __all__ = [
     "ParameterScale",
     "RESEARCH_MANIFEST_FILENAME",
     "RESEARCH_MANIFEST_SCHEMA_VERSION",
+    "RESEARCH_BASELINE_VERSION",
+    "RUN_CONTEXT_FILENAME",
     "RCHighPassConfig",
     "RCFilterConfig",
     "RCLowPassConfig",
+    "ResearchRunDirectory",
     "SimulationResult",
     "SweepConfig",
     "SweepResult",
     "VoltageDividerConfig",
     "ParameterCombination",
     "calculate_relative_error",
+    "dc_supply_power",
+    "derived_rc_power",
     "evaluate_response_metric",
     "find_cutoff_frequency",
     "find_highpass_cutoff_frequency",
     "generate_netlist",
+    "generate_run_id",
     "generate_parameter_combinations",
     "load_circuit_config",
     "load_optimization_config",
     "load_sweep_config",
     "parse_ac_output",
     "plot_optimization_progress",
+    "prepare_research_run_directory",
     "run_ngspice",
     "resolve_ngspice_executable",
     "run_parameter_sweep",

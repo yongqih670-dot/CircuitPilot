@@ -27,6 +27,65 @@ def _successful_simulation() -> SimulationResult:
     return SimulationResult(("ngspice",), 0, "", "", 0.01)
 
 
+def _patch_successful_single_run(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Patch only the physical boundary for CLI directory-lifecycle tests."""
+    response = ACAnalysisResult(
+        frequency_hz=(10.0, 100.0, 1_000.0),
+        gain_db=(0.0, -3.0, -20.0),
+        phase_deg=(-1.0, -45.0, -85.0),
+    )
+    monkeypatch.setattr(
+        "circuitpilot.cli.run_ngspice", lambda *args, **kwargs: _successful_simulation()
+    )
+    monkeypatch.setattr("circuitpilot.cli.parse_ac_output", lambda path: response)
+    monkeypatch.setattr(
+        "circuitpilot.cli.plot_bode", lambda result, path, **kwargs: Path(path)
+    )
+
+
+def test_default_cli_output_creates_unique_run_directory(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    _patch_successful_single_run(monkeypatch)
+
+    status = main([])
+
+    captured = capsys.readouterr()
+    runs = list((tmp_path / "output").iterdir())
+    assert status == 0
+    assert len(runs) == 1
+    assert runs[0].name.startswith("cp-")
+    assert (runs[0] / "run_context.json").is_file()
+    assert f"Run ID: {runs[0].name}" in captured.out
+    assert f"Output directory: {runs[0]}" in captured.out
+
+
+def test_cli_refuses_reuse_without_resume_and_accepts_explicit_resume(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    _patch_successful_single_run(monkeypatch)
+    output = tmp_path / "run"
+
+    assert main(["--output-dir", str(output)]) == 0
+    assert main(["--output-dir", str(output)]) == 1
+    assert "not empty" in capsys.readouterr().err
+    assert (
+        main(
+            [
+                "--output-dir",
+                str(output),
+                "--resume",
+                "--resistance",
+                "2000",
+            ]
+        )
+        == 1
+    )
+    assert "resolved configuration" in capsys.readouterr().err
+    assert main(["--output-dir", str(output), "--resume"]) == 0
+
+
 def test_main_runs_complete_workflow(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:

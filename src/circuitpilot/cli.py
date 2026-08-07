@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import argparse
-from dataclasses import asdict
+from dataclasses import asdict, is_dataclass
+from enum import Enum
+from hashlib import sha256
 import json
 from pathlib import Path
 import sys
@@ -47,7 +49,13 @@ from circuitpilot.parameter_sweep import (
 )
 from circuitpilot.parser import ACAnalysisResult, parse_ac_output
 from circuitpilot.plotting import plot_bode
+from circuitpilot.power_metrics import DERIVED_RC_POWER_METRIC
 from circuitpilot.research_artifacts import write_research_manifest
+from circuitpilot.run_directory import (
+    ResearchRunDirectory,
+    prepare_research_run_directory,
+    snapshot_run_input_config,
+)
 from circuitpilot.simulator import run_ngspice
 from circuitpilot.sweep_config import load_sweep_config
 
@@ -90,8 +98,15 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("output"),
-        help="directory for the netlist, data, log, and plot",
+        default=None,
+        help=(
+            "exact directory for one run; if omitted, create output/<unique run_id>"
+        ),
+    )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="explicitly resume a non-empty CircuitPilot run directory",
     )
     parser.add_argument(
         "--ngspice", default="ngspice", help="ngspice executable name or full path"
@@ -179,6 +194,56 @@ def _legacy_lowpass_config(args: argparse.Namespace) -> CircuitConfig:
             points_per_decade=args.points,
         ),
     )
+
+
+def _stable_config_value(value: object) -> object:
+    """Convert typed configuration into deterministic JSON-compatible data."""
+    if is_dataclass(value) and not isinstance(value, type):
+        return _stable_config_value(asdict(value))
+    if isinstance(value, Enum):
+        return value.value
+    if isinstance(value, dict):
+        return {
+            str(key): _stable_config_value(item)
+            for key, item in sorted(value.items(), key=lambda pair: str(pair[0]))
+        }
+    if isinstance(value, (list, tuple)):
+        return [_stable_config_value(item) for item in value]
+    return value
+
+
+def _configuration_sha256(config: object) -> str:
+    """Hash the fully resolved configuration used for resume compatibility."""
+    payload = json.dumps(
+        _stable_config_value(config),
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+        allow_nan=False,
+    ).encode("utf-8")
+    return sha256(payload).hexdigest()
+
+
+def _prepare_run(
+    args: argparse.Namespace,
+    source_config: str | Path | None,
+    resolved_config: object,
+) -> ResearchRunDirectory:
+    """Prepare one protected run boundary and snapshot its source YAML."""
+    run = prepare_research_run_directory(
+        args.output_dir,
+        resume=args.resume,
+        source_config=source_config,
+        configuration_sha256=_configuration_sha256(resolved_config),
+    )
+    snapshot_run_input_config(run, source_config)
+    return run
+
+
+def _print_run_location(run: ResearchRunDirectory) -> None:
+    """Print the immutable run identity and concrete output directory."""
+    print(f"Run ID: {run.run_id}")
+    print(f"Output directory: {run.path}")
 
 
 def _cutoff_for_config(
@@ -328,7 +393,8 @@ def _save_single_experiment(
 def _run_sweep_workflow(args: argparse.Namespace) -> int:
     """Execute, rank, and export one automated parameter sweep."""
     config = load_sweep_config(args.sweep_config)
-    output_dir = args.output_dir.resolve()
+    run = _prepare_run(args, args.sweep_config, config)
+    output_dir = run.path
     started_at = monotonic()
     results = run_parameter_sweep(
         config,
@@ -399,11 +465,15 @@ def _run_sweep_workflow(args: argparse.Namespace) -> int:
         runtime_seconds=elapsed_seconds,
         ngspice_executable=args.ngspice,
         random_seed=None,
+        run_id=run.run_id,
+        resumed=run.resumed,
+        resume_count=run.resume_count,
         source_config_path=args.sweep_config,
         experiment_name=args.experiment_name,
         experiment_id=experiment_id,
     )
     print(f"Research manifest: {manifest_path}")
+    _print_run_location(run)
     return 0
 
 
@@ -424,6 +494,11 @@ def _optimization_parameters(config: OptimizationConfig) -> dict[str, object]:
         },
         "objective": {
             "metric": config.objective.metric.value,
+            "metric_model": (
+                DERIVED_RC_POWER_METRIC
+                if config.objective.metric is ObjectiveMetric.POWER
+                else config.objective.metric.value
+            ),
             "goal": config.objective.goal.value,
             "target_value": config.objective.target_value,
             "evaluation_frequency_hz": config.objective.evaluation_frequency_hz,
@@ -466,7 +541,7 @@ def _optimization_metrics(
     metric_names = {
         ObjectiveMetric.BANDWIDTH: "bandwidth_hz",
         ObjectiveMetric.GAIN: "gain_db",
-        ObjectiveMetric.POWER: "power_w",
+        ObjectiveMetric.POWER: "derived_rc_power_w",
     }
     metrics: dict[str, float] = {
         metric_names[config.objective.metric]: float(best.metric_value),
@@ -478,6 +553,8 @@ def _optimization_metrics(
         "failure_count": float(result.failed_count),
         "iteration_count": float(result.iteration_count),
     }
+    if config.objective.metric is ObjectiveMetric.POWER:
+        metrics["power_w"] = float(best.metric_value)
     if config.objective.target_value is not None:
         metrics["target_value"] = config.objective.target_value
         metrics["relative_error"] = best.objective_value
@@ -487,7 +564,8 @@ def _optimization_metrics(
 def _run_optimization_workflow(args: argparse.Namespace) -> int:
     """Run SciPy/ngspice optimization and export all history artifacts."""
     config = load_optimization_config(args.optimize_config)
-    output_dir = args.output_dir.resolve()
+    run = _prepare_run(args, args.optimize_config, config)
+    output_dir = run.path
     result = run_circuit_optimization(
         config,
         output_dir,
@@ -523,6 +601,9 @@ def _run_optimization_workflow(args: argparse.Namespace) -> int:
         runtime_seconds=result.total_time_seconds,
         ngspice_executable=args.ngspice,
         random_seed=config.optimizer.seed,
+        run_id=run.run_id,
+        resumed=run.resumed,
+        resume_count=run.resume_count,
         source_config_path=args.optimize_config,
         experiment_name=args.experiment_name,
         experiment_id=experiment_id,
@@ -550,6 +631,7 @@ def _run_optimization_workflow(args: argparse.Namespace) -> int:
     print(f"Summary JSON: {summary_path}")
     print(f"Progress plot: {plot_path}")
     print(f"Research manifest: {manifest_path}")
+    _print_run_location(run)
     if experiment_id is not None:
         print(f"Experiment saved with ID {experiment_id}.")
     return 0
@@ -577,7 +659,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.config is not None
             else _legacy_lowpass_config(args)
         )
-        output_dir = args.output_dir.resolve()
+        run = _prepare_run(args, args.config, config)
+        output_dir = run.path
         circuit_name = config.circuit_type.value
         netlist_path = output_dir / f"{circuit_name}.cir"
         data_path = output_dir / "ac_results.dat"
@@ -632,6 +715,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             runtime_seconds=simulation_result.elapsed_seconds,
             ngspice_executable=args.ngspice,
             random_seed=None,
+            run_id=run.run_id,
+            resumed=run.resumed,
+            resume_count=run.resume_count,
             source_config_path=args.config,
             experiment_name=args.experiment_name,
             experiment_id=experiment_id,
@@ -648,6 +734,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"Transfer gain: {response.gain_db[0]:.6g} dB")
     print(f"Bode plot: {plot_path}")
     print(f"Research manifest: {manifest_path}")
+    _print_run_location(run)
     if experiment_id is not None:
         print(f"Experiment saved with ID {experiment_id}.")
     return 0
