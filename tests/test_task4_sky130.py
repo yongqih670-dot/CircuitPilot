@@ -19,6 +19,7 @@ from circuitpilot.experiments.objectives import ObjectiveEvaluator
 from circuitpilot.experiments.recorder import EvaluationRecord
 from circuitpilot.experiments.simulation import Sky130CommonSourceNgspiceSimulator
 from circuitpilot.experiments.survival import kaplan_meier
+from circuitpilot.experiments.statistics import build_survival_rows
 from circuitpilot.sky130_common_source import generate_sky130_common_source_netlist
 from circuitpilot.sky130_model import SKY130_DEVICE_NAME
 
@@ -238,6 +239,19 @@ def test_kaplan_meier_with_censoring_and_rmst() -> None:
     assert estimate.points[-1].survival_probability == pytest.approx(1 / 3)
     assert estimate.rmst == pytest.approx(10 / 3)
     assert estimate.median_time_to_event == 4
+
+
+def test_survival_table_preserves_censored_runs_and_time_zero() -> None:
+    rows = build_survival_rows(
+        [
+            {"method": "random", "simulation_budget": 5, "evaluation_time": 2, "event_observed": True},
+            {"method": "random", "simulation_budget": 5, "evaluation_time": 5, "event_observed": False},
+        ]
+    )
+    assert rows[0]["simulation_evaluations"] == 0
+    assert rows[0]["survival_probability"] == 1.0
+    assert rows[-1]["censored"] == 1
+    assert rows[-1]["survival_probability"] == pytest.approx(0.5)
 
 
 @pytest.mark.integration

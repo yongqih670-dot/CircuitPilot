@@ -36,6 +36,12 @@ SUMMARY_COLUMNS = (
     "best_gain", "best_bandwidth", "best_bandwidth_lower_bound", "best_power",
 )
 
+SURVIVAL_COLUMNS = (
+    "method", "simulation_evaluations", "survival_probability", "at_risk",
+    "events", "censored", "horizon", "rmst",
+    "km_median_time_to_feasible",
+)
+
 
 def load_evaluations(run_directory: str | Path) -> list[dict[str, Any]]:
     """Load one canonical evaluations.csv without replacing missing values."""
@@ -215,6 +221,56 @@ def summarize_methods(results: Iterable[dict[str, Any]]) -> list[dict[str, Any]]
             "best_power": min(best_powers) if best_powers else None,
         })
     return summaries
+
+
+def build_survival_rows(results: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Return auditable Kaplan-Meier coordinates for every method.
+
+    Survival means the probability that a run has not yet found a feasible
+    design.  A time-zero row is included so the CSV maps exactly to the plotted
+    post-step curve.  Unsuccessful runs are right-censored at their budget.
+    """
+    groups: dict[str, list[dict[str, Any]]] = {}
+    for result in results:
+        groups.setdefault(str(result["method"]), []).append(result)
+    rows: list[dict[str, Any]] = []
+    for method, method_results in sorted(groups.items()):
+        horizon = max(int(item["simulation_budget"]) for item in method_results)
+        estimate = kaplan_meier(
+            [
+                (int(item["evaluation_time"]), bool(item["event_observed"]))
+                for item in method_results
+            ],
+            horizon=horizon,
+        )
+        common = {
+            "method": method,
+            "horizon": estimate.horizon,
+            "rmst": estimate.rmst,
+            "km_median_time_to_feasible": estimate.median_time_to_event,
+        }
+        rows.append(
+            {
+                **common,
+                "simulation_evaluations": 0,
+                "survival_probability": 1.0,
+                "at_risk": len(method_results),
+                "events": 0,
+                "censored": 0,
+            }
+        )
+        rows.extend(
+            {
+                **common,
+                "simulation_evaluations": point.time,
+                "survival_probability": point.survival_probability,
+                "at_risk": point.at_risk,
+                "events": point.events,
+                "censored": point.censored,
+            }
+            for point in estimate.points
+        )
+    return rows
 
 
 def _csv_value(field: str, value: Any) -> Any:

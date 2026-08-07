@@ -20,6 +20,8 @@ from circuitpilot.experiments.runner import execute_experiment
 from circuitpilot.experiments.statistics import (
     RESULT_COLUMNS,
     SUMMARY_COLUMNS,
+    SURVIVAL_COLUMNS,
+    build_survival_rows,
     summarize_methods,
     summarize_run,
     write_table,
@@ -126,6 +128,11 @@ def run_suite(config: BaselineSuiteConfig) -> Path:
     summaries = summarize_methods(results)
     write_table(suite_run.path / "baseline_results.csv", RESULT_COLUMNS, results)
     write_table(suite_run.path / "baseline_summary.csv", SUMMARY_COLUMNS, summaries)
+    write_table(
+        suite_run.path / "kaplan_meier.csv",
+        SURVIVAL_COLUMNS,
+        build_survival_rows(results),
+    )
     plot_baseline(run_directories, suite_run.path / "plots")
     return suite_run.path
 

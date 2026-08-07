@@ -79,3 +79,19 @@ summary、plot、seed set 或算法结论。benchmark hash 冻结后，任何语
 `is_feasible` 仅表示所有硬约束同时满足。删失 run 继续保持
 `simulations_to_first_feasible = null`，同时记录 survival-ready 的
 `event_observed` 和 `evaluation_time`；不得替换为 0 或 budget+1。
+
+## Research Task 4 SKY130 与删失语义扩展
+
+Task 4 公平比较还必须共享完全一致的 SKY130 model-tree SHA-256、top-library
+SHA-256、PDK release/commit、device/corner、带宽语义版本、固定 AC measurement
+window、censoring policy 和 benchmark difficulty protocol version。任何不一致
+必须由 `FairnessValidator` 拒绝。
+
+有效频响在固定 `f_stop` 前没有 post-peak -3 dB crossing 时是
+`right_censored`：精确 `bandwidth_hz` 保持 null，只记录
+`bandwidth_lower_bound_hz=f_stop`。它不是 simulation failure。只有 `>=` 带宽
+硬约束可使用该下界作确定性判定，精确带宽统计和散点图不得使用此下界冒充测量值。
+
+Time-to-first-feasible 的未成功 run 在预算处右删失。正式输出必须同时提供
+逐点 Kaplan–Meier survival probability、KM median（可定义时）和固定预算 horizon
+上的 RMST。`simulations_to_first_feasible` 对删失 run 继续保持 null。
