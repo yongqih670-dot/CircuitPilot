@@ -45,7 +45,7 @@ frozen benchmark field.
 ## Formal Baseline Experiment
 
 Run directory:
-`research_runs/task3_common_source_baseline/cp-20260807T082454433891Z-90b806b36b15`
+`research_runs/task3_common_source_baseline/cp-20260807T083800448980Z-5be94980f0c1`
 
 - methods: Random, DE, TPE, BO
 - seeds: 0–9
@@ -55,9 +55,11 @@ Run directory:
 - `analysis_failed`: 427 (no post-peak −3 dB crossing by 1 GHz)
 - ngspice process failures/timeouts/nonzero exits: 0 / 0 / 0
 - evidence: 2000 netlists, 2000 logs, 2000 AC outputs, 2000 DC outputs,
-  and 2000 MOS operating-point outputs (40.4 MB locally)
+  and 2000 MOS operating-point outputs (40.5 MB locally)
 - fairness: passed; every row carries the frozen benchmark hash, phase
   `baseline`, and identical environment/model signature
+- authoritative environment: `requirements-research.lock`, clean Git commit
+  `7bae910f599b6e9402427c5983a05ca52b58f8aa`
 
 | Method | Success rate | Median best objective | Mean ± population SD | Median first feasible | Censored | Median violation | Fail rate | Calls |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -86,16 +88,15 @@ are published under `research/common_source/results/`.
 
 ## Verification
 
-- complete test suite: `177 passed, 1 skipped in 11.39s`
-- real-ngspice integration selection: `18 passed, 1 skipped, 159 deselected in 8.59s`
+- locked-environment complete suite: `177 passed, 1 skipped in 12.18s`
+- locked-environment real-ngspice selection: `18 passed, 1 skipped, 159 deselected in 9.45s`
 - skipped test: optional SKY130 integration because `SKY130_MODEL_LIBRARY` is
   not configured
 - clean environment: PASS in a newly created venv using
   `requirements-research.lock`; `pip check` passed and a real ngspice RC
   optimization completed with 10/10 successful evaluations
-- clean locked versions included Python 3.12.7, NumPy 2.5.1, SciPy 1.18.0,
-  PyYAML 6.0.3, Optuna 4.9.0; baseline runs used the consistently fingerprinted
-  local NumPy 1.26.4 and SciPy 1.13.1 environment
+- authoritative baseline and clean-environment locked versions: Python 3.12.7,
+  NumPy 2.5.1, SciPy 1.18.0, PyYAML 6.0.3, Optuna 4.9.0
 - ngspice: version 46, executable SHA-256
   `86c9ea5f645ca919e305639fa7bdb522355364c424d14e197f1ade617feb3453`
 
