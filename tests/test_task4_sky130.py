@@ -243,6 +243,9 @@ def test_kaplan_meier_with_censoring_and_rmst() -> None:
 @pytest.mark.integration
 def test_real_sky130_ngspice_end_to_end(tmp_path: Path) -> None:
     config = _task4_config()
+    evaluation_directory = tmp_path
+    while len(str(evaluation_directory.resolve())) < 235:
+        evaluation_directory /= "suite_depth"
     parameters = {
         "width_m": 1.26e-6,
         "length_m": 0.15e-6,
@@ -251,7 +254,7 @@ def test_real_sky130_ngspice_end_to_end(tmp_path: Path) -> None:
     }
     calls: list[int] = []
     simulation = Sky130CommonSourceNgspiceSimulator(config).evaluate(
-        parameters, tmp_path / "evaluation_0001", lambda: calls.append(1)
+        parameters, evaluation_directory, lambda: calls.append(1)
     )
     outcome = Sky130CommonSourceAnalyzer(config).extract(simulation, parameters)
     assert calls == [1]
@@ -264,4 +267,6 @@ def test_real_sky130_ngspice_end_to_end(tmp_path: Path) -> None:
         )
     )
     assert outcome.metrics["gm"] > 0
+    assert simulation.netlist_path.name == "circuit.cir"
+    assert simulation.data_path.name == "ac.dat"
     assert simulation.log_path.is_file()

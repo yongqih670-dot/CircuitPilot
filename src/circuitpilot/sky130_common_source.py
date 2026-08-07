@@ -254,10 +254,13 @@ def sky130_runtime_paths(
     """Expose ASCII/short ngspice paths while preserving physical artifacts."""
     directory = evaluation_directory.resolve()
     directory.mkdir(parents=True, exist_ok=True)
-    netlist = directory / "sky130_common_source.cir"
-    ac_path = directory / "ac_results.dat"
-    op_path = directory / "dc_operating_point.dat"
-    device_path = directory / "mos_operating_point.dat"
+    # Keep evidence names compact because a suite run adds several nested,
+    # immutable IDs.  Windows may reject a perfectly valid artifact once the
+    # full path exceeds MAX_PATH even though ngspice itself uses a short alias.
+    netlist = directory / "circuit.cir"
+    ac_path = directory / "ac.dat"
+    op_path = directory / "op.dat"
+    device_path = directory / "device_op.dat"
     log_path = directory / "ngspice.log"
     if os.name != "nt":
         yield NgspiceRuntimePaths(

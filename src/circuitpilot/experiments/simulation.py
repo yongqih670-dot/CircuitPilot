@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import os
 from pathlib import Path
 from typing import Callable, Mapping, Protocol
 
@@ -177,11 +178,17 @@ class Sky130CommonSourceNgspiceSimulator:
         circuit = self._config.circuit_config
         assert isinstance(circuit, Sky130CommonSourceCircuitConfig)
         with sky130_runtime_paths(circuit.model, evaluation_directory) as paths:
+            windows_runtime = os.name == "nt"
+            runtime_ac_path = Path(paths.runtime_ac) if windows_runtime else paths.ac_path
+            runtime_op_path = Path(paths.runtime_op) if windows_runtime else paths.op_path
+            runtime_device_path = (
+                Path(paths.runtime_device) if windows_runtime else paths.device_path
+            )
             for path in (
-                paths.ac_path,
-                paths.op_path,
-                paths.device_path,
-                paths.log_path,
+                runtime_ac_path,
+                runtime_op_path,
+                runtime_device_path,
+                paths.runtime_log,
             ):
                 path.unlink(missing_ok=True)
             text = generate_sky130_common_source_netlist(
@@ -197,7 +204,7 @@ class Sky130CommonSourceNgspiceSimulator:
                 points_per_decade=self._config.ngspice_config.points_per_decade,
             )
             try:
-                paths.netlist_path.write_text(text, encoding="utf-8")
+                paths.runtime_netlist.write_text(text, encoding="utf-8")
             except (OSError, UnicodeError) as exc:
                 from circuitpilot.exceptions import NetlistError
 
@@ -212,9 +219,9 @@ class Sky130CommonSourceNgspiceSimulator:
                 log_path=paths.runtime_log,
                 preserve_runtime_paths=True,
             )
-            response = parse_ac_output(paths.ac_path)
+            response = parse_ac_output(runtime_ac_path)
             operating_point = parse_operating_point(
-                paths.op_path, paths.device_path
+                runtime_op_path, runtime_device_path
             )
         return CandidateSimulation(
             response=response,

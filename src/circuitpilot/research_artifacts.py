@@ -80,8 +80,9 @@ def _classify_artifact(path: Path) -> str:
         return "netlist"
     if path.name.lower() == "ngspice.log":
         return "ngspice_log"
-    if path.name.lower() == "ac_results.dat" or path.name.lower().endswith(
-        "operating_point.dat"
+    if path.name.lower() in {"ac.dat", "op.dat", "device_op.dat"} or (
+        path.name.lower() == "ac_results.dat"
+        or path.name.lower().endswith("operating_point.dat")
     ):
         return "ngspice_output"
     if path.suffix.lower() == ".csv":
