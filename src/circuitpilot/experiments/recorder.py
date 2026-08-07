@@ -19,6 +19,7 @@ EVALUATION_COLUMNS = (
     "run_id",
     "circuit",
     "method",
+    "optimizer_phase",
     "seed",
     "iteration",
     "parameters",
@@ -27,6 +28,7 @@ EVALUATION_COLUMNS = (
     "raw_metrics",
     "objective_value",
     "constraint_violation",
+    "is_feasible",
     "simulation_time",
     "total_elapsed_time",
     "timestamp",
@@ -64,6 +66,22 @@ def _numeric_mapping(value: Mapping[str, Any], context: str) -> dict[str, float]
     return normalized
 
 
+def _parameter_mapping(value: Mapping[str, Any]) -> dict[str, Any]:
+    """Validate JSON-scalar candidate parameters, including categories."""
+    if not isinstance(value, Mapping):
+        raise ValueError("parameters must be a mapping")
+    normalized: dict[str, Any] = {}
+    for name, item in value.items():
+        if not isinstance(name, str) or not name:
+            raise ValueError("parameter names must be non-empty strings")
+        if not isinstance(item, (str, int, float, bool)):
+            raise ValueError(f"parameters.{name} must be a JSON scalar")
+        if isinstance(item, float) and not isfinite(item):
+            raise ValueError(f"parameters.{name} must be finite")
+        normalized[name] = item
+    return normalized
+
+
 @dataclass(frozen=True, slots=True)
 class EvaluationRecord:
     """Method-neutral record for one candidate slot."""
@@ -74,7 +92,7 @@ class EvaluationRecord:
     method: str
     seed: int
     iteration: int
-    parameters: dict[str, float | int]
+    parameters: dict[str, Any]
     simulation_status: str
     failure_type: str | None
     raw_metrics: dict[str, float]
@@ -85,6 +103,8 @@ class EvaluationRecord:
     timestamp: str
     run_directory: str
     ngspice_called: bool
+    optimizer_phase: str = "search"
+    is_feasible: bool = False
 
     def __post_init__(self) -> None:
         """Reject malformed, non-finite, or internally inconsistent records."""
@@ -100,7 +120,9 @@ class EvaluationRecord:
             or self.iteration <= 0
         ):
             raise ValueError("iteration must be a positive integer")
-        _numeric_mapping(self.parameters, "parameters")
+        _parameter_mapping(self.parameters)
+        if not isinstance(self.optimizer_phase, str) or not self.optimizer_phase:
+            raise ValueError("optimizer_phase must be non-empty")
         if not isinstance(self.simulation_status, str) or not self.simulation_status:
             raise ValueError("simulation_status must be non-empty")
         if self.failure_type is not None and (
@@ -124,6 +146,8 @@ class EvaluationRecord:
             raise ValueError("run_directory must be non-empty")
         if not isinstance(self.ngspice_called, bool):
             raise ValueError("ngspice_called must be a boolean")
+        if not isinstance(self.is_feasible, bool):
+            raise ValueError("is_feasible must be a boolean")
         if self.simulation_status == "success":
             if self.failure_type is not None:
                 raise ValueError("successful records cannot have failure_type")
@@ -135,6 +159,8 @@ class EvaluationRecord:
                 raise ValueError("successful records require a real ngspice call")
         elif self.objective_value is not None or self.constraint_violation is not None:
             raise ValueError("failed records cannot contain optimizer-facing values")
+        elif self.is_feasible:
+            raise ValueError("failed records cannot be feasible")
 
     @classmethod
     def now(
@@ -146,7 +172,7 @@ class EvaluationRecord:
         method: str,
         seed: int,
         iteration: int,
-        parameters: Mapping[str, float | int],
+        parameters: Mapping[str, Any],
         simulation_status: str,
         failure_type: str | None,
         raw_metrics: Mapping[str, float],
@@ -156,6 +182,8 @@ class EvaluationRecord:
         total_elapsed_time: float,
         run_directory: str,
         ngspice_called: bool,
+        optimizer_phase: str = "search",
+        is_feasible: bool = False,
     ) -> "EvaluationRecord":
         """Construct a record with a UTC timestamp."""
         return cls(
@@ -176,13 +204,15 @@ class EvaluationRecord:
             timestamp=datetime.now(timezone.utc).isoformat(timespec="microseconds"),
             run_directory=run_directory,
             ngspice_called=ngspice_called,
+            optimizer_phase=optimizer_phase,
+            is_feasible=is_feasible,
         )
 
 
 class EvaluationRecorder:
     """Persist identical evaluation rows to CSV and SQLite after every tell."""
 
-    SCHEMA_VERSION = 1
+    SCHEMA_VERSION = 2
 
     def __init__(self, output_directory: str | Path) -> None:
         """Initialize the per-run CSV and SQLite stores."""
@@ -221,6 +251,7 @@ class EvaluationRecorder:
                         experiment_id TEXT NOT NULL,
                         circuit TEXT NOT NULL,
                         method TEXT NOT NULL,
+                        optimizer_phase TEXT NOT NULL DEFAULT 'search',
                         seed INTEGER NOT NULL,
                         parameters_json TEXT NOT NULL,
                         simulation_status TEXT NOT NULL,
@@ -228,6 +259,7 @@ class EvaluationRecorder:
                         raw_metrics_json TEXT NOT NULL,
                         objective_value REAL,
                         constraint_violation REAL,
+                        is_feasible INTEGER NOT NULL DEFAULT 0,
                         simulation_time REAL NOT NULL,
                         total_elapsed_time REAL NOT NULL,
                         timestamp TEXT NOT NULL,
@@ -238,10 +270,15 @@ class EvaluationRecorder:
                     """
                 )
                 version = connection.execute("PRAGMA user_version").fetchone()[0]
-                if version not in (0, self.SCHEMA_VERSION):
+                if version not in (0, 1, self.SCHEMA_VERSION):
                     raise ResearchExperimentError(
                         f"unsupported evaluation database schema {version}"
                     )
+                columns = {row[1] for row in connection.execute("PRAGMA table_info(research_evaluations)")}
+                if "optimizer_phase" not in columns:
+                    connection.execute("ALTER TABLE research_evaluations ADD COLUMN optimizer_phase TEXT NOT NULL DEFAULT 'search'")
+                if "is_feasible" not in columns:
+                    connection.execute("ALTER TABLE research_evaluations ADD COLUMN is_feasible INTEGER NOT NULL DEFAULT 0")
                 connection.execute(f"PRAGMA user_version = {self.SCHEMA_VERSION}")
         except sqlite3.Error as exc:
             raise ResearchExperimentError(
@@ -261,12 +298,12 @@ class EvaluationRecorder:
                 connection.execute(
                     """
                     INSERT INTO research_evaluations (
-                        run_id, iteration, experiment_id, circuit, method, seed,
+                        run_id, iteration, experiment_id, circuit, method, optimizer_phase, seed,
                         parameters_json, simulation_status, failure_type,
-                        raw_metrics_json, objective_value, constraint_violation,
+                        raw_metrics_json, objective_value, constraint_violation, is_feasible,
                         simulation_time, total_elapsed_time, timestamp,
                         run_directory, ngspice_called
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         record.run_id,
@@ -274,6 +311,7 @@ class EvaluationRecorder:
                         record.experiment_id,
                         record.circuit,
                         record.method,
+                        record.optimizer_phase,
                         record.seed,
                         parameters_json,
                         record.simulation_status,
@@ -281,6 +319,7 @@ class EvaluationRecorder:
                         metrics_json,
                         record.objective_value,
                         record.constraint_violation,
+                        int(record.is_feasible),
                         record.simulation_time,
                         record.total_elapsed_time,
                         record.timestamp,
@@ -311,6 +350,7 @@ class EvaluationRecorder:
             run_id=row["run_id"],
             circuit=row["circuit"],
             method=row["method"],
+            optimizer_phase=row["optimizer_phase"],
             seed=row["seed"],
             iteration=row["iteration"],
             parameters=parameters,
@@ -319,6 +359,7 @@ class EvaluationRecorder:
             raw_metrics=raw_metrics,
             objective_value=row["objective_value"],
             constraint_violation=row["constraint_violation"],
+            is_feasible=bool(row["is_feasible"]),
             simulation_time=row["simulation_time"],
             total_elapsed_time=row["total_elapsed_time"],
             timestamp=row["timestamp"],
@@ -351,6 +392,7 @@ class EvaluationRecorder:
                             "run_id": record.run_id,
                             "circuit": record.circuit,
                             "method": record.method,
+                            "optimizer_phase": record.optimizer_phase,
                             "seed": record.seed,
                             "iteration": record.iteration,
                             "parameters": json.dumps(
@@ -377,6 +419,7 @@ class EvaluationRecorder:
                                 if record.constraint_violation is None
                                 else f"{record.constraint_violation:.17g}"
                             ),
+                            "is_feasible": str(record.is_feasible).lower(),
                             "simulation_time": f"{record.simulation_time:.17g}",
                             "total_elapsed_time": f"{record.total_elapsed_time:.17g}",
                             "timestamp": record.timestamp,

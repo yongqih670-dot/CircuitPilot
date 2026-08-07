@@ -51,3 +51,7 @@ class RunDirectoryError(CircuitPilotError):
 
 class ResearchExperimentError(CircuitPilotError):
     """Raised when a unified research experiment cannot be completed safely."""
+
+
+class FairComparisonError(ResearchExperimentError):
+    """Raised when runs do not satisfy the shared comparison protocol."""

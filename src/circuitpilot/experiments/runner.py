@@ -102,6 +102,9 @@ class ExperimentRunner:
         )
         while not self.budget.exhausted:
             parameters = self.optimizer.ask()
+            optimizer_phase = self.optimizer.get_last_ask_metadata().get(
+                "optimizer_phase", "search"
+            )
             iteration = self.budget.reserve()
             run_name = f"evaluation_{iteration:04d}"
             evaluation_directory = self.run.path / "runs" / run_name
@@ -111,6 +114,7 @@ class ExperimentRunner:
             metrics: dict[str, float] = {}
             objective_value: float | None = None
             constraint_violation: float | None = None
+            is_feasible = False
             simulation_status = "success"
             failure_type: str | None = None
             ngspice_calls_before = self.budget.ngspice_calls
@@ -133,6 +137,7 @@ class ExperimentRunner:
                     objective = self.objective_evaluator.evaluate(metrics)
                     objective_value = objective.objective_value
                     constraint_violation = objective.constraint_violation
+                    is_feasible = objective.is_feasible
                 except (CircuitPilotError, OSError, ValueError) as exc:
                     simulation_status = _failure_status(exc)
                     failure_type = type(exc).__name__
@@ -141,6 +146,7 @@ class ExperimentRunner:
                     metrics = {}
                     objective_value = None
                     constraint_violation = None
+                    is_feasible = False
 
             if simulation_status == "success":
                 self.budget.mark_success()
@@ -170,6 +176,8 @@ class ExperimentRunner:
                 total_elapsed_time=elapsed_offset + monotonic() - started,
                 run_directory=portable_directory,
                 ngspice_called=ngspice_called,
+                optimizer_phase=optimizer_phase,
+                is_feasible=is_feasible,
             )
             self.recorder.save(record)
             self.optimizer.save_state(self.optimizer_state_path)
@@ -228,14 +236,34 @@ def _write_summary(config: ExperimentConfig, result: ExperimentRunResult) -> Pat
     """Write a deterministic machine-readable run summary."""
     destination = result.output_directory / "summary" / "experiment_summary.json"
     best = result.best_record
+    feasible = [record for record in result.records if record.is_feasible]
+    first_feasible = feasible[0] if feasible else None
+    mean_simulation_time = (
+        sum(record.simulation_time for record in result.records) / len(result.records)
+        if result.records
+        else 0.0
+    )
     payload = {
         "run_id": result.run_id,
         "experiment_name": config.experiment_name,
         "circuit": config.circuit_name,
         "method": config.method,
         "seed": config.seed,
+        "simulation_budget": config.simulation_budget,
+        "evaluations_total": result.budget["evaluations_total"],
+        "evaluations_success": result.budget["evaluations_success"],
+        "evaluations_failed": result.budget["evaluations_failed"],
+        "ngspice_calls": result.budget["ngspice_calls"],
         "budget": result.budget,
         "elapsed_seconds": result.elapsed_seconds,
+        "total_runtime": result.elapsed_seconds,
+        "mean_simulation_time": mean_simulation_time,
+        "best_objective": None if best is None else best.objective_value,
+        "best_parameters": None if best is None else best.parameters,
+        "best_metrics": None if best is None else best.raw_metrics,
+        "is_feasible": first_feasible is not None,
+        "first_feasible_iteration": None if first_feasible is None else first_feasible.iteration,
+        "simulations_to_first_feasible": None if first_feasible is None else first_feasible.iteration,
         "best_result": (
             None
             if best is None
@@ -312,7 +340,7 @@ def execute_experiment(
         config.output_dir if config.resume else None,
         resume=config.resume,
         default_root=config.output_dir,
-        configuration_sha256=config.identity_sha256(),
+        configuration_sha256=config.resume_identity_sha256(),
     )
     resolved_config_path = run.path / "experiment_config.yaml"
     if run.resumed:
@@ -321,10 +349,13 @@ def execute_experiment(
                 "cannot resume research run without experiment_config.yaml"
             )
         original = load_experiment_config(resolved_config_path)
-        if original.identity_sha256() != config.identity_sha256():
+        if original.resume_identity_sha256() != config.resume_identity_sha256():
             raise ResearchExperimentError(
                 "resumed experiment_config.yaml does not match current configuration"
             )
+        if config.simulation_budget < original.simulation_budget:
+            raise ResearchExperimentError("resume cannot reduce simulation_budget")
+        write_experiment_config(config, resolved_config_path)
     else:
         write_experiment_config(config, resolved_config_path)
     for directory in (run.path / "runs", run.path / "plots", run.path / "summary"):
@@ -358,15 +389,13 @@ def execute_experiment(
     result = runner.run_to_budget()
     _write_summary(config, result)
     _plot_progress(result)
-    if result.best_record is None:
-        raise ResearchExperimentError(
-            "experiment produced no successful physical metrics; inspect evaluations.csv"
-        )
     best = result.best_record
     manifest_metrics: dict[str, object] = {
-        **best.raw_metrics,
-        "objective_value": best.objective_value,
-        "constraint_violation": best.constraint_violation,
+        **({} if best is None else best.raw_metrics),
+        "objective_value": None if best is None else best.objective_value,
+        "constraint_violation": None if best is None else best.constraint_violation,
+        "is_feasible": any(record.is_feasible for record in result.records),
+        "first_feasible_iteration": next((record.iteration for record in result.records if record.is_feasible), None),
         **result.budget,
     }
     write_research_manifest(
@@ -374,7 +403,7 @@ def execute_experiment(
         workflow="research_experiment",
         circuit_type=config.circuit_name,
         configuration=config.to_dict(),
-        parameters=best.parameters,
+        parameters={} if best is None else best.parameters,
         metrics=manifest_metrics,
         runtime_seconds=result.elapsed_seconds,
         ngspice_executable=config.ngspice_config.executable,

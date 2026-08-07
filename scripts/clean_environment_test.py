@@ -149,6 +149,7 @@ def _verify_artifacts(run_directory: Path, expected_git_commit: str) -> None:
         "os_information",
         "numpy_version",
         "scipy_version",
+        "optuna_version",
         "pyyaml_version",
         "ngspice_version_string",
         "ngspice_executable_sha256",

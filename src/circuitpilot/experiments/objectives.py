@@ -22,6 +22,8 @@ class ObjectiveEvaluation:
     constraint_violation: float
     objective_components: dict[str, float]
     constraint_components: dict[str, float]
+    relative_error: float
+    is_feasible: bool
 
 
 class ObjectiveEvaluator:
@@ -78,9 +80,17 @@ class ObjectiveEvaluator:
 
         if not isfinite(total_objective) or not isfinite(total_violation):
             raise ResearchExperimentError("objective evaluation produced non-finite output")
+        criterion = self._config.success_criterion
+        target = self._config.target_by_metric[criterion.metric]
+        relative_error = abs(normalized[criterion.metric] - target) / max(abs(target), 1e-12)
         return ObjectiveEvaluation(
             objective_value=total_objective,
             constraint_violation=total_violation,
             objective_components=objective_components,
             constraint_components=constraint_components,
+            relative_error=relative_error,
+            is_feasible=(
+                relative_error <= criterion.relative_error_threshold
+                and total_violation == 0.0
+            ),
         )

@@ -26,7 +26,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--config", type=Path, help="unified experiment YAML")
     parser.add_argument("--circuit", choices=("rc_lowpass",))
-    parser.add_argument("--method", choices=("random",))
+    parser.add_argument("--method", choices=("random", "de", "tpe", "bo"))
     parser.add_argument("--seed", type=int)
     parser.add_argument("--budget", type=int)
     parser.add_argument("--output-dir", type=Path)
@@ -70,6 +70,10 @@ def _default_config(arguments: argparse.Namespace) -> ExperimentConfig:
                 "bandwidth": {"type": "target", "target": 10_000.0}
             },
             "constraints": {},
+            "success_criterion": {
+                "metric": "bandwidth",
+                "relative_error_threshold": 0.05,
+            },
             "optimizer_config": {},
             "ngspice_config": {
                 "executable": arguments.ngspice or "ngspice",
@@ -77,6 +81,7 @@ def _default_config(arguments: argparse.Namespace) -> ExperimentConfig:
                 "stop_frequency_hz": 10_000_000.0,
                 "points_per_decade": 50,
             },
+            "pvt_config": {},
         }
     )
 
@@ -126,6 +131,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     print(f"Budget: {config.simulation_budget}")
     print(f"Succeeded: {result.budget['evaluations_success']}")
     print(f"Failed: {result.budget['evaluations_failed']}")
+    print(f"ngspice calls: {result.budget['ngspice_calls']}")
     print(
         "Best result: "
         + (
