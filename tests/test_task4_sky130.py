@@ -24,6 +24,7 @@ from circuitpilot.sky130_model import SKY130_DEVICE_NAME
 
 
 TASK3_HASH = "d60664b436ce9a928da2db86ca83378d556f18ddcf54b633394609f67288bec9"
+TASK4_HASH = "1a577200d71a900eb8ffec3fe680e3dd53e0298e87692dc66f407481de46c664"
 MODEL_HASH = "d88fa42b4f42f7b1f6987141aa92161865cfc9ff5fbdce9bbc9f137bde3a2f61"
 
 
@@ -156,7 +157,9 @@ def test_task4_hash_binds_model_and_censoring_semantics() -> None:
     config = _task4_config()
     assert config.circuit_config.model.model_sha256() == MODEL_HASH
     assert config.circuit_config.bandwidth_semantics_version in config.to_dict()["circuit_config"].values()
-    assert len(config.computed_benchmark_hash()) == 64
+    assert load_experiment_config(
+        "research/sky130/common_source/sky130_common_source_frozen.yaml"
+    ).computed_benchmark_hash() == TASK4_HASH
 
 
 def test_tampered_sky130_content_lock_is_rejected() -> None:
@@ -219,9 +222,14 @@ def test_task3_frozen_hash_remains_unchanged() -> None:
 
 
 def test_all_four_optimizers_share_task4_hash() -> None:
-    config = _task4_config()
-    hashes = {replace(config, method=method).computed_benchmark_hash() for method in ("random", "de", "tpe", "bo")}
-    assert len(hashes) == 1
+    paths = (
+        "experiments/configs/sky130_common_source_random.yaml",
+        "experiments/configs/sky130_common_source_de.yaml",
+        "experiments/configs/sky130_common_source_tpe.yaml",
+        "experiments/configs/sky130_common_source_bo.yaml",
+    )
+    hashes = {load_experiment_config(path).computed_benchmark_hash() for path in paths}
+    assert hashes == {TASK4_HASH}
 
 
 def test_kaplan_meier_with_censoring_and_rmst() -> None:
