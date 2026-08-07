@@ -35,3 +35,15 @@ class SweepError(CircuitPilotError):
 
 class ExperimentError(CircuitPilotError):
     """Raised when experiment persistence or comparison fails."""
+
+
+class OptimizationError(CircuitPilotError):
+    """Raised when circuit optimization or history export fails."""
+
+
+class ResearchArtifactError(CircuitPilotError):
+    """Raised when a reproducibility manifest cannot be created or verified."""
+
+
+class RunDirectoryError(CircuitPilotError):
+    """Raised when a research run directory cannot be created or resumed safely."""

@@ -1,9 +1,11 @@
-"""Command-line workflow for parameterized CircuitPilot simulations."""
+"""Command-line workflows for simulation, sweeps, and automatic optimization."""
 
 from __future__ import annotations
 
 import argparse
-from dataclasses import asdict
+from dataclasses import asdict, is_dataclass
+from enum import Enum
+from hashlib import sha256
 import json
 from pathlib import Path
 import sys
@@ -19,6 +21,13 @@ from circuitpilot.circuit_config import (
     RCLowPassConfig,
     load_circuit_config,
 )
+from circuitpilot.circuit_optimizer import (
+    OptimizationResult,
+    plot_optimization_progress,
+    run_circuit_optimization,
+    save_optimization_history_csv,
+    save_optimization_summary_json,
+)
 from circuitpilot.exceptions import CircuitPilotError
 from circuitpilot.experiment_manager import (
     DEFAULT_DATABASE_PATH,
@@ -26,6 +35,11 @@ from circuitpilot.experiment_manager import (
     ExperimentRepository,
 )
 from circuitpilot.netlist_generator import write_netlist
+from circuitpilot.optimization_config import (
+    ObjectiveMetric,
+    OptimizationConfig,
+    load_optimization_config,
+)
 from circuitpilot.parameter_sweep import (
     format_top_solutions,
     plot_sweep_performance,
@@ -35,6 +49,13 @@ from circuitpilot.parameter_sweep import (
 )
 from circuitpilot.parser import ACAnalysisResult, parse_ac_output
 from circuitpilot.plotting import plot_bode
+from circuitpilot.power_metrics import DERIVED_RC_POWER_METRIC
+from circuitpilot.research_artifacts import write_research_manifest
+from circuitpilot.run_directory import (
+    ResearchRunDirectory,
+    prepare_research_run_directory,
+    snapshot_run_input_config,
+)
 from circuitpilot.simulator import run_ngspice
 from circuitpilot.sweep_config import load_sweep_config
 
@@ -43,7 +64,9 @@ def build_parser() -> argparse.ArgumentParser:
     """Build and return the CircuitPilot command-line parser."""
     parser = argparse.ArgumentParser(
         prog="circuitpilot",
-        description="Run one ngspice AC analysis or an automated parameter sweep.",
+        description=(
+            "Run an ngspice AC analysis, parameter sweep, or automatic optimization."
+        ),
     )
     input_group = parser.add_mutually_exclusive_group()
     input_group.add_argument(
@@ -54,7 +77,12 @@ def build_parser() -> argparse.ArgumentParser:
     input_group.add_argument(
         "--sweep-config",
         type=Path,
-        help="YAML target and parameter space for automated optimization",
+        help="YAML target and discrete parameter space for a parameter sweep",
+    )
+    input_group.add_argument(
+        "--optimize-config",
+        type=Path,
+        help="YAML objective and continuous parameter bounds for optimization",
     )
     parser.add_argument("--resistance", type=float, default=1_000.0, help="R in ohms")
     parser.add_argument(
@@ -70,8 +98,15 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("output"),
-        help="directory for the netlist, data, log, and plot",
+        default=None,
+        help=(
+            "exact directory for one run; if omitted, create output/<unique run_id>"
+        ),
+    )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="explicitly resume a non-empty CircuitPilot run directory",
     )
     parser.add_argument(
         "--ngspice", default="ngspice", help="ngspice executable name or full path"
@@ -82,7 +117,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--show", action="store_true", help="show the plot interactively")
     parser.add_argument(
         "--experiment-name",
-        help="save a successful simulation or sweep to the experiment database",
+        help="save a successful simulation, sweep, or optimization experiment",
     )
     parser.add_argument(
         "--experiment-database",
@@ -159,6 +194,56 @@ def _legacy_lowpass_config(args: argparse.Namespace) -> CircuitConfig:
             points_per_decade=args.points,
         ),
     )
+
+
+def _stable_config_value(value: object) -> object:
+    """Convert typed configuration into deterministic JSON-compatible data."""
+    if is_dataclass(value) and not isinstance(value, type):
+        return _stable_config_value(asdict(value))
+    if isinstance(value, Enum):
+        return value.value
+    if isinstance(value, dict):
+        return {
+            str(key): _stable_config_value(item)
+            for key, item in sorted(value.items(), key=lambda pair: str(pair[0]))
+        }
+    if isinstance(value, (list, tuple)):
+        return [_stable_config_value(item) for item in value]
+    return value
+
+
+def _configuration_sha256(config: object) -> str:
+    """Hash the fully resolved configuration used for resume compatibility."""
+    payload = json.dumps(
+        _stable_config_value(config),
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+        allow_nan=False,
+    ).encode("utf-8")
+    return sha256(payload).hexdigest()
+
+
+def _prepare_run(
+    args: argparse.Namespace,
+    source_config: str | Path | None,
+    resolved_config: object,
+) -> ResearchRunDirectory:
+    """Prepare one protected run boundary and snapshot its source YAML."""
+    run = prepare_research_run_directory(
+        args.output_dir,
+        resume=args.resume,
+        source_config=source_config,
+        configuration_sha256=_configuration_sha256(resolved_config),
+    )
+    snapshot_run_input_config(run, source_config)
+    return run
+
+
+def _print_run_location(run: ResearchRunDirectory) -> None:
+    """Print the immutable run identity and concrete output directory."""
+    print(f"Run ID: {run.run_id}")
+    print(f"Output directory: {run.path}")
 
 
 def _cutoff_for_config(
@@ -263,16 +348,12 @@ def _run_experiment_command(args: argparse.Namespace) -> int:
     return 0
 
 
-def _save_single_experiment(
-    args: argparse.Namespace,
+def _single_parameters_and_metrics(
     config: CircuitConfig,
     response: ACAnalysisResult,
     cutoff_hz: float | None,
-    simulation_time_seconds: float,
-) -> int | None:
-    """Optionally persist a completed single simulation and return its id."""
-    if args.experiment_name is None:
-        return None
+) -> tuple[dict[str, object], dict[str, float]]:
+    """Build the exact parameter and ngspice-derived metric snapshots."""
     parameters = {
         "circuit": asdict(config.circuit),
         "analysis": asdict(config.analysis),
@@ -286,6 +367,19 @@ def _save_single_experiment(
         metrics["cutoff_frequency_hz"] = cutoff_hz
     else:
         metrics["transfer_gain_db"] = response.gain_db[0]
+    return parameters, metrics
+
+
+def _save_single_experiment(
+    args: argparse.Namespace,
+    config: CircuitConfig,
+    parameters: dict[str, object],
+    metrics: dict[str, float],
+    simulation_time_seconds: float,
+) -> int | None:
+    """Optionally persist a completed single simulation and return its id."""
+    if args.experiment_name is None:
+        return None
     record = ExperimentRepository(args.experiment_database).create_experiment(
         name=args.experiment_name,
         circuit_type=config.circuit_type,
@@ -299,7 +393,8 @@ def _save_single_experiment(
 def _run_sweep_workflow(args: argparse.Namespace) -> int:
     """Execute, rank, and export one automated parameter sweep."""
     config = load_sweep_config(args.sweep_config)
-    output_dir = args.output_dir.resolve()
+    run = _prepare_run(args, args.sweep_config, config)
+    output_dir = run.path
     started_at = monotonic()
     results = run_parameter_sweep(
         config,
@@ -329,21 +424,22 @@ def _run_sweep_workflow(args: argparse.Namespace) -> int:
         target_cutoff_frequency_hz=config.target_cutoff_frequency_hz,
     )
     print(f"Performance plot: {plot_path}")
+    best_result = rank_solutions(results, top_n=1)[0]
+    parameters = {
+        "resistance_values_ohm": list(config.resistance_values_ohm),
+        "capacitance_values_f": list(config.capacitance_values_f),
+        "analysis": asdict(config.analysis),
+    }
+    metrics = {
+        "target_cutoff_frequency_hz": config.target_cutoff_frequency_hz,
+        "best_cutoff_frequency_hz": best_result.simulated_cutoff_frequency_hz,
+        "best_relative_error": best_result.relative_error,
+        "combination_count": float(len(results)),
+        "success_count": float(successful_count),
+        "failure_count": float(failed_count),
+    }
+    experiment_id = None
     if args.experiment_name is not None:
-        best_result = rank_solutions(results, top_n=1)[0]
-        parameters = {
-            "resistance_values_ohm": list(config.resistance_values_ohm),
-            "capacitance_values_f": list(config.capacitance_values_f),
-            "analysis": asdict(config.analysis),
-        }
-        metrics = {
-            "target_cutoff_frequency_hz": config.target_cutoff_frequency_hz,
-            "best_cutoff_frequency_hz": best_result.simulated_cutoff_frequency_hz,
-            "best_relative_error": best_result.relative_error,
-            "combination_count": float(len(results)),
-            "success_count": float(successful_count),
-            "failure_count": float(failed_count),
-        }
         record = ExperimentRepository(args.experiment_database).create_experiment(
             name=args.experiment_name,
             circuit_type=config.circuit_type,
@@ -351,7 +447,193 @@ def _run_sweep_workflow(args: argparse.Namespace) -> int:
             simulation_time_seconds=elapsed_seconds,
             metrics=metrics,  # type: ignore[arg-type]
         )
-        print(f"Experiment saved with ID {record.experiment_id}.")
+        experiment_id = record.experiment_id
+        print(f"Experiment saved with ID {experiment_id}.")
+    manifest_path = write_research_manifest(
+        output_dir,
+        workflow="parameter_sweep",
+        circuit_type=config.circuit_type,
+        configuration={
+            "target_cutoff_frequency_hz": config.target_cutoff_frequency_hz,
+            "resistance_values_ohm": config.resistance_values_ohm,
+            "capacitance_values_f": config.capacitance_values_f,
+            "analysis": config.analysis,
+            "top_n": config.top_n,
+        },
+        parameters=parameters,
+        metrics=metrics,
+        runtime_seconds=elapsed_seconds,
+        ngspice_executable=args.ngspice,
+        random_seed=None,
+        run_id=run.run_id,
+        resumed=run.resumed,
+        resume_count=run.resume_count,
+        source_config_path=args.sweep_config,
+        experiment_name=args.experiment_name,
+        experiment_id=experiment_id,
+    )
+    print(f"Research manifest: {manifest_path}")
+    _print_run_location(run)
+    return 0
+
+
+def _optimization_parameters(config: OptimizationConfig) -> dict[str, object]:
+    """Create a JSON-compatible optimization configuration snapshot."""
+    return {
+        "parameter_bounds": {
+            "R": {
+                "min": config.resistance.minimum,
+                "max": config.resistance.maximum,
+                "scale": config.resistance.scale.value,
+            },
+            "C": {
+                "min": config.capacitance.minimum,
+                "max": config.capacitance.maximum,
+                "scale": config.capacitance.scale.value,
+            },
+        },
+        "objective": {
+            "metric": config.objective.metric.value,
+            "metric_model": (
+                DERIVED_RC_POWER_METRIC
+                if config.objective.metric is ObjectiveMetric.POWER
+                else config.objective.metric.value
+            ),
+            "goal": config.objective.goal.value,
+            "target_value": config.objective.target_value,
+            "evaluation_frequency_hz": config.objective.evaluation_frequency_hz,
+        },
+        "analysis": asdict(config.analysis),
+        "optimizer": {
+            "max_iterations": config.optimizer.max_iterations,
+            "population_size": config.optimizer.population_size,
+            "tolerance": config.optimizer.tolerance,
+            "seed": config.optimizer.seed,
+            "polish": config.optimizer.polish,
+        },
+    }
+
+
+def _save_optimization_experiment(
+    args: argparse.Namespace,
+    config: OptimizationConfig,
+    result: OptimizationResult,
+    metrics: dict[str, float],
+) -> int | None:
+    """Optionally persist one automatic optimization result in SQLite."""
+    if args.experiment_name is None:
+        return None
+    record = ExperimentRepository(args.experiment_database).create_experiment(
+        name=args.experiment_name,
+        circuit_type=config.circuit_type,
+        parameters=_optimization_parameters(config),
+        simulation_time_seconds=result.total_time_seconds,
+        metrics=metrics,
+    )
+    return record.experiment_id
+
+
+def _optimization_metrics(
+    config: OptimizationConfig, result: OptimizationResult
+) -> dict[str, float]:
+    """Return physical metrics derived from the best parsed ngspice response."""
+    best = result.best_evaluation
+    metric_names = {
+        ObjectiveMetric.BANDWIDTH: "bandwidth_hz",
+        ObjectiveMetric.GAIN: "gain_db",
+        ObjectiveMetric.POWER: "derived_rc_power_w",
+    }
+    metrics: dict[str, float] = {
+        metric_names[config.objective.metric]: float(best.metric_value),
+        "best_objective_value": best.objective_value,
+        "best_resistance_ohm": best.resistance_ohm,
+        "best_capacitance_f": best.capacitance_f,
+        "evaluation_count": float(len(result.evaluations)),
+        "success_count": float(result.successful_count),
+        "failure_count": float(result.failed_count),
+        "iteration_count": float(result.iteration_count),
+    }
+    if config.objective.metric is ObjectiveMetric.POWER:
+        metrics["power_w"] = float(best.metric_value)
+    if config.objective.target_value is not None:
+        metrics["target_value"] = config.objective.target_value
+        metrics["relative_error"] = best.objective_value
+    return metrics
+
+
+def _run_optimization_workflow(args: argparse.Namespace) -> int:
+    """Run SciPy/ngspice optimization and export all history artifacts."""
+    config = load_optimization_config(args.optimize_config)
+    run = _prepare_run(args, args.optimize_config, config)
+    output_dir = run.path
+    result = run_circuit_optimization(
+        config,
+        output_dir,
+        executable=args.ngspice,
+        timeout_seconds=args.timeout,
+    )
+    history_path = save_optimization_history_csv(
+        result, output_dir / "optimization_history.csv"
+    )
+    summary_path = save_optimization_summary_json(
+        config, result, output_dir / "optimization_summary.json"
+    )
+    plot_path = plot_optimization_progress(
+        config,
+        result,
+        output_dir / "optimization_progress.png",
+        show=args.show,
+    )
+    metrics = _optimization_metrics(config, result)
+    experiment_id = _save_optimization_experiment(args, config, result, metrics)
+    best = result.best_evaluation
+    manifest_path = write_research_manifest(
+        output_dir,
+        workflow="optimization",
+        circuit_type=config.circuit_type,
+        configuration=_optimization_parameters(config),
+        parameters={
+            **_optimization_parameters(config),
+            "best_resistance_ohm": best.resistance_ohm,
+            "best_capacitance_f": best.capacitance_f,
+        },
+        metrics=metrics,
+        runtime_seconds=result.total_time_seconds,
+        ngspice_executable=args.ngspice,
+        random_seed=config.optimizer.seed,
+        run_id=run.run_id,
+        resumed=run.resumed,
+        resume_count=run.resume_count,
+        source_config_path=args.optimize_config,
+        experiment_name=args.experiment_name,
+        experiment_id=experiment_id,
+    )
+
+    print("Automatic optimization completed.")
+    print(f"Circuit type: {config.circuit_type.value}")
+    print(
+        f"Objective: {config.objective.goal.value} "
+        f"{config.objective.metric.value}"
+    )
+    print(f"Best resistance: {best.resistance_ohm:.12g} ohm")
+    print(f"Best capacitance: {best.capacitance_f:.12g} F")
+    print(f"Best metric: {best.metric_value:.12g}")
+    print(f"Best optimizer objective: {best.objective_value:.12g}")
+    print(
+        f"Evaluations: {len(result.evaluations)} total, "
+        f"{result.successful_count} succeeded, {result.failed_count} failed"
+    )
+    print(
+        f"SciPy status: {'converged' if result.optimizer_success else 'stopped'} "
+        f"({result.optimizer_message})"
+    )
+    print(f"History CSV: {history_path}")
+    print(f"Summary JSON: {summary_path}")
+    print(f"Progress plot: {plot_path}")
+    print(f"Research manifest: {manifest_path}")
+    _print_run_location(run)
+    if experiment_id is not None:
+        print(f"Experiment saved with ID {experiment_id}.")
     return 0
 
 
@@ -368,6 +650,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         if args.command == "experiment":
             return _run_experiment_command(args)
+        if args.optimize_config is not None:
+            return _run_optimization_workflow(args)
         if args.sweep_config is not None:
             return _run_sweep_workflow(args)
         config = (
@@ -375,7 +659,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.config is not None
             else _legacy_lowpass_config(args)
         )
-        output_dir = args.output_dir.resolve()
+        run = _prepare_run(args, args.config, config)
+        output_dir = run.path
         circuit_name = config.circuit_type.value
         netlist_path = output_dir / f"{circuit_name}.cir"
         data_path = output_dir / "ac_results.dat"
@@ -405,14 +690,37 @@ def main(argv: Sequence[str] | None = None) -> int:
             title=titles[config.circuit_type],
             show=args.show,
         )
-        experiment_id = _save_single_experiment(
-            args,
+        parameters, metrics = _single_parameters_and_metrics(
             config,
             response,
             cutoff_hz,
-            simulation_result.elapsed_seconds
-            if args.experiment_name is not None
-            else 0.0,
+        )
+        experiment_id = _save_single_experiment(
+            args,
+            config,
+            parameters,
+            metrics,
+            simulation_result.elapsed_seconds,
+        )
+        manifest_path = write_research_manifest(
+            output_dir,
+            workflow="simulation",
+            circuit_type=config.circuit_type,
+            configuration={
+                "circuit": config.circuit,
+                "analysis": config.analysis,
+            },
+            parameters=parameters,
+            metrics=metrics,
+            runtime_seconds=simulation_result.elapsed_seconds,
+            ngspice_executable=args.ngspice,
+            random_seed=None,
+            run_id=run.run_id,
+            resumed=run.resumed,
+            resume_count=run.resume_count,
+            source_config_path=args.config,
+            experiment_name=args.experiment_name,
+            experiment_id=experiment_id,
         )
     except (CircuitPilotError, OSError, ValueError) as exc:
         print(f"CircuitPilot error: {exc}", file=sys.stderr)
@@ -425,6 +733,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     else:
         print(f"Transfer gain: {response.gain_db[0]:.6g} dB")
     print(f"Bode plot: {plot_path}")
+    print(f"Research manifest: {manifest_path}")
+    _print_run_location(run)
     if experiment_id is not None:
         print(f"Experiment saved with ID {experiment_id}.")
     return 0

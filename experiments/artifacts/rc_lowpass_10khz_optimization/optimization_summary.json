@@ -1,0 +1,30 @@
+{
+  "circuit_type": "rc_lowpass",
+  "objective": {
+    "metric": "bandwidth",
+    "goal": "target",
+    "target_value": 10000.0,
+    "evaluation_frequency_hz": null
+  },
+  "best": {
+    "evaluation_index": 110,
+    "resistance_ohm": 3345.4843752690713,
+    "capacitance_f": 4.746028465442753e-09,
+    "metric_value": 10000.000005420901,
+    "objective_value": 5.420901288744062e-10,
+    "status": "success",
+    "simulation_time_seconds": 0.0470000000204891,
+    "run_directory": "runs/evaluation_00110",
+    "error_message": ""
+  },
+  "optimizer": {
+    "success": false,
+    "message": "Maximum number of iterations has been exceeded.",
+    "iteration_count": 6,
+    "function_evaluation_count": 217,
+    "recorded_evaluation_count": 217,
+    "successful_count": 217,
+    "failed_count": 0,
+    "total_time_seconds": 10.952999999979511
+  }
+}

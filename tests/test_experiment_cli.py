@@ -9,6 +9,18 @@ from circuitpilot.parser import ACAnalysisResult
 from circuitpilot.simulator import SimulationResult
 
 
+@pytest.fixture(autouse=True)
+def isolate_research_manifest_in_experiment_cli_unit_tests(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Research manifest evidence is exercised by the real ngspice E2E test."""
+    monkeypatch.setattr(
+        "circuitpilot.cli.write_research_manifest",
+        lambda output_directory, **kwargs: Path(output_directory)
+        / "research_manifest.json",
+    )
+
+
 def _create_with_cli(
     database: Path,
     *,
@@ -170,4 +182,3 @@ parameters:
     assert record.name == "saved sweep"
     assert record.metrics["best_relative_error"] == pytest.approx(0.01)
     assert record.metrics["combination_count"] == pytest.approx(2.0)
-
