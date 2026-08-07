@@ -32,6 +32,7 @@ from circuitpilot.optimization_config import (
     ParameterScale,
 )
 from circuitpilot.parser import ACAnalysisResult
+from circuitpilot.power_metrics import DERIVED_RC_POWER_METRIC
 
 
 def _config(
@@ -98,6 +99,21 @@ def test_evaluates_highpass_resistor_power() -> None:
 
     assert metric == pytest.approx(0.0005)
     assert metric_to_objective(config, metric) == pytest.approx(metric)
+
+
+def test_power_summary_explicitly_labels_derived_rc_model(tmp_path: Path) -> None:
+    evaluation = OptimizationEvaluation(
+        1, 1_000.0, 1e-7, 0.0005, 0.0005, "success", 0.01, "run1"
+    )
+    result = OptimizationResult(
+        evaluation, (evaluation,), True, "done", 1, 1, 0.01
+    )
+
+    summary = save_optimization_summary_json(
+        _config(ObjectiveMetric.POWER), result, tmp_path / "power.json"
+    ).read_text(encoding="utf-8")
+
+    assert f'"metric_model": "{DERIVED_RC_POWER_METRIC}"' in summary
 
 
 def _values_from_netlist(data_path: Path) -> tuple[float, float]:

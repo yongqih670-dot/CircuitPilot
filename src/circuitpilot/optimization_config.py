@@ -23,7 +23,7 @@ class ObjectiveGoal(str, Enum):
 
 
 class ObjectiveMetric(str, Enum):
-    """AC performance metrics supported by the optimizer."""
+    """AC metrics supported by the optimizer; power means derived RC power."""
 
     GAIN = "gain"
     POWER = "power"

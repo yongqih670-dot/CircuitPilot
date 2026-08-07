@@ -12,13 +12,17 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from circuitpilot.circuit_config import CircuitType
+from circuitpilot.environment_fingerprint import collect_environment_fingerprint
 from circuitpilot.exceptions import ResearchArtifactError
-from circuitpilot.simulator import resolve_ngspice_executable
+from circuitpilot.run_directory import (
+    INPUT_CONFIG_FILENAME,
+    RUN_CONTEXT_FILENAME,
+    mark_run_successful,
+)
 
 
-RESEARCH_MANIFEST_SCHEMA_VERSION = 1
+RESEARCH_MANIFEST_SCHEMA_VERSION = 2
 RESEARCH_MANIFEST_FILENAME = "research_manifest.json"
-INPUT_CONFIG_FILENAME = "input_config.yaml"
 
 
 def _json_value(value: Any) -> Any:
@@ -66,7 +70,7 @@ def _copy_input_config(source: str | Path, output_root: Path) -> Path:
 
 def _classify_artifact(path: Path) -> str:
     """Return a stable research artifact category for one file."""
-    if path.name == INPUT_CONFIG_FILENAME:
+    if path.name in {INPUT_CONFIG_FILENAME, RUN_CONTEXT_FILENAME}:
         return "configuration"
     if path.suffix.lower() == ".cir":
         return "netlist"
@@ -127,6 +131,9 @@ def write_research_manifest(
     runtime_seconds: float,
     ngspice_executable: str,
     random_seed: int | None,
+    run_id: str,
+    resumed: bool,
+    resume_count: int,
     source_config_path: str | Path | None = None,
     experiment_name: str | None = None,
     experiment_id: int | None = None,
@@ -147,6 +154,9 @@ def write_research_manifest(
         runtime_seconds: Measured simulation or workflow duration.
         ngspice_executable: Requested executable name or path.
         random_seed: Optimizer seed, or ``None`` for deterministic workflows.
+        run_id: Immutable identifier from the prepared run directory.
+        resumed: Whether this invocation explicitly resumed that run.
+        resume_count: Number of explicit resumes recorded for this run.
         source_config_path: Optional source YAML copied as ``input_config.yaml``.
         experiment_name: Optional SQLite experiment name.
         experiment_id: Optional SQLite primary key.
@@ -169,6 +179,16 @@ def write_research_manifest(
         isinstance(random_seed, bool) or not isinstance(random_seed, int)
     ):
         raise ResearchArtifactError("random_seed must be an integer or null")
+    if not isinstance(run_id, str) or not run_id:
+        raise ResearchArtifactError("run_id must be a non-empty string")
+    if not isinstance(resumed, bool):
+        raise ResearchArtifactError("resumed must be a boolean")
+    if (
+        isinstance(resume_count, bool)
+        or not isinstance(resume_count, int)
+        or resume_count < 0
+    ):
+        raise ResearchArtifactError("resume_count must be a non-negative integer")
     if experiment_id is not None and (
         isinstance(experiment_id, bool)
         or not isinstance(experiment_id, int)
@@ -186,18 +206,20 @@ def write_research_manifest(
     if source_config_path is not None:
         _copy_input_config(source_config_path, output_root)
 
-    resolved_executable = resolve_ngspice_executable(ngspice_executable)
-    if resolved_executable is None:
-        raise ResearchArtifactError(
-            f"ngspice executable '{ngspice_executable}' cannot be resolved for provenance"
-        )
+    environment = collect_environment_fingerprint(ngspice_executable)
     runtime = _validate_runtime(runtime_seconds)
     completed_at = datetime.now(timezone.utc)
     started_at = completed_at - timedelta(seconds=runtime)
+    mark_run_successful(output_root, run_id)
     artifacts = _inventory_artifacts(output_root)
     manifest = {
         "schema_version": RESEARCH_MANIFEST_SCHEMA_VERSION,
         "status": "success",
+        "run": {
+            "run_id": run_id,
+            "resumed": resumed,
+            "resume_count": resume_count,
+        },
         "workflow": workflow,
         "circuit_type": circuit_name,
         "experiment": {
@@ -211,10 +233,11 @@ def write_research_manifest(
         },
         "reproducibility": {
             "random_seed": random_seed,
-            "ngspice_executable": str(Path(resolved_executable).resolve()),
+            "ngspice_executable": environment["ngspice_executable_path"],
             "metric_source": "parsed_ngspice_output",
             "raw_output_required": True,
         },
+        "environment": environment,
         "configuration": _json_value(configuration),
         "parameters": _json_value(parameters),
         "metrics": _json_value(metrics),

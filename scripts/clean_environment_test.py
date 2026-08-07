@@ -14,6 +14,9 @@ import tempfile
 from typing import Sequence
 
 
+RESEARCH_LOCK_FILENAME = "requirements-research.lock"
+
+
 def _run_checked(
     command: Sequence[str],
     *,
@@ -66,6 +69,21 @@ def _resolve_ngspice(project_root: Path, requested: str) -> Path:
     )
 
 
+def _git_source_identity(project_root: Path) -> tuple[str, bool]:
+    """Return the checkout commit and dirty state passed into the clean wheel run."""
+    commit = _run_checked(
+        ["git", "-C", str(project_root), "rev-parse", "HEAD"],
+        cwd=project_root,
+    ).stdout.strip()
+    if len(commit) != 40 or any(character not in "0123456789abcdef" for character in commit):
+        raise RuntimeError("git rev-parse did not return a full hexadecimal commit")
+    status = _run_checked(
+        ["git", "-C", str(project_root), "status", "--porcelain"],
+        cwd=project_root,
+    ).stdout
+    return commit, bool(status.strip())
+
+
 def _venv_python(venv_directory: Path) -> Path:
     """Return the platform-specific Python executable in a virtual environment."""
     if os.name == "nt":
@@ -100,7 +118,7 @@ analysis:
     )
 
 
-def _verify_artifacts(run_directory: Path) -> None:
+def _verify_artifacts(run_directory: Path, expected_git_commit: str) -> None:
     """Cross-check clean-run manifest, raw output, history, and SQLite record."""
     required = (
         "research_manifest.json",
@@ -109,6 +127,7 @@ def _verify_artifacts(run_directory: Path) -> None:
         "optimization_summary.json",
         "optimization_progress.png",
         "experiments.sqlite3",
+        "run_context.json",
     )
     missing = [name for name in required if not (run_directory / name).is_file()]
     if missing:
@@ -123,6 +142,34 @@ def _verify_artifacts(run_directory: Path) -> None:
         raise RuntimeError("clean manifest did not preserve the configured random seed")
     if manifest["reproducibility"]["metric_source"] != "parsed_ngspice_output":
         raise RuntimeError("clean manifest metric provenance is not ngspice")
+    environment = manifest["environment"]
+    required_fingerprint = {
+        "git_commit_hash",
+        "python_version",
+        "os_information",
+        "numpy_version",
+        "scipy_version",
+        "pyyaml_version",
+        "ngspice_version_string",
+        "ngspice_executable_sha256",
+        "circuitpilot_version",
+    }
+    missing_fingerprint = sorted(required_fingerprint - set(environment))
+    if missing_fingerprint:
+        raise RuntimeError(
+            "clean manifest is missing fingerprint field(s): "
+            + ", ".join(missing_fingerprint)
+        )
+    if len(environment["ngspice_executable_sha256"]) != 64:
+        raise RuntimeError("clean manifest contains an invalid ngspice SHA-256")
+    if environment["git_commit_hash"] != expected_git_commit:
+        raise RuntimeError("clean manifest Git commit does not match installed source")
+    if environment["research_baseline_version"] != "v0.5-research-baseline":
+        raise RuntimeError("clean manifest does not identify the frozen research baseline")
+    if manifest["run"]["run_id"] not in (run_directory / "run_context.json").read_text(
+        encoding="utf-8"
+    ):
+        raise RuntimeError("clean manifest run_id does not match run context")
     best_directory = run_directory / summary["best"]["run_directory"]
     for name in ("rc_lowpass.cir", "ac_results.dat", "ngspice.log"):
         if not (best_directory / name).is_file():
@@ -157,8 +204,18 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     project_root = Path(__file__).resolve().parents[1]
     ngspice = _resolve_ngspice(project_root, args.ngspice)
+    lock_path = project_root / RESEARCH_LOCK_FILENAME
+    if not lock_path.is_file():
+        print(f"clean_environment_test: FAIL: missing {lock_path}", file=sys.stderr)
+        return 1
+    try:
+        git_commit, git_dirty = _git_source_identity(project_root)
+    except (OSError, RuntimeError) as exc:
+        print(f"clean_environment_test: FAIL: {exc}", file=sys.stderr)
+        return 1
     print(f"Project: {project_root}")
     print(f"ngspice: {ngspice}")
+    print(f"Research lock: {lock_path}")
 
     try:
         with tempfile.TemporaryDirectory(prefix="circuitpilot-clean-") as temporary:
@@ -172,6 +229,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             environment["PYTHONNOUSERSITE"] = "1"
             environment["PYTHONUTF8"] = "1"
             environment["PYTHONIOENCODING"] = "utf-8"
+            environment["CIRCUITPILOT_GIT_COMMIT"] = git_commit
+            environment["CIRCUITPILOT_GIT_DIRTY"] = "1" if git_dirty else "0"
 
             _run_checked(
                 [sys.executable, "-m", "venv", str(venv_directory)],
@@ -186,8 +245,28 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "pip",
                     "install",
                     "--disable-pip-version-check",
+                    "-r",
+                    str(lock_path),
+                ],
+                cwd=work_directory,
+                environment=environment,
+            )
+            _run_checked(
+                [
+                    str(python),
+                    "-m",
+                    "pip",
+                    "install",
+                    "--disable-pip-version-check",
+                    "--no-deps",
+                    "--no-build-isolation",
                     str(project_root),
                 ],
+                cwd=work_directory,
+                environment=environment,
+            )
+            _run_checked(
+                [str(python), "-m", "pip", "check"],
                 cwd=work_directory,
                 environment=environment,
             )
@@ -222,7 +301,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 cwd=work_directory,
                 environment=environment,
             )
-            _verify_artifacts(run_directory)
+            _verify_artifacts(run_directory, git_commit)
     except (OSError, RuntimeError, ValueError, json.JSONDecodeError) as exc:
         print(f"clean_environment_test: FAIL: {exc}", file=sys.stderr)
         return 1

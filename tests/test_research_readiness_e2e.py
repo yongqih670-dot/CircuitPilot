@@ -1,8 +1,12 @@
 import csv
+from hashlib import sha256
+from importlib import metadata
 import json
 from math import isfinite, log10, pi
 from pathlib import Path
+import platform
 import re
+import subprocess
 
 import pytest
 
@@ -29,6 +33,7 @@ from circuitpilot.optimization_config import (
     ParameterBounds,
 )
 from circuitpilot.parser import parse_ac_output
+from circuitpilot.power_metrics import dc_supply_power
 from circuitpilot.simulator import resolve_ngspice_executable, run_ngspice
 
 
@@ -208,10 +213,41 @@ analysis:
     log_path = best_directory / "ngspice.log"
 
     assert manifest["status"] == "success"
+    assert manifest["schema_version"] == 2
+    assert manifest["run"]["run_id"].startswith("cp-")
+    assert manifest["run"]["resumed"] is False
     assert manifest["reproducibility"]["random_seed"] == 17
     assert manifest["reproducibility"]["metric_source"] == "parsed_ngspice_output"
     assert manifest["timing"]["runtime_seconds"] > 0
     assert manifest["experiment"]["database_id"] == record.experiment_id
+    environment = manifest["environment"]
+    assert re.fullmatch(r"[0-9a-f]{40}", environment["git_commit_hash"])
+    assert environment["python_version"]
+    assert environment["python_version"] == platform.python_version()
+    assert environment["os_information"]["system"] == "Windows"
+    assert environment["numpy_version"] == metadata.version("numpy")
+    assert environment["scipy_version"] == metadata.version("scipy")
+    assert environment["pyyaml_version"] == metadata.version("PyYAML")
+    assert "ngspice-" in environment["ngspice_version_string"].lower()
+    assert re.fullmatch(
+        r"[0-9a-f]{64}", environment["ngspice_executable_sha256"]
+    )
+    executable = Path(environment["ngspice_executable_path"])
+    assert environment["ngspice_executable_sha256"] == sha256(
+        executable.read_bytes()
+    ).hexdigest()
+    git_result = subprocess.run(
+        ["git", "-C", str(PROJECT_ROOT), "rev-parse", "HEAD"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        check=False,
+    )
+    assert git_result.returncode == 0
+    assert environment["git_commit_hash"] == git_result.stdout.strip()
+    assert environment["circuitpilot_version"] == "0.5.0"
+    assert environment["research_baseline_version"] == "v0.5-research-baseline"
     assert (output / "input_config.yaml").read_bytes() == config_path.read_bytes()
     assert netlist_path.is_file()
     assert data_path.is_file()
@@ -276,6 +312,41 @@ def test_missing_ngspice_and_unparseable_output_never_return_defaults(
 @pytest.mark.integration
 @pytest.mark.skipif(
     NGSPICE_EXECUTABLE is None,
+    reason="a local ngspice executable is required for resume verification",
+)
+def test_real_cli_requires_resume_and_preserves_run_identity(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    config_path = PROJECT_ROOT / "examples" / "lowpass.yaml"
+    output = tmp_path / "resumable_run"
+    arguments = [
+        "--config",
+        str(config_path),
+        "--output-dir",
+        str(output),
+        "--ngspice",
+        NGSPICE_EXECUTABLE or "ngspice",
+    ]
+
+    assert main(arguments) == 0
+    original = json.loads(
+        (output / "research_manifest.json").read_text(encoding="utf-8")
+    )
+    assert main(arguments) == 1
+    assert "not empty" in capsys.readouterr().err
+    assert main([*arguments, "--resume"]) == 0
+    resumed = json.loads(
+        (output / "research_manifest.json").read_text(encoding="utf-8")
+    )
+
+    assert resumed["run"]["run_id"] == original["run"]["run_id"]
+    assert resumed["run"]["resumed"] is True
+    assert resumed["run"]["resume_count"] == 1
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    NGSPICE_EXECUTABLE is None,
     reason="a local ngspice executable is required for failure propagation",
 )
 def test_real_ngspice_nonzero_exit_is_an_error(tmp_path: Path) -> None:
@@ -294,3 +365,44 @@ def test_real_ngspice_nonzero_exit_is_an_error(tmp_path: Path) -> None:
             executable=NGSPICE_EXECUTABLE or "ngspice",
             log_path=tmp_path / "ngspice.log",
         )
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    NGSPICE_EXECUTABLE is None,
+    reason="a local ngspice executable is required for DC supply-power verification",
+)
+def test_dc_supply_power_uses_real_ngspice_operating_point(tmp_path: Path) -> None:
+    """Measure a DC source current in ngspice, then apply the public power API."""
+    netlist = tmp_path / "dc_supply_power.cir"
+    log = tmp_path / "ngspice.log"
+    netlist.write_text(
+        """* Minimal real DC supply-power interface verification
+VDD vdd 0 5
+RLOAD vdd 0 1000
+.control
+op
+print v(vdd) i(VDD)
+quit
+.endc
+.end
+""",
+        encoding="utf-8",
+    )
+
+    run_ngspice(
+        netlist,
+        executable=NGSPICE_EXECUTABLE or "ngspice",
+        log_path=log,
+    )
+
+    text = log.read_text(encoding="utf-8", errors="replace")
+    voltage_match = re.search(r"v\(vdd\)\s*=\s*([+-]?[0-9.eE+-]+)", text)
+    current_match = re.search(r"i\(vdd\)\s*=\s*([+-]?[0-9.eE+-]+)", text)
+    assert voltage_match is not None, text
+    assert current_match is not None, text
+    voltage = float(voltage_match.group(1))
+    current = float(current_match.group(1))
+    assert voltage == pytest.approx(5.0, rel=1e-9)
+    assert current == pytest.approx(-0.005, rel=1e-9)
+    assert dc_supply_power(voltage, current) == pytest.approx(0.025, rel=1e-9)

@@ -1,16 +1,16 @@
 # CircuitPilot 研究就绪审计报告
 
-审计日期：2026-08-01（Asia/Shanghai）
+审计日期：2026-08-07（Asia/Shanghai）
 
-审计基线：`bfa3271c908dca1bb14bcdd15208557774cf485d`
+冻结版本：`v0.5-research-baseline`
 
 审计环境：Windows 10 Home China、Python 3.12.7、ngspice-46（KLU）
 
 ## 结论
 
-**自动仿真、参数扫描和优化工作流在本次审计环境中达到研究就绪状态。** 三种电路模板、离散扫描、SciPy 连续优化、结果解析、绘图和 SQLite 自动保存均通过真实 ngspice 测试；生产代码中没有 mock、fake、placeholder、demo fallback、hardcoded result 或 random result。ngspice 缺失、进程非零退出、超时和不可解析输出都会明确失败，不会生成默认物理指标。
+**研究基线冻结前的剩余修复已全部完成并通过验证，当前版本标记为 `v0.5-research-baseline`。** 自动仿真、参数扫描和优化工作流在本次审计环境中达到研究就绪状态。每次运行具有唯一身份且不会静默复用目录；成功清单包含完整环境和 ngspice 二进制指纹；研究依赖被完全锁定；RC 功耗与晶体管级 DC 供电功耗已明确分型。ngspice 缺失、进程非零退出、超时和不可解析输出仍会明确失败，不会生成默认物理指标。
 
-该结论只覆盖自动工作流及报告所列环境。保留的 `experiment create` 是人工历史导入接口，其指标是用户提供的未验证数据，不能作为 ngspice 研究证据。Linux/macOS、其他 Python/ngspice/SciPy 版本以及长时间大规模优化仍属于未验证风险。
+该结论只覆盖自动工作流、锁文件目标平台及报告所列环境。保留的 `experiment create` 是人工历史导入接口，其指标是用户提供的未验证数据，不能作为 ngspice 研究证据。Linux/macOS、其他 Python/ngspice 版本以及长时间大规模优化仍属于未验证风险。
 
 ## 审计方法与搜索结果
 
@@ -79,17 +79,23 @@ YAML / CLI 参数
 
 ## 可复现实验目录
 
-单次仿真、参数扫描和自动优化成功后，`--output-dir` 被定义为该次实验的证据边界。新增的 `research_manifest.json` 保存：
+单次仿真、参数扫描和自动优化的每次调用都有唯一 `run_id`。省略 `--output-dir` 时自动创建 `output/<run_id>`；显式目录只能不存在或为空。非空目录在任何仿真开始前被拒绝，只有 `--resume` 才能恢复含有效 `run_context.json` 的 CircuitPilot run，并要求输入 YAML 与原始快照逐字节一致。恢复保留 `run_id` 并递增 `resume_count`。
+
+`research_manifest.json` schema v2 保存：
 
 - 完整解析后配置和原始 YAML 的逐字节副本 `input_config.yaml`；
 - 随机种子（确定性工作流为 `null`）；
 - 参数、指标、工作流类型、电路类型；
 - UTC 开始/结束时间和实测运行时间；
 - 实际解析到的 ngspice 可执行文件路径；
+- Git commit、工作树 dirty 状态、Python 版本和 OS 信息；
+- NumPy、SciPy、PyYAML、CircuitPilot 和研究基线版本；
+- ngspice 版本字符串和可执行文件 SHA-256；
+- `run_id`、本次是否恢复和累计 `resume_count`；
 - SQLite 实验名称和数据库 ID（如果启用自动保存）；
 - 目录内所有网表、日志、原始数据、CSV、JSON 和图的相对路径、类型、字节数与 SHA-256。
 
-每个扫描或优化候选继续保存在独立的 `runs/run_*` 或 `runs/evaluation_*` 子目录，包含 `.cir`、`ngspice.log` 和 `ac_results.dat`。为避免不同运行的证据混合，研究运行必须为每次命令指定新的 `--output-dir`；当前版本没有强制拒绝复用已有目录，此项列为剩余风险。
+每个扫描或优化候选继续保存在独立的 `runs/run_*` 或 `runs/evaluation_*` 子目录，包含 `.cir`、`ngspice.log` 和 `ac_results.dat`。目录唯一性和显式恢复规则已由单元测试与真实 ngspice CLI 恢复测试共同验证。
 
 ## 新增端到端覆盖
 
@@ -101,7 +107,10 @@ YAML / CLI 参数
 4. 优化历史、最佳候选、研究清单和文件哈希；
 5. SQLite 自动保存后重新读取，并与原始输出重算值交叉核对；
 6. ngspice 缺失、真实 ngspice 非零退出和不可解析输出；
-7. gain 与 power 对真实解析响应的计算。
+7. gain 与 `derived_rc_power` 对真实解析响应的计算；
+8. 非空目录拒绝、显式恢复、run 身份保持和 YAML 一致性；
+9. `dc_supply_power = abs(VDD * I(VDD))` 的真实 5 V / 1 kΩ ngspice 工作点，结果为 25 mW；
+10. 环境指纹字段和 ngspice 可执行文件 SHA-256。
 
 `tests/test_research_artifacts.py` 覆盖清单、种子、配置副本、哈希和证据缺失拒绝。`tests/test_circuit_optimizer.py` 新增全候选失败时不生成指标且保留失败历史的回归测试。
 
@@ -111,17 +120,21 @@ YAML / CLI 参数
 
 1. 创建全新临时虚拟环境；
 2. 移除 `PYTHONPATH` 并禁止用户 site-packages；
-3. 从当前项目和 `pyproject.toml` 声明重新构建、安装 wheel 与运行依赖；
-4. 在项目目录外调用已安装的 `python -m circuitpilot`；
-5. 使用真实 ngspice 完成确定性截止频率优化；
-6. 核验配置副本、清单、历史、摘要、图、候选网表/日志/原始数据和 SQLite 记录；
-7. 成功校验并关闭数据库后清理临时环境。
+3. 严格从 `requirements-research.lock` 安装完全锁定的直接、传递和测试依赖；
+4. 使用 `--no-deps --no-build-isolation` 从当前源码构建并安装 wheel；
+5. 执行 `pip check`，验证依赖闭包无冲突；
+6. 在项目目录外调用已安装的 `python -m circuitpilot`；
+7. 使用真实 ngspice 完成确定性截止频率优化；
+8. 核验 run 身份、环境指纹、配置副本、清单、历史、摘要、图、候选证据和 SQLite；
+9. 成功校验并关闭数据库后清理临时环境。
 
 本次真实运行安装了 CircuitPilot 0.5.0、PyYAML 6.0.3、matplotlib 3.11.1、NumPy 2.5.1 和 SciPy 1.18.0。关键原始输出如下：
 
 ```text
 Successfully built circuitpilot
-Successfully installed PyYAML-6.0.3 circuitpilot-0.5.0 ... scipy-1.18.0 ...
+Successfully installed PyYAML-6.0.3 ... numpy-2.5.1 ... pytest-7.4.4 ... scipy-1.18.0 ...
+No broken requirements found.
+Successfully installed circuitpilot-0.5.0
 installed CircuitPilot 0.5.0
 Automatic optimization completed.
 Circuit type: rc_lowpass
@@ -131,6 +144,7 @@ Best capacitance: 1.5052226272e-07 F
 Best metric: 978.633426319
 Best optimizer objective: 0.0213665736811
 Evaluations: 10 total, 10 succeeded, 0 failed
+Run ID: cp-20260807T031043460969Z-ba70b02fd257
 Experiment saved with ID 1.
 clean_environment_test: PASS
 ```
@@ -140,15 +154,15 @@ clean_environment_test: PASS
 完整测试：
 
 ```text
-........................................................................ [ 65%]
-......................................                                   [100%]
-110 passed in 4.69s
+........................................................................ [ 55%]
+.........................................................                [100%]
+129 passed in 6.53s
 ```
 
 真实 ngspice 集成测试：
 
 ```text
-collected 110 items / 102 deselected / 8 selected
+collected 129 items / 119 deselected / 10 selected
 tests/test_integration.py::test_real_ngspice_rc_lowpass_end_to_end PASSED
 tests/test_integration.py::test_real_ngspice_two_point_parameter_sweep PASSED
 tests/test_integration.py::test_real_ngspice_scipy_optimization_loop PASSED
@@ -156,16 +170,18 @@ tests/test_research_readiness_e2e.py::test_every_circuit_template_uses_real_ngsp
 tests/test_research_readiness_e2e.py::test_every_circuit_template_uses_real_ngspice_output[highpass.yaml] PASSED
 tests/test_research_readiness_e2e.py::test_every_circuit_template_uses_real_ngspice_output[voltage_divider.yaml] PASSED
 tests/test_research_readiness_e2e.py::test_config_to_real_optimization_to_database_and_manifest PASSED
+tests/test_research_readiness_e2e.py::test_real_cli_requires_resume_and_preserves_run_identity PASSED
 tests/test_research_readiness_e2e.py::test_real_ngspice_nonzero_exit_is_an_error PASSED
-8 passed, 102 deselected in 2.73s
+tests/test_research_readiness_e2e.py::test_dc_supply_power_uses_real_ngspice_operating_point PASSED
+10 passed, 119 deselected in 4.63s
 ```
 
 不依赖 ngspice 的单元/数据库测试：
 
 ```text
-........................................................................ [ 70%]
-..............................                                           [100%]
-102 passed, 8 deselected in 2.20s
+........................................................................ [ 60%]
+...............................................                          [100%]
+119 passed, 10 deselected in 2.39s
 ```
 
 本次没有 skipped、failed 或 xfailed 测试。
@@ -177,16 +193,18 @@ tests/test_research_readiness_e2e.py::test_real_ngspice_nonzero_exit_is_an_error
 3. **缺少覆盖优化和数据库保存的无替身端到端测试。** 已增加真实 ngspice E2E，并从原始数据重新计算指标与数据库交叉验证。
 4. **高通、分压器及 gain/power 缺少统一研究审计证据。** 已增加真实模板和真实响应指标测试。
 5. **缺少全新环境安装验证。** 已增加并真实运行 `clean_environment_test.py`；修复了 Windows 子进程 UTF-8 输出和 SQLite 连接清理问题。
+6. **输出目录可能复用或混入旧证据。** 已增加原子唯一 `run_id`、非空目录拒绝、显式 `--resume`、run context 和 YAML 一致性校验。
+7. **环境指纹不完整。** manifest schema v2 现记录 Git、Python、OS、核心库、CircuitPilot、ngspice 版本与 ngspice 二进制 SHA-256。
+8. **依赖只有兼容范围。** 已新增 Python 3.12 / Windows 研究锁文件，并让 clean test 严格以锁文件安装和执行 `pip check`。
+9. **RC 功耗容易被误解为晶体管供电功耗。** 兼容模型现标记为 `derived_rc_power`；新增独立 `dc_supply_power` 接口，并以真实 ngspice 工作点验证。
 
 ## 仍未验证的风险
 
 - `experiment create` 接受人工 JSON 指标。它为兼容第四阶段而保留，并已在 README 明确标记为未验证导入；研究证据必须使用自动工作流及其清单。
-- `--output-dir` 是实验边界，但程序尚未强制目录为空或自动生成唯一运行 ID；复用目录可能混入旧文件。
-- 清单记录依赖配置和 ngspice 路径，但尚未记录 Python/库版本、操作系统、ngspice 版本文本或二进制哈希；跨版本仅靠种子不保证逐位相同。
-- 功耗是由 ngspice 的传递函数增益/相位和理想 1 V 激励推导，不是通过器件电流或瞬态积分直接测得；更复杂器件模型下需要重新定义与验证。
+- `derived_rc_power` 仍是由 RC 传递函数和理想 1 V 峰值激励推导的兼容指标；晶体管级研究必须使用独立的 `dc_supply_power`，并自行从目标电路提取 VDD 电压和电源支路电流。
 - 当前只在 Windows、Python 3.12.7、ngspice-46 上完成真实审计；Linux、macOS、Python 3.10/3.11/3.13 和其他 ngspice 版本未验证。
-- 当前 E2E 使用小型 RC 搜索空间和短优化；长时运行、中断恢复、并发实验、数据库锁竞争和大规模扫描未做压力测试。
+- 当前 E2E 使用小型 RC 搜索空间和短优化；显式恢复会安全重入并重新执行工作流，但没有保存/恢复 SciPy 内部种群状态。长时中断恢复、并发实验、数据库锁竞争和大规模扫描未做压力测试。
 - 绘图测试验证文件成功生成且非空，没有进行逐像素或人工视觉基准审查。
-- 依赖使用兼容范围而非锁文件；本次 clean test 可复现安装，但未来包索引解析到的新版本仍可能改变数值或行为。
+- `requirements-research.lock` 冻结的是 Python 3.12 / Windows x86-64 基线；其他平台需要另行生成、审计并记录对应锁文件。
 
-在用于论文或长期实验前，建议优先解决输出目录唯一性、环境/二进制指纹和依赖锁定三项风险。
+上述剩余项不阻塞当前 Windows 研究基线冻结；扩展到其他平台、晶体管电路或大规模并发实验前必须重新审计。

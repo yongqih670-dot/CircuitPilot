@@ -43,3 +43,7 @@ class OptimizationError(CircuitPilotError):
 
 class ResearchArtifactError(CircuitPilotError):
     """Raised when a reproducibility manifest cannot be created or verified."""
+
+
+class RunDirectoryError(CircuitPilotError):
+    """Raised when a research run directory cannot be created or resumed safely."""
