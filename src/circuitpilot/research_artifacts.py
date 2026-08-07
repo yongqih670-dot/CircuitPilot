@@ -70,7 +70,11 @@ def _copy_input_config(source: str | Path, output_root: Path) -> Path:
 
 def _classify_artifact(path: Path) -> str:
     """Return a stable research artifact category for one file."""
-    if path.name in {INPUT_CONFIG_FILENAME, RUN_CONTEXT_FILENAME}:
+    if path.name in {
+        INPUT_CONFIG_FILENAME,
+        RUN_CONTEXT_FILENAME,
+        "experiment_config.yaml",
+    } or path.suffix.lower() in {".yaml", ".yml"}:
         return "configuration"
     if path.suffix.lower() == ".cir":
         return "netlist"
@@ -79,6 +83,8 @@ def _classify_artifact(path: Path) -> str:
     if path.name.lower() == "ac_results.dat":
         return "ngspice_output"
     if path.suffix.lower() == ".csv":
+        return "tabular_result"
+    if path.suffix.lower() in {".sqlite", ".sqlite3", ".db"}:
         return "tabular_result"
     if path.suffix.lower() == ".png":
         return "plot"
@@ -131,6 +137,7 @@ def write_research_manifest(
     runtime_seconds: float,
     ngspice_executable: str,
     random_seed: int | None,
+    seed_registry: Mapping[str, int] | None = None,
     run_id: str,
     resumed: bool,
     resume_count: int,
@@ -146,7 +153,7 @@ def write_research_manifest(
 
     Args:
         output_directory: Independent directory produced by one CLI workflow.
-        workflow: ``simulation``, ``parameter_sweep``, or ``optimization``.
+        workflow: Existing workflow name or ``research_experiment``.
         circuit_type: Circuit template identifier.
         configuration: Fully resolved configuration snapshot.
         parameters: Simulated or searched component parameters.
@@ -154,6 +161,7 @@ def write_research_manifest(
         runtime_seconds: Measured simulation or workflow duration.
         ngspice_executable: Requested executable name or path.
         random_seed: Optimizer seed, or ``None`` for deterministic workflows.
+        seed_registry: Optional complete research RNG seed mapping.
         run_id: Immutable identifier from the prepared run directory.
         resumed: Whether this invocation explicitly resumed that run.
         resume_count: Number of explicit resumes recorded for this run.
@@ -167,7 +175,12 @@ def write_research_manifest(
     Raises:
         ResearchArtifactError: If required evidence is missing or cannot be saved.
     """
-    if workflow not in {"simulation", "parameter_sweep", "optimization"}:
+    if workflow not in {
+        "simulation",
+        "parameter_sweep",
+        "optimization",
+        "research_experiment",
+    }:
         raise ResearchArtifactError(f"unsupported research workflow '{workflow}'")
     if isinstance(circuit_type, CircuitType):
         circuit_name = circuit_type.value
@@ -179,6 +192,27 @@ def write_research_manifest(
         isinstance(random_seed, bool) or not isinstance(random_seed, int)
     ):
         raise ResearchArtifactError("random_seed must be an integer or null")
+    normalized_seeds: dict[str, int] | None = None
+    if seed_registry is not None:
+        if not isinstance(seed_registry, Mapping) or not seed_registry:
+            raise ResearchArtifactError("seed_registry must be a non-empty mapping")
+        normalized_seeds = {}
+        for name, value in seed_registry.items():
+            if (
+                not isinstance(name, str)
+                or not name
+                or isinstance(value, bool)
+                or not isinstance(value, int)
+                or value < 0
+            ):
+                raise ResearchArtifactError(
+                    "seed_registry requires non-empty names and non-negative integers"
+                )
+            normalized_seeds[name] = value
+        if random_seed is not None and normalized_seeds.get("experiment") != random_seed:
+            raise ResearchArtifactError(
+                "seed_registry.experiment must match random_seed"
+            )
     if not isinstance(run_id, str) or not run_id:
         raise ResearchArtifactError("run_id must be a non-empty string")
     if not isinstance(resumed, bool):
@@ -233,6 +267,7 @@ def write_research_manifest(
         },
         "reproducibility": {
             "random_seed": random_seed,
+            "seeds": normalized_seeds,
             "ngspice_executable": environment["ngspice_executable_path"],
             "metric_source": "parsed_ngspice_output",
             "raw_output_required": True,

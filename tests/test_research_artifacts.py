@@ -47,6 +47,11 @@ def test_manifest_snapshots_config_hashes_evidence_and_records_seed(
         runtime_seconds=0.25,
         ngspice_executable=sys.executable,
         random_seed=17,
+        seed_registry={
+            "experiment": 17,
+            "python_random": 17,
+            "numpy_generator": 17,
+        },
         run_id=run.run_id,
         resumed=False,
         resume_count=0,
@@ -58,6 +63,7 @@ def test_manifest_snapshots_config_hashes_evidence_and_records_seed(
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     artifacts = {item["path"]: item for item in manifest["artifacts"]}
     assert manifest["reproducibility"]["random_seed"] == 17
+    assert manifest["reproducibility"]["seeds"]["experiment"] == 17
     assert manifest["schema_version"] == 2
     assert manifest["run"] == {
         "run_id": run.run_id,

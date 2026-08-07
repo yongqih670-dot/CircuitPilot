@@ -492,4 +492,20 @@ python -m pytest -m "not integration"
 python -m pytest -m integration
 ```
 
+## Unified research experiments
+
+Research Task 1 adds one optimizer-independent experiment path. The YAML form is:
+
+```console
+python -m circuitpilot.experiments.run --config research/configs/rc_baseline_seed0.yaml
+```
+
+The equivalent minimum CLI form is:
+
+```console
+python -m circuitpilot.experiments.run --circuit rc_lowpass --method random --seed 0 --budget 50
+```
+
+Every run receives a unique directory under `research_runs/` containing the resolved `experiment_config.yaml`, uniform `evaluations.csv` and SQLite records, per-candidate netlist/log/raw output, optimizer state, plots, summary, and the environment-fingerprinted `research_manifest.json`. Research comparison rules are defined in `research/EXPERIMENT_PROTOCOL.md`.
+
 集成测试会自动检测本机 ngspice；未安装时明确显示为 `SKIPPED`。

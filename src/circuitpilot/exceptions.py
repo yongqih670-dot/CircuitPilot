@@ -47,3 +47,7 @@ class ResearchArtifactError(CircuitPilotError):
 
 class RunDirectoryError(CircuitPilotError):
     """Raised when a research run directory cannot be created or resumed safely."""
+
+
+class ResearchExperimentError(CircuitPilotError):
+    """Raised when a unified research experiment cannot be completed safely."""
