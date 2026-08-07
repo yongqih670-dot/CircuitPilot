@@ -2,16 +2,30 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from math import log10
 from typing import Mapping, Protocol
 
 from circuitpilot.analysis import find_cutoff_frequency
+from circuitpilot.bandwidth import BandwidthStatus, measure_bandwidth
 from circuitpilot.circuit_config import CircuitType
 from circuitpilot.common_source import analyze_common_source
 from circuitpilot.exceptions import AnalysisError
 from circuitpilot.experiments.config import ExperimentConfig
 from circuitpilot.experiments.simulation import CandidateSimulation
 from circuitpilot.power_metrics import derived_rc_power
+from circuitpilot.power_metrics import dc_supply_power
+
+
+@dataclass(frozen=True, slots=True)
+class AnalysisOutcome:
+    """Physical metrics plus explicit Task 4 measurement semantics."""
+
+    metrics: dict[str, float | None]
+    measurement_status: str = "complete"
+    bandwidth_status: str | None = None
+    bandwidth_lower_bound_hz: float | None = None
+    message: str | None = None
 
 
 class CandidateAnalyzer(Protocol):
@@ -21,7 +35,7 @@ class CandidateAnalyzer(Protocol):
         self,
         simulation: CandidateSimulation,
         parameters: Mapping[str, float | int],
-    ) -> dict[str, float]:
+    ) -> dict[str, float] | AnalysisOutcome:
         """Return physical metrics derived only from simulator evidence."""
 
 
@@ -178,3 +192,118 @@ class CommonSourceAnalyzer:
             **{name: measured[name] for name in self._requested},
             "sample_count": float(len(simulation.response)),
         }
+
+
+class Sky130CommonSourceAnalyzer:
+    """Extract truthful SKY130 metrics, including censored bandwidth evidence."""
+
+    _SUPPORTED = {
+        "gain_db",
+        "peak_gain_db",
+        "bandwidth_hz",
+        "bandwidth_lower_bound_hz",
+        "dc_power_w",
+        "dc_supply_power",
+        "output_dc_voltage",
+        "supply_current_a",
+        "operating_region_valid",
+        "vgs",
+        "vds",
+        "gm",
+        "gds",
+        "vth",
+        "vdsat",
+    }
+
+    def __init__(self, config: ExperimentConfig) -> None:
+        if config.circuit_name != "sky130_common_source":
+            raise ValueError(
+                "Sky130CommonSourceAnalyzer requires sky130_common_source config"
+            )
+        requested = {
+            definition.metric for definition in (*config.objectives, *config.constraints)
+        }
+        unsupported = sorted(requested - self._SUPPORTED)
+        if unsupported:
+            raise ValueError(
+                "unsupported SKY130 common-source metric(s): " + ", ".join(unsupported)
+            )
+        self._requested = requested
+
+    def extract(
+        self,
+        simulation: CandidateSimulation,
+        parameters: Mapping[str, float | int],
+    ) -> AnalysisOutcome:
+        """Return metrics derived only from real AC and `.op` evidence."""
+        del parameters
+        operating_point = simulation.operating_point
+        if operating_point is None:
+            return AnalysisOutcome(
+                {},
+                measurement_status="analysis_error",
+                bandwidth_status=BandwidthStatus.ANALYSIS_ERROR.value,
+                message="SKY130 simulation has no parsed operating point",
+            )
+        response = simulation.response
+        bandwidth = measure_bandwidth(response.frequency_hz, response.gain_db)
+        if bandwidth.bandwidth_status in {
+            BandwidthStatus.INVALID_RESPONSE,
+            BandwidthStatus.ANALYSIS_ERROR,
+        }:
+            return AnalysisOutcome(
+                {},
+                measurement_status=bandwidth.measurement_status,
+                bandwidth_status=bandwidth.bandwidth_status.value,
+                message=bandwidth.message,
+            )
+
+        device = dict(operating_point.device_quantities)
+        measured: dict[str, float | None] = {
+            "gain_db": float(response.gain_db[0]),
+            "peak_gain_db": max(float(value) for value in response.gain_db),
+            "bandwidth_hz": bandwidth.bandwidth_hz,
+            "bandwidth_lower_bound_hz": bandwidth.bandwidth_lower_bound_hz,
+            "dc_power_w": dc_supply_power(
+                operating_point.supply_voltage_v, operating_point.supply_current_a
+            ),
+            "dc_supply_power": dc_supply_power(
+                operating_point.supply_voltage_v, operating_point.supply_current_a
+            ),
+            "output_dc_voltage": operating_point.output_voltage_v,
+            "supply_current_a": operating_point.supply_current_a,
+            "sample_count": float(len(response)),
+            **device,
+        }
+        if {"vgs", "vds", "vth"} <= set(device):
+            overdrive = device["vgs"] - device["vth"]
+            measured["operating_region_valid"] = float(
+                device["vgs"] > device["vth"] and device["vds"] >= overdrive
+            )
+        missing = sorted(
+            name
+            for name in self._requested
+            if name not in measured
+            or (
+                measured[name] is None
+                and not (
+                    name == "bandwidth_hz"
+                    and bandwidth.bandwidth_status is BandwidthStatus.RIGHT_CENSORED
+                )
+            )
+        )
+        if missing:
+            return AnalysisOutcome(
+                measured,
+                measurement_status="analysis_error",
+                bandwidth_status=bandwidth.bandwidth_status.value,
+                bandwidth_lower_bound_hz=bandwidth.bandwidth_lower_bound_hz,
+                message="requested SKY130 metric(s) unavailable: " + ", ".join(missing),
+            )
+        return AnalysisOutcome(
+            measured,
+            measurement_status=bandwidth.measurement_status,
+            bandwidth_status=bandwidth.bandwidth_status.value,
+            bandwidth_lower_bound_hz=bandwidth.bandwidth_lower_bound_hz,
+            message=bandwidth.message,
+        )

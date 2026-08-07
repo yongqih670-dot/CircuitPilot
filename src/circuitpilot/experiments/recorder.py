@@ -24,6 +24,9 @@ EVALUATION_COLUMNS = (
     "iteration",
     "parameters",
     "simulation_status",
+    "measurement_status",
+    "bandwidth_status",
+    "bandwidth_lower_bound_hz",
     "failure_type",
     "error_message",
     "ngspice_return_code",
@@ -56,16 +59,21 @@ def _finite_optional(value: float | None, context: str) -> float | None:
     return numeric
 
 
-def _numeric_mapping(value: Mapping[str, Any], context: str) -> dict[str, float]:
-    """Return a finite string-keyed physical-metric mapping."""
+def _numeric_mapping(
+    value: Mapping[str, Any], context: str
+) -> dict[str, float | None]:
+    """Return finite physical metrics while preserving truthful nulls."""
     if not isinstance(value, Mapping):
         raise ValueError(f"{context} must be a mapping")
-    normalized: dict[str, float] = {}
+    normalized: dict[str, float | None] = {}
     for name, item in value.items():
         if not isinstance(name, str) or not name:
             raise ValueError(f"{context} keys must be non-empty strings")
+        if item is None:
+            normalized[name] = None
+            continue
         if isinstance(item, bool) or not isinstance(item, (int, float)):
-            raise ValueError(f"{context}.{name} must be numeric")
+            raise ValueError(f"{context}.{name} must be numeric or null")
         numeric = float(item)
         if not isfinite(numeric):
             raise ValueError(f"{context}.{name} must be finite")
@@ -102,7 +110,7 @@ class EvaluationRecord:
     parameters: dict[str, Any]
     simulation_status: str
     failure_type: str | None
-    raw_metrics: dict[str, float]
+    raw_metrics: dict[str, float | None]
     objective_value: float | None
     constraint_violation: float | None
     simulation_time: float
@@ -119,6 +127,9 @@ class EvaluationRecord:
     experiment_phase: str = "baseline"
     event_observed: bool = False
     evaluation_time: int | None = None
+    measurement_status: str | None = None
+    bandwidth_status: str | None = None
+    bandwidth_lower_bound_hz: float | None = None
 
     def __post_init__(self) -> None:
         """Reject malformed, non-finite, or internally inconsistent records."""
@@ -139,6 +150,28 @@ class EvaluationRecord:
             raise ValueError("optimizer_phase must be non-empty")
         if not isinstance(self.simulation_status, str) or not self.simulation_status:
             raise ValueError("simulation_status must be non-empty")
+        if self.measurement_status is not None and self.measurement_status not in {
+            "complete",
+            "invalid_response",
+            "analysis_error",
+        }:
+            raise ValueError("measurement_status is invalid")
+        if self.bandwidth_status is not None and self.bandwidth_status not in {
+            "measured",
+            "right_censored",
+            "invalid_response",
+            "analysis_error",
+        }:
+            raise ValueError("bandwidth_status is invalid")
+        lower_bound = _finite_optional(
+            self.bandwidth_lower_bound_hz, "bandwidth_lower_bound_hz"
+        )
+        if lower_bound is not None and lower_bound <= 0:
+            raise ValueError("bandwidth_lower_bound_hz must be positive or null")
+        if self.bandwidth_status == "right_censored" and lower_bound is None:
+            raise ValueError("right-censored bandwidth requires a lower bound")
+        if self.bandwidth_status != "right_censored" and lower_bound is not None:
+            raise ValueError("only right-censored bandwidth can have a lower bound")
         if self.failure_type is not None and (
             not isinstance(self.failure_type, str) or not self.failure_type
         ):
@@ -186,7 +219,8 @@ class EvaluationRecord:
             raise ValueError("ngspice_called must be a boolean")
         if not isinstance(self.is_feasible, bool):
             raise ValueError("is_feasible must be a boolean")
-        if self.simulation_status == "success":
+        complete_measurement = self.measurement_status in {None, "complete"}
+        if self.simulation_status == "success" and complete_measurement:
             if self.failure_type is not None:
                 raise ValueError("successful records cannot have failure_type")
             if self.objective_value is None or self.constraint_violation is None:
@@ -197,6 +231,13 @@ class EvaluationRecord:
                 raise ValueError("successful records require a real ngspice call")
             if self.error_message is not None or self.timed_out:
                 raise ValueError("successful records cannot contain failure evidence")
+        elif self.simulation_status == "success":
+            if not self.ngspice_called:
+                raise ValueError("measurement failures require a real ngspice call")
+            if self.objective_value is not None or self.constraint_violation is not None:
+                raise ValueError("invalid measurements cannot contain optimizer-facing values")
+            if self.is_feasible:
+                raise ValueError("invalid measurements cannot be feasible")
         elif self.objective_value is not None or self.constraint_violation is not None:
             raise ValueError("failed records cannot contain optimizer-facing values")
         elif self.is_feasible:
@@ -215,7 +256,7 @@ class EvaluationRecord:
         parameters: Mapping[str, Any],
         simulation_status: str,
         failure_type: str | None,
-        raw_metrics: Mapping[str, float],
+        raw_metrics: Mapping[str, float | None],
         objective_value: float | None,
         constraint_violation: float | None,
         simulation_time: float,
@@ -231,6 +272,9 @@ class EvaluationRecord:
         experiment_phase: str = "baseline",
         event_observed: bool = False,
         evaluation_time: int | None = None,
+        measurement_status: str | None = None,
+        bandwidth_status: str | None = None,
+        bandwidth_lower_bound_hz: float | None = None,
     ) -> "EvaluationRecord":
         """Construct a record with a UTC timestamp."""
         return cls(
@@ -260,13 +304,16 @@ class EvaluationRecord:
             experiment_phase=experiment_phase,
             event_observed=event_observed,
             evaluation_time=evaluation_time,
+            measurement_status=measurement_status,
+            bandwidth_status=bandwidth_status,
+            bandwidth_lower_bound_hz=bandwidth_lower_bound_hz,
         )
 
 
 class EvaluationRecorder:
     """Persist identical evaluation rows to CSV and SQLite after every tell."""
 
-    SCHEMA_VERSION = 3
+    SCHEMA_VERSION = 4
 
     def __init__(self, output_directory: str | Path) -> None:
         """Initialize the per-run CSV and SQLite stores."""
@@ -309,6 +356,9 @@ class EvaluationRecorder:
                         seed INTEGER NOT NULL,
                         parameters_json TEXT NOT NULL,
                         simulation_status TEXT NOT NULL,
+                        measurement_status TEXT,
+                        bandwidth_status TEXT,
+                        bandwidth_lower_bound_hz REAL,
                         failure_type TEXT,
                         error_message TEXT,
                         ngspice_return_code INTEGER,
@@ -331,7 +381,7 @@ class EvaluationRecorder:
                     """
                 )
                 version = connection.execute("PRAGMA user_version").fetchone()[0]
-                if version not in (0, 1, 2, self.SCHEMA_VERSION):
+                if version not in (0, 1, 2, 3, self.SCHEMA_VERSION):
                     raise ResearchExperimentError(
                         f"unsupported evaluation database schema {version}"
                     )
@@ -348,6 +398,9 @@ class EvaluationRecorder:
                     "experiment_phase": "TEXT NOT NULL DEFAULT 'baseline'",
                     "event_observed": "INTEGER NOT NULL DEFAULT 0",
                     "evaluation_time": "INTEGER",
+                    "measurement_status": "TEXT",
+                    "bandwidth_status": "TEXT",
+                    "bandwidth_lower_bound_hz": "REAL",
                 }
                 for name, declaration in migrations.items():
                     if name not in columns:
@@ -375,12 +428,13 @@ class EvaluationRecorder:
                     INSERT INTO research_evaluations (
                         run_id, iteration, experiment_id, circuit, method, optimizer_phase, seed,
                         parameters_json, simulation_status, failure_type,
+                        measurement_status, bandwidth_status, bandwidth_lower_bound_hz,
                         error_message, ngspice_return_code, timed_out,
                         raw_metrics_json, objective_value, constraint_violation, is_feasible,
                         simulation_time, total_elapsed_time, timestamp,
                         run_directory, ngspice_called, benchmark_config_hash,
                         experiment_phase, event_observed, evaluation_time
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         record.run_id,
@@ -393,6 +447,9 @@ class EvaluationRecorder:
                         parameters_json,
                         record.simulation_status,
                         record.failure_type,
+                        record.measurement_status,
+                        record.bandwidth_status,
+                        record.bandwidth_lower_bound_hz,
                         record.error_message,
                         record.ngspice_return_code,
                         int(record.timed_out),
@@ -439,6 +496,9 @@ class EvaluationRecorder:
             iteration=row["iteration"],
             parameters=parameters,
             simulation_status=row["simulation_status"],
+            measurement_status=row["measurement_status"],
+            bandwidth_status=row["bandwidth_status"],
+            bandwidth_lower_bound_hz=row["bandwidth_lower_bound_hz"],
             failure_type=row["failure_type"],
             error_message=row["error_message"],
             ngspice_return_code=row["ngspice_return_code"],
@@ -493,6 +553,13 @@ class EvaluationRecorder:
                                 allow_nan=False,
                             ),
                             "simulation_status": record.simulation_status,
+                            "measurement_status": record.measurement_status or "",
+                            "bandwidth_status": record.bandwidth_status or "",
+                            "bandwidth_lower_bound_hz": (
+                                ""
+                                if record.bandwidth_lower_bound_hz is None
+                                else f"{record.bandwidth_lower_bound_hz:.17g}"
+                            ),
                             "failure_type": record.failure_type or "",
                             "error_message": record.error_message or "",
                             "ngspice_return_code": (

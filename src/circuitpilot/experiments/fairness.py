@@ -34,6 +34,13 @@ class FairnessValidator:
         "circuit",
         "circuit_config",
         "transistor_model",
+        "model_sha256",
+        "pdk_release",
+        "pdk_commit",
+        "bandwidth_semantics_version",
+        "measurement_window",
+        "censoring_policy",
+        "difficulty_protocol_version",
         "simulation_budget",
         "experiment_phase",
         "pvt_config",
@@ -64,6 +71,12 @@ class FairnessValidator:
             transistor_model = json.loads(json.dumps(manifest.get("transistor_model")))
             if transistor_model is not None:
                 transistor_model.pop("model_path", None)
+                transistor_model.pop("pdk_root", None)
+            measurement_window = {
+                "start_frequency_hz": config["ngspice_config"]["start_frequency_hz"],
+                "stop_frequency_hz": config["ngspice_config"]["stop_frequency_hz"],
+                "points_per_decade": config["ngspice_config"]["points_per_decade"],
+            }
             return {
                 "search_space_hash": _stable_hash(config["search_space"]),
                 "benchmark_config_hash": manifest.get("reproducibility", {}).get(
@@ -72,6 +85,13 @@ class FairnessValidator:
                 "circuit": experiment["circuit"],
                 "circuit_config": circuit_config,
                 "transistor_model": transistor_model,
+                "model_sha256": None if transistor_model is None else transistor_model.get("model_sha256"),
+                "pdk_release": None if transistor_model is None else transistor_model.get("pdk_release"),
+                "pdk_commit": None if transistor_model is None else transistor_model.get("pdk_commit"),
+                "bandwidth_semantics_version": None if circuit_config is None else circuit_config.get("bandwidth_semantics_version"),
+                "measurement_window": measurement_window,
+                "censoring_policy": None if circuit_config is None else circuit_config.get("censoring_policy"),
+                "difficulty_protocol_version": None if circuit_config is None else circuit_config.get("difficulty_protocol_version"),
                 "simulation_budget": experiment["simulation_budget"],
                 "experiment_phase": experiment.get("phase", "baseline"),
                 "pvt_config": config.get("pvt_config", {}),

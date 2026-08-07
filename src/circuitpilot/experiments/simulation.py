@@ -16,6 +16,11 @@ from circuitpilot.experiments.config import ExperimentConfig
 from circuitpilot.netlist_generator import write_netlist
 from circuitpilot.parser import ACAnalysisResult, parse_ac_output
 from circuitpilot.simulator import SimulationResult, run_ngspice
+from circuitpilot.sky130_common_source import (
+    Sky130CommonSourceCircuitConfig,
+    generate_sky130_common_source_netlist,
+    sky130_runtime_paths,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -146,4 +151,78 @@ class CommonSourceNgspiceSimulator:
             operating_point=operating_point,
             dc_data_path=dc_path,
             device_op_data_path=device_path if device_path.is_file() else None,
+        )
+
+
+class Sky130CommonSourceNgspiceSimulator:
+    """Run the independent, content-locked SKY130 Task 4 benchmark."""
+
+    def __init__(self, config: ExperimentConfig) -> None:
+        if (
+            config.circuit_name != "sky130_common_source"
+            or not isinstance(config.circuit_config, Sky130CommonSourceCircuitConfig)
+        ):
+            raise ValueError(
+                "Sky130CommonSourceNgspiceSimulator requires SKY130 circuit config"
+            )
+        self._config = config
+
+    def evaluate(
+        self,
+        parameters: Mapping[str, float | int],
+        evaluation_directory: Path,
+        on_ngspice_launch: Callable[[], None],
+    ) -> CandidateSimulation:
+        """Execute exactly one ngspice process containing real `.op` and `.ac`."""
+        circuit = self._config.circuit_config
+        assert isinstance(circuit, Sky130CommonSourceCircuitConfig)
+        with sky130_runtime_paths(circuit.model, evaluation_directory) as paths:
+            for path in (
+                paths.ac_path,
+                paths.op_path,
+                paths.device_path,
+                paths.log_path,
+            ):
+                path.unlink(missing_ok=True)
+            text = generate_sky130_common_source_netlist(
+                circuit,
+                parameters,
+                invariant_path=paths.runtime_invariant,
+                corner_path=paths.runtime_corner,
+                ac_output_path=paths.runtime_ac,
+                op_output_path=paths.runtime_op,
+                device_op_output_path=paths.runtime_device,
+                start_frequency_hz=self._config.ngspice_config.start_frequency_hz,
+                stop_frequency_hz=self._config.ngspice_config.stop_frequency_hz,
+                points_per_decade=self._config.ngspice_config.points_per_decade,
+            )
+            try:
+                paths.netlist_path.write_text(text, encoding="utf-8")
+            except (OSError, UnicodeError) as exc:
+                from circuitpilot.exceptions import NetlistError
+
+                raise NetlistError(
+                    f"failed to write SKY130 netlist '{paths.netlist_path}': {exc}"
+                ) from exc
+            on_ngspice_launch()
+            process = run_ngspice(
+                paths.runtime_netlist,
+                executable=self._config.ngspice_config.executable,
+                timeout_seconds=self._config.timeout,
+                log_path=paths.runtime_log,
+                preserve_runtime_paths=True,
+            )
+            response = parse_ac_output(paths.ac_path)
+            operating_point = parse_operating_point(
+                paths.op_path, paths.device_path
+            )
+        return CandidateSimulation(
+            response=response,
+            process=process,
+            netlist_path=paths.netlist_path,
+            data_path=paths.ac_path,
+            log_path=paths.log_path,
+            operating_point=operating_point,
+            dc_data_path=paths.op_path,
+            device_op_data_path=paths.device_path,
         )

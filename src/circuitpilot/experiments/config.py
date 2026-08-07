@@ -18,6 +18,11 @@ from circuitpilot.common_source import (
     common_source_config_from_mapping,
 )
 from circuitpilot.exceptions import ConfigError
+from circuitpilot.sky130_common_source import (
+    SKY130_COMMON_SOURCE_PARAMETER_NAMES,
+    Sky130CommonSourceCircuitConfig,
+    sky130_common_source_config_from_mapping,
+)
 
 
 ParameterValue = float | int | str | bool
@@ -30,6 +35,15 @@ COMMON_SOURCE_METRIC_DEFINITIONS = {
     "bandwidth_hz": "interpolated post-peak -3 dB bandwidth from parsed real ngspice AC output",
     "dc_power_w": "abs(VDD * I(VDD)) from parsed real ngspice operating-point output",
     "output_dc_voltage": "V(out) from parsed real ngspice operating-point output",
+}
+SKY130_COMMON_SOURCE_METRIC_DEFINITIONS = {
+    "gain_db": "low-frequency gain from parsed real SKY130 ngspice AC output",
+    "peak_gain_db": "peak gain from parsed real SKY130 ngspice AC output",
+    "bandwidth_hz": "exact post-peak -3 dB crossing or null when right-censored",
+    "bandwidth_lower_bound_hz": "fixed f_stop lower bound only when right-censored",
+    "dc_power_w": "abs(VDD * I(VDD)) from parsed real SKY130 ngspice operating point",
+    "output_dc_voltage": "V(out) from parsed real SKY130 ngspice operating point",
+    "operating_region_valid": "1 iff VGS > VTH and VDS >= VGS - VTH from real MOS OP vectors",
 }
 
 
@@ -372,7 +386,7 @@ class ExperimentConfig:
     optimizer_config: Mapping[str, Any] = field(default_factory=dict)
     ngspice_config: NgspiceConfig = NgspiceConfig()
     pvt_config: Mapping[str, Any] = field(default_factory=dict)
-    circuit_config: CommonSourceCircuitConfig | None = None
+    circuit_config: CommonSourceCircuitConfig | Sky130CommonSourceCircuitConfig | None = None
     benchmark_config_hash: str | None = None
     experiment_phase: str = "baseline"
     resume: bool = False
@@ -381,8 +395,10 @@ class ExperimentConfig:
     def __post_init__(self) -> None:
         if not isinstance(self.experiment_name, str) or not self.experiment_name.strip():
             raise ValueError("experiment_name must be non-empty")
-        if self.circuit_name not in {"rc_lowpass", "common_source"}:
-            raise ValueError("research circuit must be rc_lowpass or common_source")
+        if self.circuit_name not in {"rc_lowpass", "common_source", "sky130_common_source"}:
+            raise ValueError(
+                "research circuit must be rc_lowpass, common_source, or sky130_common_source"
+            )
         if not isinstance(self.method, str) or not self.method.strip():
             raise ValueError("method must be non-empty")
         if isinstance(self.seed, bool) or not isinstance(self.seed, int) or self.seed < 0:
@@ -395,17 +411,17 @@ class ExperimentConfig:
         names = [item.name for item in self.search_space]
         if len(set(names)) != len(names):
             raise ValueError("search_space parameter names must be unique")
-        expected_parameters = (
-            {"resistance", "capacitance"}
-            if self.circuit_name == "rc_lowpass"
-            else COMMON_SOURCE_PARAMETER_NAMES
-        )
+        expected_parameters = {
+            "rc_lowpass": {"resistance", "capacitance"},
+            "common_source": COMMON_SOURCE_PARAMETER_NAMES,
+            "sky130_common_source": SKY130_COMMON_SOURCE_PARAMETER_NAMES,
+        }[self.circuit_name]
         if set(names) != expected_parameters:
             readable = ", ".join(sorted(expected_parameters))
             raise ValueError(
                 f"{self.circuit_name} search_space must contain exactly: {readable}"
             )
-        if self.circuit_name == "common_source":
+        if self.circuit_name in {"common_source", "sky130_common_source"}:
             for parameter in self.search_space:
                 if parameter.unit is None:
                     raise ValueError(
@@ -446,11 +462,20 @@ class ExperimentConfig:
         if not isinstance(self.ngspice_config, NgspiceConfig):
             raise ValueError("ngspice_config must be NgspiceConfig")
         if not isinstance(self.pvt_config, Mapping) or self.pvt_config:
-            raise ValueError("Task 3 requires an explicit empty pvt_config")
+            raise ValueError("the non-PVT research baselines require an explicit empty pvt_config")
         if self.circuit_name == "common_source":
             if not isinstance(self.circuit_config, CommonSourceCircuitConfig):
                 raise ValueError("common_source requires a typed circuit_config")
             self.circuit_config.model.require_library()
+        elif self.circuit_name == "sky130_common_source":
+            if not isinstance(self.circuit_config, Sky130CommonSourceCircuitConfig):
+                raise ValueError(
+                    "sky130_common_source requires a typed SKY130 circuit_config"
+                )
+            if self.circuit_config.model.expected_model_sha256 is None:
+                raise ValueError("Task 4 circuit_config must bind model_sha256")
+            if self.circuit_config.model.expected_library_sha256 is None:
+                raise ValueError("Task 4 circuit_config must bind library_sha256")
         elif self.circuit_config is not None:
             raise ValueError("rc_lowpass cannot define circuit_config")
         if self.benchmark_config_hash is not None:
@@ -496,11 +521,11 @@ class ExperimentConfig:
                 raise ValueError(f"candidate parameter '{name}' is outside its validated search space")
 
     def to_dict(self) -> dict[str, Any]:
-        metric_definitions = (
-            RC_METRIC_DEFINITIONS
-            if self.circuit_name == "rc_lowpass"
-            else COMMON_SOURCE_METRIC_DEFINITIONS
-        )
+        metric_definitions = {
+            "rc_lowpass": RC_METRIC_DEFINITIONS,
+            "common_source": COMMON_SOURCE_METRIC_DEFINITIONS,
+            "sky130_common_source": SKY130_COMMON_SOURCE_METRIC_DEFINITIONS,
+        }[self.circuit_name]
         result = {
             "experiment": {
                 "name": self.experiment_name, "circuit": self.circuit_name,
@@ -554,11 +579,11 @@ class ExperimentConfig:
 
     def computed_benchmark_hash(self) -> str:
         """Hash all circuit semantics shared by every benchmark method/seed."""
-        metric_definitions = (
-            RC_METRIC_DEFINITIONS
-            if self.circuit_name == "rc_lowpass"
-            else COMMON_SOURCE_METRIC_DEFINITIONS
-        )
+        metric_definitions = {
+            "rc_lowpass": RC_METRIC_DEFINITIONS,
+            "common_source": COMMON_SOURCE_METRIC_DEFINITIONS,
+            "sky130_common_source": SKY130_COMMON_SOURCE_METRIC_DEFINITIONS,
+        }[self.circuit_name]
         payload: dict[str, Any] = {
             "circuit": self.circuit_name,
             "search_space": {item.name: item.to_dict() for item in self.search_space},
@@ -595,11 +620,20 @@ class ExperimentConfig:
             "pvt_config": dict(self.pvt_config),
             "metric_definitions": dict(metric_definitions),
         }
-        if self.circuit_config is not None:
+        if isinstance(self.circuit_config, CommonSourceCircuitConfig):
             circuit_payload = self.circuit_config.to_dict()
             circuit_payload["mosfet_model"] = dict(circuit_payload["mosfet_model"])
             circuit_payload["mosfet_model"]["model_library"] = "<content-addressed-model>"
             payload["circuit_config"] = circuit_payload
+            payload["model_library_sha256"] = self.circuit_config.model.library_sha256()
+        elif isinstance(self.circuit_config, Sky130CommonSourceCircuitConfig):
+            circuit_payload = self.circuit_config.to_dict()
+            model_payload = dict(circuit_payload["sky130_model"])
+            model_payload["pdk_root"] = "<content-addressed-sky130-pdk>"
+            model_payload["model_library"] = "<content-addressed-model>"
+            circuit_payload["sky130_model"] = model_payload
+            payload["circuit_config"] = circuit_payload
+            payload["model_sha256"] = self.circuit_config.model.model_sha256()
             payload["model_library_sha256"] = self.circuit_config.model.library_sha256()
         encoded = json.dumps(
             payload, sort_keys=True, separators=(",", ":"), allow_nan=False
@@ -814,11 +848,16 @@ def experiment_config_from_mapping(
     optimizer_config = _mapping(root.get("optimizer_config", {}), "optimizer_config")
     pvt_config = _mapping(root.get("pvt_config", {}), "pvt_config")
     circuit_name = experiment["circuit"]
-    expected_metric_definitions = (
-        RC_METRIC_DEFINITIONS
-        if circuit_name == "rc_lowpass"
-        else COMMON_SOURCE_METRIC_DEFINITIONS
-    )
+    try:
+        expected_metric_definitions = {
+            "rc_lowpass": RC_METRIC_DEFINITIONS,
+            "common_source": COMMON_SOURCE_METRIC_DEFINITIONS,
+            "sky130_common_source": SKY130_COMMON_SOURCE_METRIC_DEFINITIONS,
+        }[circuit_name]
+    except KeyError:
+        raise ConfigError(
+            "experiment.circuit must be rc_lowpass, common_source, or sky130_common_source"
+        ) from None
     metric_definitions = _mapping(
         root.get("metric_definitions", expected_metric_definitions), "metric_definitions"
     )
@@ -845,7 +884,13 @@ def experiment_config_from_mapping(
                     root.get("circuit_config"), base_directory=base_directory
                 )
                 if circuit_name == "common_source"
-                else None
+                else (
+                    sky130_common_source_config_from_mapping(
+                        root.get("circuit_config"), base_directory=base_directory
+                    )
+                    if circuit_name == "sky130_common_source"
+                    else None
+                )
             ),
             benchmark_config_hash=root.get("benchmark_config_hash"),
             experiment_phase=experiment.get("phase", "baseline"),

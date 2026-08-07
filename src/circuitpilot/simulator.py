@@ -61,6 +61,7 @@ def run_ngspice(
     executable: str = "ngspice",
     timeout_seconds: float = 60.0,
     log_path: str | Path | None = None,
+    preserve_runtime_paths: bool = False,
 ) -> SimulationResult:
     """Run ngspice in batch mode and require a successful exit status.
 
@@ -69,6 +70,8 @@ def run_ngspice(
         executable: ngspice executable name or path.
         timeout_seconds: Maximum runtime before the process is terminated.
         log_path: Optional ngspice log destination supplied with ``-o``.
+        preserve_runtime_paths: Keep caller-provided drive aliases instead of
+            resolving them to a potentially long or non-ASCII physical path.
 
     Returns:
         Captured process metadata for a successful execution.
@@ -81,7 +84,11 @@ def run_ngspice(
     if timeout_seconds <= 0:
         raise ValueError("timeout_seconds must be positive")
 
-    source = Path(netlist_path).resolve()
+    source = (
+        Path(netlist_path).absolute()
+        if preserve_runtime_paths
+        else Path(netlist_path).resolve()
+    )
     if not source.is_file():
         raise SimulationError(f"netlist does not exist: '{source}'")
 
@@ -94,7 +101,11 @@ def run_ngspice(
 
     command = [resolved_executable, "-b"]
     if log_path is not None:
-        log_destination = Path(log_path).resolve()
+        log_destination = (
+            Path(log_path).absolute()
+            if preserve_runtime_paths
+            else Path(log_path).resolve()
+        )
         try:
             log_destination.parent.mkdir(parents=True, exist_ok=True)
         except OSError as exc:

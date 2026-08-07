@@ -17,9 +17,11 @@ from circuitpilot.exceptions import (
     SimulationError,
 )
 from circuitpilot.experiments.analyzer import (
+    AnalysisOutcome,
     CandidateAnalyzer,
     CommonSourceAnalyzer,
     RCLowPassAnalyzer,
+    Sky130CommonSourceAnalyzer,
 )
 from circuitpilot.experiments.budget import SimulationBudget
 from circuitpilot.experiments.config import (
@@ -35,7 +37,9 @@ from circuitpilot.experiments.simulation import (
     CandidateSimulator,
     CommonSourceNgspiceSimulator,
     RCLowPassNgspiceSimulator,
+    Sky130CommonSourceNgspiceSimulator,
 )
+from circuitpilot.sky130_common_source import Sky130CommonSourceCircuitConfig
 from circuitpilot.research_artifacts import write_research_manifest
 from circuitpilot.run_directory import (
     ResearchRunDirectory,
@@ -116,7 +120,7 @@ class ExperimentRunner:
             evaluation_directory.mkdir(parents=True, exist_ok=True)
             portable_directory = (Path("runs") / run_name).as_posix()
             candidate_started = monotonic()
-            metrics: dict[str, float] = {}
+            metrics: dict[str, float | None] = {}
             objective_value: float | None = None
             constraint_violation: float | None = None
             is_feasible = False
@@ -125,6 +129,9 @@ class ExperimentRunner:
             error_message: str | None = None
             ngspice_return_code: int | None = None
             timed_out = False
+            measurement_status: str | None = None
+            bandwidth_status: str | None = None
+            bandwidth_lower_bound_hz: float | None = None
             ngspice_calls_before = self.budget.ngspice_calls
 
             try:
@@ -142,13 +149,47 @@ class ExperimentRunner:
                         evaluation_directory,
                         self.budget.mark_ngspice_call,
                     )
-                    metrics = self.analyzer.extract(simulation, parameters)
-                    objective = self.objective_evaluator.evaluate(metrics)
-                    objective_value = objective.objective_value
-                    constraint_violation = objective.constraint_violation
-                    is_feasible = objective.is_feasible
+                    extracted = self.analyzer.extract(simulation, parameters)
+                    if isinstance(extracted, AnalysisOutcome):
+                        metrics = extracted.metrics
+                        measurement_status = extracted.measurement_status
+                        bandwidth_status = extracted.bandwidth_status
+                        bandwidth_lower_bound_hz = extracted.bandwidth_lower_bound_hz
+                        if measurement_status == "complete":
+                            objective = self.objective_evaluator.evaluate(
+                                metrics,
+                                bandwidth_status=bandwidth_status,
+                                bandwidth_lower_bound_hz=bandwidth_lower_bound_hz,
+                            )
+                            objective_value = objective.objective_value
+                            constraint_violation = objective.constraint_violation
+                            is_feasible = objective.is_feasible
+                        else:
+                            failure_type = (
+                                "InvalidResponse"
+                                if measurement_status == "invalid_response"
+                                else "AnalysisError"
+                            )
+                            error_message = extracted.message
+                    else:
+                        metrics = extracted
+                        measurement_status = "complete"
+                        objective = self.objective_evaluator.evaluate(metrics)
+                        objective_value = objective.objective_value
+                        constraint_violation = objective.constraint_violation
+                        is_feasible = objective.is_feasible
                 except (CircuitPilotError, OSError, ValueError) as exc:
-                    simulation_status = _failure_status(exc)
+                    task4_postprocess_failure = (
+                        self.config.circuit_name == "sky130_common_source"
+                        and self.budget.ngspice_calls > ngspice_calls_before
+                        and not isinstance(exc, SimulationError)
+                    )
+                    simulation_status = (
+                        "success" if task4_postprocess_failure else _failure_status(exc)
+                    )
+                    if task4_postprocess_failure:
+                        measurement_status = "analysis_error"
+                        bandwidth_status = "analysis_error"
                     failure_type = type(exc).__name__
                     error_message = str(exc)
                     if isinstance(exc, SimulationError):
@@ -166,11 +207,16 @@ class ExperimentRunner:
             else:
                 self.budget.mark_failure()
             ngspice_called = self.budget.ngspice_calls > ngspice_calls_before
+            optimizer_status = (
+                "success"
+                if simulation_status == "success" and objective_value is not None
+                else (measurement_status or simulation_status)
+            )
             self.optimizer.tell(
                 parameters,
-                metrics,
+                {name: value for name, value in metrics.items() if value is not None},
                 objective_value,
-                simulation_status,
+                optimizer_status,
             )
             already_feasible = any(record.is_feasible for record in self.recorder.records())
             record = EvaluationRecord.now(
@@ -199,12 +245,21 @@ class ExperimentRunner:
                 experiment_phase=self.config.experiment_phase,
                 event_observed=is_feasible and not already_feasible,
                 evaluation_time=iteration,
+                measurement_status=measurement_status,
+                bandwidth_status=bandwidth_status,
+                bandwidth_lower_bound_hz=bandwidth_lower_bound_hz,
             )
             self.recorder.save(record)
             self.optimizer.save_state(self.optimizer_state_path)
 
         records = self.recorder.records()
-        successful = [record for record in records if record.simulation_status == "success"]
+        successful = [
+            record
+            for record in records
+            if record.simulation_status == "success"
+            and record.objective_value is not None
+            and record.constraint_violation is not None
+        ]
         best = (
             min(
                 successful,
@@ -319,7 +374,11 @@ def _write_summary(config: ExperimentConfig, result: ExperimentRunResult) -> Pat
 
 def _plot_progress(result: ExperimentRunResult) -> Path | None:
     """Plot measured objective progress without fabricating failed values."""
-    successful = [record for record in result.records if record.simulation_status == "success"]
+    successful = [
+        record
+        for record in result.records
+        if record.simulation_status == "success" and record.objective_value is not None
+    ]
     if not successful:
         return None
     import matplotlib.pyplot as plt
@@ -398,9 +457,12 @@ def execute_experiment(
     if config.circuit_name == "rc_lowpass":
         selected_simulator = simulator or RCLowPassNgspiceSimulator(config)
         selected_analyzer = analyzer or RCLowPassAnalyzer(config)
-    else:
+    elif config.circuit_name == "common_source":
         selected_simulator = simulator or CommonSourceNgspiceSimulator(config)
         selected_analyzer = analyzer or CommonSourceAnalyzer(config)
+    else:
+        selected_simulator = simulator or Sky130CommonSourceNgspiceSimulator(config)
+        selected_analyzer = analyzer or Sky130CommonSourceAnalyzer(config)
 
     runner = ExperimentRunner(
         config=config,
@@ -427,7 +489,16 @@ def execute_experiment(
         **result.budget,
     }
     model_metadata = None
-    if config.circuit_config is not None:
+    if isinstance(config.circuit_config, Sky130CommonSourceCircuitConfig):
+        model_metadata = config.circuit_config.model.metadata()
+        model_metadata.update(
+            {
+                "bandwidth_semantics_version": config.circuit_config.bandwidth_semantics_version,
+                "censoring_policy": config.circuit_config.censoring_policy,
+                "difficulty_protocol_version": config.circuit_config.difficulty_protocol_version,
+            }
+        )
+    elif config.circuit_config is not None:
         model = config.circuit_config.model
         model_metadata = {
             "model_path": str(model.require_library()),

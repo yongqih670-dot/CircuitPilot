@@ -15,11 +15,13 @@ from typing import Any, Mapping, Sequence
 
 import yaml
 
-from circuitpilot.common_source import analyze_common_source
 from circuitpilot.exceptions import CircuitPilotError, ConfigError, ResearchExperimentError, SimulationError
+from circuitpilot.experiments.analyzer import AnalysisOutcome, Sky130CommonSourceAnalyzer
 from circuitpilot.experiments.config import ExperimentConfig, load_experiment_config, write_experiment_config
 from circuitpilot.experiments.objectives import ObjectiveEvaluator
-from circuitpilot.experiments.simulation import CommonSourceNgspiceSimulator
+from circuitpilot.experiments.simulation import CommonSourceNgspiceSimulator, Sky130CommonSourceNgspiceSimulator
+from circuitpilot.common_source import analyze_common_source
+from circuitpilot.sky130_common_source import Sky130CommonSourceCircuitConfig
 from circuitpilot.research_artifacts import write_research_manifest
 from circuitpilot.run_directory import prepare_research_run_directory
 
@@ -28,6 +30,9 @@ CALIBRATION_COLUMNS = (
     "iteration",
     "parameters",
     "simulation_status",
+    "measurement_status",
+    "bandwidth_status",
+    "bandwidth_lower_bound_hz",
     "failure_type",
     "error_message",
     "ngspice_return_code",
@@ -128,15 +133,24 @@ def run_common_source_calibration(
     published_csv: str | Path | None = None,
 ) -> CalibrationResult:
     """Execute each deterministic grid point with exactly one real ngspice call."""
-    if config.circuit_name != "common_source":
-        raise ValueError("calibration supports only common_source")
+    if config.circuit_name not in {"common_source", "sky130_common_source"}:
+        raise ValueError("calibration supports transistor common-source benchmarks only")
     run = prepare_research_run_directory(None, resume=False, default_root=config.output_dir)
     (run.path / "runs").mkdir(parents=True, exist_ok=True)
     write_experiment_config(config, run.path / "calibration_config.yaml")
     ordered_names = tuple(parameter.name for parameter in config.search_space)
     rows: list[dict[str, Any]] = []
     ngspice_calls = 0
-    simulator = CommonSourceNgspiceSimulator(config)
+    simulator = (
+        CommonSourceNgspiceSimulator(config)
+        if config.circuit_name == "common_source"
+        else Sky130CommonSourceNgspiceSimulator(config)
+    )
+    sky_analyzer = (
+        Sky130CommonSourceAnalyzer(config)
+        if config.circuit_name == "sky130_common_source"
+        else None
+    )
     started = monotonic()
     for iteration, values in enumerate(product(*(grid[name] for name in ordered_names)), start=1):
         parameters = dict(zip(ordered_names, values))
@@ -155,15 +169,35 @@ def run_common_source_calibration(
         error_message = None
         returncode = None
         timed_out = False
-        metrics: dict[str, float] = {}
+        metrics: dict[str, float | None] = {}
+        measurement_status = None
+        bandwidth_status = None
+        bandwidth_lower_bound_hz = None
         try:
             simulation = simulator.evaluate(parameters, evidence, mark_call)
-            if simulation.operating_point is None:
-                raise ResearchExperimentError("calibration simulation has no operating point")
-            metrics = analyze_common_source(
-                simulation.response, simulation.operating_point
-            ).to_dict()
-            metrics.update(simulation.operating_point.device_quantities)
+            if sky_analyzer is not None:
+                outcome = sky_analyzer.extract(simulation, parameters)
+                assert isinstance(outcome, AnalysisOutcome)
+                metrics = outcome.metrics
+                measurement_status = outcome.measurement_status
+                bandwidth_status = outcome.bandwidth_status
+                bandwidth_lower_bound_hz = outcome.bandwidth_lower_bound_hz
+                if measurement_status != "complete":
+                    status = "measurement_incomplete"
+                    failure_type = (
+                        "InvalidResponse"
+                        if measurement_status == "invalid_response"
+                        else "AnalysisError"
+                    )
+                    error_message = outcome.message
+            else:
+                if simulation.operating_point is None:
+                    raise ResearchExperimentError("calibration simulation has no operating point")
+                metrics = analyze_common_source(
+                    simulation.response, simulation.operating_point
+                ).to_dict()
+                metrics.update(simulation.operating_point.device_quantities)
+                measurement_status = "complete"
         except (CircuitPilotError, OSError, ValueError) as exc:
             status = "simulation_failed" if isinstance(exc, SimulationError) else "evaluation_failed"
             failure_type = type(exc).__name__
@@ -178,6 +212,11 @@ def run_common_source_calibration(
                 "iteration": iteration,
                 "parameters": parameters,
                 "simulation_status": status,
+                "measurement_status": measurement_status or "",
+                "bandwidth_status": bandwidth_status or "",
+                "bandwidth_lower_bound_hz": (
+                    "" if bandwidth_lower_bound_hz is None else bandwidth_lower_bound_hz
+                ),
                 "failure_type": failure_type or "",
                 "error_message": error_message or "",
                 "ngspice_return_code": "" if returncode is None else returncode,
@@ -220,7 +259,10 @@ def run_common_source_calibration(
         model_metadata=(
             None
             if model is None
-            else {
+            else (
+                model.metadata()
+                if isinstance(config.circuit_config, Sky130CommonSourceCircuitConfig)
+                else {
                 "model_path": str(model.require_library()),
                 "model_library_sha256": model.library_sha256(),
                 "model_name": model.model_name,
@@ -228,7 +270,8 @@ def run_common_source_calibration(
                 "corner": model.corner,
                 "device_kind": model.device_kind,
                 "provenance": model.provenance,
-            }
+                }
+            )
         ),
     )
     return CalibrationResult(run.run_id, run.path, csv_path, grid_hash, ngspice_calls, successful, len(rows) - successful)
@@ -238,8 +281,8 @@ def annotate_calibration_with_frozen_spec(
     calibration_csv: str | Path, frozen_config: ExperimentConfig
 ) -> tuple[int, int]:
     """Annotate existing raw rows without launching or synthesizing simulations."""
-    if frozen_config.circuit_name != "common_source":
-        raise ValueError("frozen calibration specification must be common_source")
+    if frozen_config.circuit_name not in {"common_source", "sky130_common_source"}:
+        raise ValueError("frozen calibration specification must be common-source")
     source = Path(calibration_csv).resolve()
     try:
         with source.open("r", encoding="utf-8", newline="") as stream:
@@ -260,7 +303,15 @@ def annotate_calibration_with_frozen_spec(
         violation: float | None = None
         if raw["simulation_status"] == "success":
             successful += 1
-            evaluation = evaluator.evaluate(metrics)
+            evaluation = evaluator.evaluate(
+                metrics,
+                bandwidth_status=raw.get("bandwidth_status") or None,
+                bandwidth_lower_bound_hz=(
+                    None
+                    if raw.get("bandwidth_lower_bound_hz", "") == ""
+                    else float(raw["bandwidth_lower_bound_hz"])
+                ),
+            )
             is_feasible = evaluation.is_feasible
             violation = evaluation.constraint_violation
             feasible += int(is_feasible)

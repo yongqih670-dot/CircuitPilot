@@ -9,6 +9,7 @@ from typing import Iterable
 import matplotlib.pyplot as plt
 
 from circuitpilot.experiments.statistics import load_evaluations
+from circuitpilot.experiments.survival import kaplan_meier
 
 
 def plot_baseline(run_directories: Iterable[str | Path], output_directory: str | Path) -> tuple[Path, ...]:
@@ -80,6 +81,26 @@ def plot_baseline(run_directories: Iterable[str | Path], output_directory: str |
     destination = output / "simulations_to_first_feasible.png"; figure.savefig(destination, dpi=150); plt.close(figure); destinations.append(destination)
 
     figure, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
+    for method, method_runs in sorted(methods.items()):
+        horizon = max(len(rows) for rows in method_runs)
+        observations = []
+        for rows in method_runs:
+            first = next((row["iteration"] for row in rows if row["is_feasible"]), None)
+            observations.append((first if first is not None else len(rows), first is not None))
+        estimate = kaplan_meier(observations, horizon=horizon)
+        xs = [0] + [point.time for point in estimate.points]
+        ys = [1.0] + [point.survival_probability for point in estimate.points]
+        axis.step(xs, ys, where="post", label=f"{method} (RMST={estimate.rmst:.2f})")
+    axis.set(
+        xlabel="Simulation evaluations",
+        ylabel="Probability not yet feasible",
+        title="Kaplan-Meier time to first feasible",
+        ylim=(-0.02, 1.02),
+    )
+    axis.grid(True, linestyle=":", alpha=0.5); axis.legend()
+    destination = output / "kaplan_meier_time_to_feasible.png"; figure.savefig(destination, dpi=150); plt.close(figure); destinations.append(destination)
+
+    figure, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
     for _, rows in runs:
         best = None
         xs, ys = [], []
@@ -98,7 +119,10 @@ def plot_baseline(run_directories: Iterable[str | Path], output_directory: str |
     common_source_rows = [
         row for _, rows in runs for row in rows
         if row["simulation_status"] == "success"
-        and {"gain_db", "bandwidth_hz", "dc_power_w"} <= set(row["raw_metrics"])
+        and all(
+            row["raw_metrics"].get(name) is not None
+            for name in ("gain_db", "bandwidth_hz", "dc_power_w")
+        )
     ]
     if common_source_rows:
         for x_metric, y_metric, filename, xlabel, ylabel in (

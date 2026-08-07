@@ -25,7 +25,10 @@ def build_parser() -> argparse.ArgumentParser:
         description="Run a fair, budgeted, reproducible CircuitPilot experiment."
     )
     parser.add_argument("--config", type=Path, help="unified experiment YAML")
-    parser.add_argument("--circuit", choices=("rc_lowpass",))
+    parser.add_argument(
+        "--circuit",
+        choices=("rc_lowpass", "common_source", "sky130_common_source"),
+    )
     parser.add_argument("--method", choices=("random", "de", "tpe", "bo"))
     parser.add_argument("--seed", type=int)
     parser.add_argument("--budget", type=int)
@@ -40,6 +43,10 @@ def _default_config(arguments: argparse.Namespace) -> ExperimentConfig:
     """Build the documented RC random baseline through the same config parser."""
     if arguments.circuit is None or arguments.method is None:
         raise ValueError("--circuit and --method are required without --config")
+    if arguments.circuit != "rc_lowpass":
+        raise ValueError(
+            "transistor benchmarks require --config so model provenance and hashes are explicit"
+        )
     return experiment_config_from_mapping(
         {
             "experiment": {

@@ -33,10 +33,18 @@ class ObjectiveEvaluator:
         """Bind the common objective/constraint definitions."""
         self._config = config
 
-    def evaluate(self, metrics: Mapping[str, float]) -> ObjectiveEvaluation:
+    def evaluate(
+        self,
+        metrics: Mapping[str, float | None],
+        *,
+        bandwidth_status: str | None = None,
+        bandwidth_lower_bound_hz: float | None = None,
+    ) -> ObjectiveEvaluation:
         """Convert measured physical metrics into optimizer-facing scalars."""
         normalized: dict[str, float] = {}
         for name, value in metrics.items():
+            if value is None:
+                continue
             numeric = float(value)
             if not isfinite(numeric):
                 raise ResearchExperimentError(f"metric '{name}' must be finite")
@@ -45,11 +53,20 @@ class ObjectiveEvaluator:
         constraint_components: dict[str, float] = {}
         total_violation = 0.0
         for definition in self._config.constraints:
-            if definition.metric not in normalized:
+            if definition.metric in normalized:
+                metric = normalized[definition.metric]
+            elif (
+                definition.metric == "bandwidth_hz"
+                and definition.operator is ConstraintOperator.GREATER_EQUAL
+                and bandwidth_status == "right_censored"
+                and bandwidth_lower_bound_hz is not None
+                and isfinite(float(bandwidth_lower_bound_hz))
+            ):
+                metric = float(bandwidth_lower_bound_hz)
+            else:
                 raise ResearchExperimentError(
                     f"required constraint metric '{definition.metric}' is unavailable"
                 )
-            metric = normalized[definition.metric]
             scale = max(abs(definition.threshold), 1e-12)
             if definition.operator is ConstraintOperator.GREATER_EQUAL:
                 violation = max(0.0, definition.threshold - metric) / scale
