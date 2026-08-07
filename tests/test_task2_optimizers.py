@@ -1,6 +1,7 @@
 from dataclasses import replace
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from circuitpilot.experiments.budget import SimulationBudget
@@ -14,6 +15,7 @@ from circuitpilot.experiments.optimizer import (
     create_optimizer,
 )
 from circuitpilot.experiments.seeding import initialize_seeds
+from circuitpilot.experiments.optimizers.base import SearchSpaceCodec
 
 
 def _config(method: str, seed: int = 7, budget: int = 20, optimizer_config=None):
@@ -99,6 +101,20 @@ def test_de_stops_at_budget_mid_generation() -> None:
     assert budget.evaluations_total == 10
     assert phases.count("initialization") == 8
     assert phases.count("generation") == 2
+
+
+def test_log_decode_clamps_exact_unit_cube_endpoint_to_declared_bound() -> None:
+    config = experiment_config_from_mapping({
+        "experiment": {"name": "endpoint", "circuit": "rc_lowpass", "method": "de", "seed": 0, "simulation_budget": 8},
+        "search_space": {
+            "resistance": {"type": "float", "low": 0.42e-6, "high": 7.0e-6, "log": True},
+            "capacitance": {"type": "float", "low": 0.15e-6, "high": 1.0e-6, "log": True},
+        },
+        "objectives": {"bandwidth": {"type": "target", "target": 10_000.0}},
+    })
+    candidate = SearchSpaceCodec(config).decode(np.ones(2))
+    assert candidate == {"resistance": 7.0e-6, "capacitance": 1.0e-6}
+    config.validate_parameters(candidate)
 
 
 def test_bo_switches_from_initialization_to_model_based_phase() -> None:

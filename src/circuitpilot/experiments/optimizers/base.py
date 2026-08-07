@@ -171,6 +171,11 @@ class SearchSpaceCodec:
                 value = 10.0 ** (log10(definition.low) + unit * (log10(definition.high) - log10(definition.low)))
             else:
                 value = definition.low + unit * (definition.high - definition.low)
+            # Transcendental log decoding can round an exact unit-cube endpoint
+            # a few ULPs outside the declared physical interval.  Clamp the
+            # decoded value, not only its coordinate, so valid optimizer bounds
+            # never become invalid candidates at the Runner boundary.
+            value = max(float(definition.low), min(float(definition.high), value))
             result[definition.name] = int(round(value)) if definition.parameter_type is ParameterType.INTEGER else float(value)
         return result
 
