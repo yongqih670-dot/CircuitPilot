@@ -508,4 +508,18 @@ python -m circuitpilot.experiments.run --circuit rc_lowpass --method random --se
 
 Every run receives a unique directory under `research_runs/` containing the resolved `experiment_config.yaml`, uniform `evaluations.csv` and SQLite records, per-candidate netlist/log/raw output, optimizer state, plots, summary, and the environment-fingerprinted `research_manifest.json`. Research comparison rules are defined in `research/EXPERIMENT_PROTOCOL.md`.
 
+Research Task 2 adds four traditional methods through the same Runner: `random`, `de`, `tpe`, and `bo`. The fixed, directly comparable configurations are under `experiments/configs/`. Run one method with:
+
+```console
+python -m circuitpilot.experiments.run --config experiments/configs/rc_baseline_tpe.yaml
+```
+
+Run the complete 4-method × 3-seed × 20-evaluation validation suite with:
+
+```console
+python -m circuitpilot.experiments.batch --config experiments/configs/rc_baseline_suite.yaml
+```
+
+The batch command refuses unfair combinations before producing comparison tables, then writes `baseline_results.csv`, `baseline_summary.csv`, `fairness_validation.json`, and four plots sourced only from each run's real `evaluations.csv`. Task 2 design and limitations are documented in [research/BASELINE_DESIGN.md](research/BASELINE_DESIGN.md); the actual validation record is [research/TASK2_BASELINE_REPORT.md](research/TASK2_BASELINE_REPORT.md).
+
 集成测试会自动检测本机 ngspice；未安装时明确显示为 `SKIPPED`。

@@ -30,5 +30,6 @@ def test_research_lock_pins_every_dependency_exactly() -> None:
     assert all("==" in requirement for requirement in requirements)
     assert any(requirement.lower().startswith("numpy==") for requirement in requirements)
     assert any(requirement.lower().startswith("scipy==") for requirement in requirements)
+    assert any(requirement.lower().startswith("optuna==") for requirement in requirements)
     assert any(requirement.lower().startswith("pyyaml==") for requirement in requirements)
     assert any(requirement.lower().startswith("pytest==") for requirement in requirements)

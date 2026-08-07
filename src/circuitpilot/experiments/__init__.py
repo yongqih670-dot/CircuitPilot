@@ -10,6 +10,7 @@ from circuitpilot.experiments.config import (
     ObjectiveType,
     ParameterType,
     SearchParameter,
+    SuccessCriterion,
     experiment_config_from_mapping,
     load_experiment_config,
     write_experiment_config,
@@ -24,11 +25,15 @@ from circuitpilot.experiments.objectives import (
     ObjectiveEvaluator,
 )
 from circuitpilot.experiments.optimizer import (
+    BayesianOptimizationOptimizer,
+    DifferentialEvolutionOptimizer,
     Optimizer,
     OptimizerFeedback,
     RandomOptimizer,
+    TPEOptimizer,
     create_optimizer,
 )
+from circuitpilot.experiments.fairness import FairnessValidator
 from circuitpilot.experiments.recorder import (
     EVALUATION_COLUMNS,
     EvaluationRecord,
@@ -43,6 +48,8 @@ from circuitpilot.experiments.runner import (
 __all__ = [
     "ConstraintDefinition",
     "ConstraintOperator",
+    "BayesianOptimizationOptimizer",
+    "DifferentialEvolutionOptimizer",
     "ExperimentConfig",
     "NgspiceConfig",
     "ObjectiveEvaluation",
@@ -53,7 +60,10 @@ __all__ = [
     "Optimizer",
     "OptimizerFeedback",
     "RandomOptimizer",
+    "TPEOptimizer",
+    "FairnessValidator",
     "SearchParameter",
+    "SuccessCriterion",
     "SeedContext",
     "SeedRegistry",
     "SimulationBudget",
