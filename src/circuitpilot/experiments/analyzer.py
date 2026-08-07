@@ -7,6 +7,7 @@ from typing import Mapping, Protocol
 
 from circuitpilot.analysis import find_cutoff_frequency
 from circuitpilot.circuit_config import CircuitType
+from circuitpilot.common_source import analyze_common_source
 from circuitpilot.exceptions import AnalysisError
 from circuitpilot.experiments.config import ExperimentConfig
 from circuitpilot.experiments.simulation import CandidateSimulation
@@ -117,3 +118,63 @@ class RCLowPassAnalyzer:
                 f"metric '{name}' is not available for the rc_lowpass research baseline"
             )
         return metrics
+
+
+class CommonSourceAnalyzer:
+    """Extract transistor metrics only from parsed ngspice `.op` and `.ac` data."""
+
+    _SUPPORTED = {
+        "gain_db",
+        "low_frequency_gain_db",
+        "peak_gain_db",
+        "bandwidth_hz",
+        "bandwidth_3db_hz",
+        "dc_power_w",
+        "dc_supply_power",
+        "output_dc_voltage",
+        "supply_current_a",
+        "vgs",
+        "vds",
+        "gm",
+        "gds",
+        "vth",
+        "vdsat",
+    }
+
+    def __init__(self, config: ExperimentConfig) -> None:
+        """Reject requests for metrics that this physical analyzer cannot emit."""
+        if config.circuit_name != "common_source":
+            raise ValueError("CommonSourceAnalyzer requires common_source config")
+        requested = {
+            definition.metric for definition in (*config.objectives, *config.constraints)
+        }
+        unsupported = sorted(requested - self._SUPPORTED)
+        if unsupported:
+            raise ValueError(
+                "unsupported common_source metric(s): " + ", ".join(unsupported)
+            )
+        self._requested = requested
+
+    def extract(
+        self,
+        simulation: CandidateSimulation,
+        parameters: Mapping[str, float | int],
+    ) -> dict[str, float]:
+        """Return requested physical metrics and available MOS OP quantities."""
+        del parameters
+        if simulation.operating_point is None:
+            raise AnalysisError("common-source simulation has no parsed operating point")
+        measured = analyze_common_source(
+            simulation.response, simulation.operating_point
+        ).to_dict()
+        measured.update(simulation.operating_point.device_quantities)
+        missing = sorted(self._requested - set(measured))
+        if missing:
+            raise AnalysisError(
+                "requested MOS operating-point quantity is unsupported by this model/ngspice: "
+                + ", ".join(missing)
+            )
+        return {
+            **{name: measured[name] for name in self._requested},
+            "sample_count": float(len(simulation.response)),
+        }

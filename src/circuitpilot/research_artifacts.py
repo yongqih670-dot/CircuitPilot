@@ -80,7 +80,9 @@ def _classify_artifact(path: Path) -> str:
         return "netlist"
     if path.name.lower() == "ngspice.log":
         return "ngspice_log"
-    if path.name.lower() == "ac_results.dat":
+    if path.name.lower() == "ac_results.dat" or path.name.lower().endswith(
+        "operating_point.dat"
+    ):
         return "ngspice_output"
     if path.suffix.lower() == ".csv":
         return "tabular_result"
@@ -144,6 +146,8 @@ def write_research_manifest(
     source_config_path: str | Path | None = None,
     experiment_name: str | None = None,
     experiment_id: int | None = None,
+    benchmark_config_hash: str | None = None,
+    model_metadata: Mapping[str, Any] | None = None,
 ) -> Path:
     """Write a self-contained, hash-inventoried research run manifest.
 
@@ -180,6 +184,7 @@ def write_research_manifest(
         "parameter_sweep",
         "optimization",
         "research_experiment",
+        "calibration",
     }:
         raise ResearchArtifactError(f"unsupported research workflow '{workflow}'")
     if isinstance(circuit_type, CircuitType):
@@ -271,7 +276,9 @@ def write_research_manifest(
             "ngspice_executable": environment["ngspice_executable_path"],
             "metric_source": "parsed_ngspice_output",
             "raw_output_required": True,
+            "benchmark_config_hash": benchmark_config_hash,
         },
+        "transistor_model": _json_value(model_metadata),
         "environment": environment,
         "configuration": _json_value(configuration),
         "parameters": _json_value(parameters),

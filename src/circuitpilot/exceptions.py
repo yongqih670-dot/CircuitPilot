@@ -16,6 +16,17 @@ class ConfigError(CircuitPilotError):
 class SimulationError(CircuitPilotError):
     """Raised when ngspice cannot be started or finishes unsuccessfully."""
 
+    def __init__(
+        self,
+        message: str,
+        *,
+        returncode: int | None = None,
+        timed_out: bool = False,
+    ) -> None:
+        super().__init__(message)
+        self.returncode = returncode
+        self.timed_out = timed_out
+
 
 class ParseError(CircuitPilotError):
     """Raised when an ngspice result file is missing or malformed."""

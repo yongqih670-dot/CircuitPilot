@@ -12,6 +12,11 @@ from typing import Any, Mapping
 
 import yaml
 
+from circuitpilot.common_source import (
+    COMMON_SOURCE_PARAMETER_NAMES,
+    CommonSourceCircuitConfig,
+    common_source_config_from_mapping,
+)
 from circuitpilot.exceptions import ConfigError
 
 
@@ -19,6 +24,12 @@ ParameterValue = float | int | str | bool
 RC_METRIC_DEFINITIONS = {
     "bandwidth": "interpolated -3 dB cutoff from parsed real ngspice AC output",
     "sample_count": "number of parsed ngspice AC samples",
+}
+COMMON_SOURCE_METRIC_DEFINITIONS = {
+    "gain_db": "low-frequency magnitude gain from parsed real ngspice AC output",
+    "bandwidth_hz": "interpolated post-peak -3 dB bandwidth from parsed real ngspice AC output",
+    "dc_power_w": "abs(VDD * I(VDD)) from parsed real ngspice operating-point output",
+    "output_dc_voltage": "V(out) from parsed real ngspice operating-point output",
 }
 
 
@@ -101,6 +112,9 @@ class SearchParameter:
     high: float | None = None
     log: bool = False
     choices: tuple[ParameterValue, ...] = ()
+    unit: str | None = None
+    technology_low: float | None = None
+    technology_high: float | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.name, str) or not self.name.strip():
@@ -108,7 +122,13 @@ class SearchParameter:
         if not isinstance(self.parameter_type, ParameterType):
             raise ValueError("search parameter type is invalid")
         if self.parameter_type is ParameterType.CATEGORICAL:
-            if self.low is not None or self.high is not None or self.log:
+            if (
+                self.low is not None
+                or self.high is not None
+                or self.log
+                or self.technology_low is not None
+                or self.technology_high is not None
+            ):
                 raise ValueError(f"categorical search_space.{self.name} accepts only choices")
             if len(self.choices) < 2 or len(set(self.choices)) != len(self.choices):
                 raise ValueError(
@@ -120,6 +140,8 @@ class SearchParameter:
                 if isinstance(choice, float) and not isfinite(choice):
                     raise ValueError(f"search_space.{self.name}.choices must be finite")
             return
+        if self.unit is not None and (not isinstance(self.unit, str) or not self.unit.strip()):
+            raise ValueError(f"search_space.{self.name}.unit must be null or non-empty")
         if self.choices:
             raise ValueError(f"numeric search_space.{self.name} cannot define choices")
         if self.low is None or self.high is None:
@@ -135,6 +157,25 @@ class SearchParameter:
         if self.parameter_type is ParameterType.INTEGER:
             if not float(self.low).is_integer() or not float(self.high).is_integer():
                 raise ValueError(f"integer search_space.{self.name} bounds must be integers")
+        if (self.technology_low is None) != (self.technology_high is None):
+            raise ValueError(
+                f"search_space.{self.name}.technology_limits requires low and high"
+            )
+        if self.technology_low is not None and self.technology_high is not None:
+            technology_low = _finite_number(
+                self.technology_low, f"search_space.{self.name}.technology_limits.low"
+            )
+            technology_high = _finite_number(
+                self.technology_high, f"search_space.{self.name}.technology_limits.high"
+            )
+            if technology_high <= technology_low:
+                raise ValueError(
+                    f"search_space.{self.name}.technology_limits.high must exceed low"
+                )
+            if self.low < technology_low or self.high > technology_high:
+                raise ValueError(
+                    f"search_space.{self.name} exceeds declared technology limits"
+                )
 
     def contains(self, value: Any) -> bool:
         """Return whether ``value`` is a valid member of this dimension."""
@@ -152,12 +193,20 @@ class SearchParameter:
         """Return a stable YAML-compatible dimension definition."""
         if self.parameter_type is ParameterType.CATEGORICAL:
             return {"type": self.parameter_type.value, "choices": list(self.choices)}
-        return {
+        result = {
             "type": self.parameter_type.value,
             "low": self.low,
             "high": self.high,
             "log": self.log,
         }
+        if self.unit is not None:
+            result["unit"] = self.unit
+        if self.technology_low is not None and self.technology_high is not None:
+            result["technology_limits"] = {
+                "low": self.technology_low,
+                "high": self.technology_high,
+            }
+        return result
 
 
 @dataclass(frozen=True, slots=True)
@@ -190,6 +239,7 @@ class ConstraintDefinition:
     operator: ConstraintOperator
     threshold: float
     frequency_hz: float | None = None
+    constraint_id: str | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.metric, str) or not self.metric.strip():
@@ -199,16 +249,31 @@ class ConstraintDefinition:
         _finite_number(self.threshold, f"constraints.{self.metric}.threshold")
         if self.frequency_hz is not None:
             _positive_number(self.frequency_hz, f"constraints.{self.metric}.frequency_hz")
+        if self.constraint_id is not None and (
+            not isinstance(self.constraint_id, str) or not self.constraint_id.strip()
+        ):
+            raise ValueError("constraint_id must be null or non-empty")
 
 
 @dataclass(frozen=True, slots=True)
 class SuccessCriterion:
     """Shared, method-independent definition of a feasible design."""
 
-    metric: str = "bandwidth"
-    relative_error_threshold: float = 0.05
+    metric: str | None = "bandwidth"
+    relative_error_threshold: float | None = 0.05
+    criterion_type: str = "target_relative_error"
 
     def __post_init__(self) -> None:
+        if self.criterion_type not in {"target_relative_error", "all_constraints"}:
+            raise ValueError(
+                "success_criterion.type must be target_relative_error or all_constraints"
+            )
+        if self.criterion_type == "all_constraints":
+            if self.metric is not None or self.relative_error_threshold is not None:
+                raise ValueError(
+                    "all_constraints success criterion cannot define metric or relative_error_threshold"
+                )
+            return
         if not isinstance(self.metric, str) or not self.metric.strip():
             raise ValueError("success_criterion.metric must be non-empty")
         threshold = _positive_number(
@@ -307,14 +372,17 @@ class ExperimentConfig:
     optimizer_config: Mapping[str, Any] = field(default_factory=dict)
     ngspice_config: NgspiceConfig = NgspiceConfig()
     pvt_config: Mapping[str, Any] = field(default_factory=dict)
+    circuit_config: CommonSourceCircuitConfig | None = None
+    benchmark_config_hash: str | None = None
+    experiment_phase: str = "baseline"
     resume: bool = False
     timeout: float = 60.0
 
     def __post_init__(self) -> None:
         if not isinstance(self.experiment_name, str) or not self.experiment_name.strip():
             raise ValueError("experiment_name must be non-empty")
-        if self.circuit_name != "rc_lowpass":
-            raise ValueError("Research Task 2 supports only circuit_name='rc_lowpass'")
+        if self.circuit_name not in {"rc_lowpass", "common_source"}:
+            raise ValueError("research circuit must be rc_lowpass or common_source")
         if not isinstance(self.method, str) or not self.method.strip():
             raise ValueError("method must be non-empty")
         if isinstance(self.seed, bool) or not isinstance(self.seed, int) or self.seed < 0:
@@ -327,24 +395,46 @@ class ExperimentConfig:
         names = [item.name for item in self.search_space]
         if len(set(names)) != len(names):
             raise ValueError("search_space parameter names must be unique")
-        if set(names) != {"resistance", "capacitance"}:
-            raise ValueError("rc_lowpass search_space must contain resistance and capacitance")
+        expected_parameters = (
+            {"resistance", "capacitance"}
+            if self.circuit_name == "rc_lowpass"
+            else COMMON_SOURCE_PARAMETER_NAMES
+        )
+        if set(names) != expected_parameters:
+            readable = ", ".join(sorted(expected_parameters))
+            raise ValueError(
+                f"{self.circuit_name} search_space must contain exactly: {readable}"
+            )
+        if self.circuit_name == "common_source":
+            for parameter in self.search_space:
+                if parameter.unit is None:
+                    raise ValueError(
+                        f"common_source search_space.{parameter.name} requires unit"
+                    )
+                if parameter.technology_low is None or parameter.technology_high is None:
+                    raise ValueError(
+                        f"common_source search_space.{parameter.name} requires technology_limits"
+                    )
         if not self.objectives or not all(isinstance(item, ObjectiveDefinition) for item in self.objectives):
             raise ValueError("objectives must contain ObjectiveDefinition objects")
         if len({item.metric for item in self.objectives}) != len(self.objectives):
             raise ValueError("objective metric names must be unique")
         if not all(isinstance(item, ConstraintDefinition) for item in self.constraints):
             raise ValueError("constraints must contain ConstraintDefinition objects")
-        if len({item.metric for item in self.constraints}) != len(self.constraints):
-            raise ValueError("constraint metric names must be unique")
+        constraint_ids = [item.constraint_id or item.metric for item in self.constraints]
+        if len(set(constraint_ids)) != len(constraint_ids):
+            raise ValueError("constraint identifiers must be unique")
         if not isinstance(self.success_criterion, SuccessCriterion):
             raise ValueError("success_criterion must be SuccessCriterion")
         targets = {
             item.metric: item.target for item in self.objectives
             if item.objective_type is ObjectiveType.TARGET
         }
-        if self.success_criterion.metric not in targets:
-            raise ValueError("success_criterion.metric must name a target objective")
+        if self.success_criterion.criterion_type == "target_relative_error":
+            if self.success_criterion.metric not in targets:
+                raise ValueError("success_criterion.metric must name a target objective")
+        elif not self.constraints:
+            raise ValueError("all_constraints success criterion requires constraints")
         if not isinstance(self.optimizer_config, Mapping):
             raise ValueError("optimizer_config must be a mapping")
         forbidden = {"seed", "random_seed", "random_state", "sampler_seed"}
@@ -356,7 +446,26 @@ class ExperimentConfig:
         if not isinstance(self.ngspice_config, NgspiceConfig):
             raise ValueError("ngspice_config must be NgspiceConfig")
         if not isinstance(self.pvt_config, Mapping) or self.pvt_config:
-            raise ValueError("Research Task 2 requires an explicit empty pvt_config")
+            raise ValueError("Task 3 requires an explicit empty pvt_config")
+        if self.circuit_name == "common_source":
+            if not isinstance(self.circuit_config, CommonSourceCircuitConfig):
+                raise ValueError("common_source requires a typed circuit_config")
+            self.circuit_config.model.require_library()
+        elif self.circuit_config is not None:
+            raise ValueError("rc_lowpass cannot define circuit_config")
+        if self.benchmark_config_hash is not None:
+            if (
+                not isinstance(self.benchmark_config_hash, str)
+                or len(self.benchmark_config_hash) != 64
+                or any(character not in "0123456789abcdef" for character in self.benchmark_config_hash)
+            ):
+                raise ValueError("benchmark_config_hash must be a lowercase SHA-256 hex string")
+            if self.benchmark_config_hash != self.computed_benchmark_hash():
+                raise ValueError(
+                    "benchmark_config_hash does not match the resolved frozen benchmark configuration"
+                )
+        if self.experiment_phase not in {"baseline", "smoke", "calibration"}:
+            raise ValueError("experiment.phase must be baseline, smoke, or calibration")
         if not isinstance(self.resume, bool):
             raise ValueError("resume must be a boolean")
         _positive_number(self.timeout, "timeout")
@@ -387,13 +496,18 @@ class ExperimentConfig:
                 raise ValueError(f"candidate parameter '{name}' is outside its validated search space")
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        metric_definitions = (
+            RC_METRIC_DEFINITIONS
+            if self.circuit_name == "rc_lowpass"
+            else COMMON_SOURCE_METRIC_DEFINITIONS
+        )
+        result = {
             "experiment": {
                 "name": self.experiment_name, "circuit": self.circuit_name,
                 "method": self.method, "seed": self.seed,
                 "simulation_budget": self.simulation_budget,
                 "output_dir": self.output_dir.as_posix(), "resume": self.resume,
-                "timeout": self.timeout,
+                "timeout": self.timeout, "phase": self.experiment_phase,
             },
             "search_space": {item.name: item.to_dict() for item in self.search_space},
             "objectives": {
@@ -405,14 +519,22 @@ class ExperimentConfig:
                 } for item in self.objectives
             },
             "constraints": {
-                item.metric: {
+                item.constraint_id or item.metric: {
+                    **({"metric": item.metric} if item.constraint_id else {}),
                     "operator": item.operator.value, "threshold": item.threshold,
                     **({"frequency_hz": item.frequency_hz} if item.frequency_hz is not None else {}),
                 } for item in self.constraints
             },
             "success_criterion": {
-                "metric": self.success_criterion.metric,
-                "relative_error_threshold": self.success_criterion.relative_error_threshold,
+                "type": self.success_criterion.criterion_type,
+                **(
+                    {
+                        "metric": self.success_criterion.metric,
+                        "relative_error_threshold": self.success_criterion.relative_error_threshold,
+                    }
+                    if self.success_criterion.criterion_type == "target_relative_error"
+                    else {}
+                ),
             },
             "optimizer_config": dict(self.optimizer_config),
             "ngspice_config": {
@@ -421,9 +543,68 @@ class ExperimentConfig:
                 "stop_frequency_hz": self.ngspice_config.stop_frequency_hz,
                 "points_per_decade": self.ngspice_config.points_per_decade,
             },
-            "metric_definitions": dict(RC_METRIC_DEFINITIONS),
+            "metric_definitions": dict(metric_definitions),
             "pvt_config": dict(self.pvt_config),
         }
+        if self.circuit_config is not None:
+            result["circuit_config"] = self.circuit_config.to_dict()
+        if self.benchmark_config_hash is not None:
+            result["benchmark_config_hash"] = self.benchmark_config_hash
+        return result
+
+    def computed_benchmark_hash(self) -> str:
+        """Hash all circuit semantics shared by every benchmark method/seed."""
+        metric_definitions = (
+            RC_METRIC_DEFINITIONS
+            if self.circuit_name == "rc_lowpass"
+            else COMMON_SOURCE_METRIC_DEFINITIONS
+        )
+        payload: dict[str, Any] = {
+            "circuit": self.circuit_name,
+            "search_space": {item.name: item.to_dict() for item in self.search_space},
+            "objectives": [
+                {
+                    "metric": item.metric,
+                    "type": item.objective_type.value,
+                    "target": item.target,
+                    "weight": item.weight,
+                    "frequency_hz": item.frequency_hz,
+                }
+                for item in self.objectives
+            ],
+            "constraints": [
+                {
+                    "id": item.constraint_id or item.metric,
+                    "metric": item.metric,
+                    "operator": item.operator.value,
+                    "threshold": item.threshold,
+                    "frequency_hz": item.frequency_hz,
+                }
+                for item in self.constraints
+            ],
+            "success_criterion": {
+                "type": self.success_criterion.criterion_type,
+                "metric": self.success_criterion.metric,
+                "relative_error_threshold": self.success_criterion.relative_error_threshold,
+            },
+            "ngspice_config": {
+                "start_frequency_hz": self.ngspice_config.start_frequency_hz,
+                "stop_frequency_hz": self.ngspice_config.stop_frequency_hz,
+                "points_per_decade": self.ngspice_config.points_per_decade,
+            },
+            "pvt_config": dict(self.pvt_config),
+            "metric_definitions": dict(metric_definitions),
+        }
+        if self.circuit_config is not None:
+            circuit_payload = self.circuit_config.to_dict()
+            circuit_payload["mosfet_model"] = dict(circuit_payload["mosfet_model"])
+            circuit_payload["mosfet_model"]["model_library"] = "<content-addressed-model>"
+            payload["circuit_config"] = circuit_payload
+            payload["model_library_sha256"] = self.circuit_config.model.library_sha256()
+        encoded = json.dumps(
+            payload, sort_keys=True, separators=(",", ":"), allow_nan=False
+        ).encode("utf-8")
+        return sha256(encoded).hexdigest()
 
     def identity_sha256(self) -> str:
         payload = self.to_dict()
@@ -456,18 +637,60 @@ def _parse_search_space(value: Any) -> tuple[SearchParameter, ...]:
         except (TypeError, ValueError):
             raise ConfigError(f"search_space.{name}.type must be float, int, or categorical") from None
         if parameter_type is ParameterType.CATEGORICAL:
-            _keys(definition, required={"type", "choices"}, context=f"search_space.{name}")
+            _keys(
+                definition,
+                required={"type", "choices"},
+                optional={"unit"},
+                context=f"search_space.{name}",
+            )
             raw_choices = definition["choices"]
             if not isinstance(raw_choices, list):
                 raise ConfigError(f"search_space.{name}.choices must be a YAML list")
-            arguments = {"name": name, "parameter_type": parameter_type, "choices": tuple(raw_choices)}
+            arguments = {
+                "name": name,
+                "parameter_type": parameter_type,
+                "choices": tuple(raw_choices),
+                "unit": definition.get("unit"),
+            }
         else:
-            _keys(definition, required={"type", "low", "high"}, optional={"log"}, context=f"search_space.{name}")
+            _keys(
+                definition,
+                required={"type", "low", "high"},
+                optional={"log", "unit", "technology_limits"},
+                context=f"search_space.{name}",
+            )
+            technology_limits = definition.get("technology_limits")
+            if technology_limits is not None:
+                technology_limits = _mapping(
+                    technology_limits, f"search_space.{name}.technology_limits"
+                )
+                _keys(
+                    technology_limits,
+                    required={"low", "high"},
+                    context=f"search_space.{name}.technology_limits",
+                )
             arguments = {
                 "name": name, "parameter_type": parameter_type,
                 "low": _finite_number(definition["low"], f"search_space.{name}.low"),
                 "high": _finite_number(definition["high"], f"search_space.{name}.high"),
                 "log": definition.get("log", False),
+                "unit": definition.get("unit"),
+                "technology_low": (
+                    None
+                    if technology_limits is None
+                    else _finite_number(
+                        technology_limits["low"],
+                        f"search_space.{name}.technology_limits.low",
+                    )
+                ),
+                "technology_high": (
+                    None
+                    if technology_limits is None
+                    else _finite_number(
+                        technology_limits["high"],
+                        f"search_space.{name}.technology_limits.high",
+                    )
+                ),
             }
         try:
             parameters.append(SearchParameter(**arguments))
@@ -498,14 +721,21 @@ def _parse_objectives(value: Any) -> tuple[ObjectiveDefinition, ...]:
 def _parse_constraints(value: Any) -> tuple[ConstraintDefinition, ...]:
     mapping = _mapping(value, "constraints")
     result = []
-    for metric, raw in mapping.items():
-        definition = _mapping(raw, f"constraints.{metric}")
-        _keys(definition, required={"operator", "threshold"}, optional={"frequency_hz"}, context=f"constraints.{metric}")
+    for constraint_id, raw in mapping.items():
+        definition = _mapping(raw, f"constraints.{constraint_id}")
+        _keys(
+            definition,
+            required={"operator", "threshold"},
+            optional={"metric", "frequency_hz"},
+            context=f"constraints.{constraint_id}",
+        )
+        metric = definition.get("metric", constraint_id)
         try:
             result.append(ConstraintDefinition(
                 metric=metric, operator=ConstraintOperator(definition["operator"]),
                 threshold=_finite_number(definition["threshold"], f"constraints.{metric}.threshold"),
                 frequency_hz=None if "frequency_hz" not in definition else _positive_number(definition["frequency_hz"], f"constraints.{metric}.frequency_hz"),
+                constraint_id=(constraint_id if metric != constraint_id else None),
             ))
         except (TypeError, ValueError) as exc:
             raise ConfigError(str(exc)) from exc
@@ -528,32 +758,80 @@ def _parse_ngspice_config(value: Any) -> NgspiceConfig:
 
 def _parse_success(value: Any) -> SuccessCriterion:
     mapping = _mapping(value, "success_criterion")
-    _keys(mapping, required={"metric", "relative_error_threshold"}, context="success_criterion")
+    criterion_type = mapping.get("type", "target_relative_error")
+    if criterion_type == "all_constraints":
+        _keys(mapping, required={"type"}, context="success_criterion")
+        try:
+            return SuccessCriterion(
+                metric=None,
+                relative_error_threshold=None,
+                criterion_type="all_constraints",
+            )
+        except ValueError as exc:
+            raise ConfigError(str(exc)) from exc
+    _keys(
+        mapping,
+        required={"metric", "relative_error_threshold"},
+        optional={"type"},
+        context="success_criterion",
+    )
     try:
         return SuccessCriterion(
             metric=mapping["metric"],
             relative_error_threshold=_positive_number(mapping["relative_error_threshold"], "success_criterion.relative_error_threshold"),
+            criterion_type=criterion_type,
         )
     except ValueError as exc:
         raise ConfigError(str(exc)) from exc
 
 
-def experiment_config_from_mapping(value: Mapping[str, Any]) -> ExperimentConfig:
+def experiment_config_from_mapping(
+    value: Mapping[str, Any], *, base_directory: Path | None = None
+) -> ExperimentConfig:
     root = _mapping(value, "configuration root")
-    _keys(root, required={"experiment", "search_space", "objectives"}, optional={"constraints", "success_criterion", "optimizer_config", "ngspice_config", "metric_definitions", "pvt_config"}, context="configuration root")
+    _keys(
+        root,
+        required={"experiment", "search_space", "objectives"},
+        optional={
+            "constraints",
+            "success_criterion",
+            "optimizer_config",
+            "ngspice_config",
+            "metric_definitions",
+            "pvt_config",
+            "circuit_config",
+            "benchmark_config_hash",
+        },
+        context="configuration root",
+    )
     experiment = _mapping(root["experiment"], "experiment")
-    _keys(experiment, required={"name", "circuit", "method", "seed", "simulation_budget"}, optional={"output_dir", "resume", "timeout"}, context="experiment")
+    _keys(
+        experiment,
+        required={"name", "circuit", "method", "seed", "simulation_budget"},
+        optional={"output_dir", "resume", "timeout", "phase"},
+        context="experiment",
+    )
     optimizer_config = _mapping(root.get("optimizer_config", {}), "optimizer_config")
     pvt_config = _mapping(root.get("pvt_config", {}), "pvt_config")
-    metric_definitions = _mapping(root.get("metric_definitions", RC_METRIC_DEFINITIONS), "metric_definitions")
-    if dict(metric_definitions) != RC_METRIC_DEFINITIONS:
-        raise ConfigError("metric_definitions must match the audited rc_lowpass analyzer")
+    circuit_name = experiment["circuit"]
+    expected_metric_definitions = (
+        RC_METRIC_DEFINITIONS
+        if circuit_name == "rc_lowpass"
+        else COMMON_SOURCE_METRIC_DEFINITIONS
+    )
+    metric_definitions = _mapping(
+        root.get("metric_definitions", expected_metric_definitions), "metric_definitions"
+    )
+    if dict(metric_definitions) != expected_metric_definitions:
+        raise ConfigError(
+            f"metric_definitions must match the audited {circuit_name} analyzer"
+        )
     try:
         objectives = _parse_objectives(root["objectives"])
         default_success_metric = next((item.metric for item in objectives if item.objective_type is ObjectiveType.TARGET), "bandwidth")
         success = _parse_success(root["success_criterion"]) if "success_criterion" in root else SuccessCriterion(default_success_metric, 0.05)
         return ExperimentConfig(
-            experiment_name=experiment["name"], circuit_name=experiment["circuit"],
+            experiment_name=experiment["name"], circuit_name=circuit_name,
             method=experiment["method"], seed=experiment["seed"],
             simulation_budget=_positive_integer(experiment["simulation_budget"], "experiment.simulation_budget"),
             output_dir=Path(experiment.get("output_dir", "research_runs")),
@@ -562,6 +840,15 @@ def experiment_config_from_mapping(value: Mapping[str, Any]) -> ExperimentConfig
             optimizer_config=dict(optimizer_config), ngspice_config=_parse_ngspice_config(root.get("ngspice_config", {})),
             pvt_config=dict(pvt_config), resume=experiment.get("resume", False),
             timeout=_positive_number(experiment.get("timeout", 60.0), "experiment.timeout"),
+            circuit_config=(
+                common_source_config_from_mapping(
+                    root.get("circuit_config"), base_directory=base_directory
+                )
+                if circuit_name == "common_source"
+                else None
+            ),
+            benchmark_config_hash=root.get("benchmark_config_hash"),
+            experiment_phase=experiment.get("phase", "baseline"),
         )
     except (TypeError, ValueError) as exc:
         raise ConfigError(str(exc)) from exc
@@ -574,7 +861,9 @@ def load_experiment_config(config_path: str | Path) -> ExperimentConfig:
         loaded = yaml.safe_load(text)
     except (OSError, UnicodeError, yaml.YAMLError) as exc:
         raise ConfigError(f"failed to read experiment config '{source}': {exc}") from exc
-    return experiment_config_from_mapping(_mapping(loaded, "configuration root"))
+    return experiment_config_from_mapping(
+        _mapping(loaded, "configuration root"), base_directory=source.parent
+    )
 
 
 def write_experiment_config(config: ExperimentConfig, path: str | Path) -> Path:

@@ -1,0 +1,19 @@
+benchmark_config_hash: d60664b436ce9a928da2db86ca83378d556f18ddcf54b633394609f67288bec9
+experiment: {name: common_source_de, circuit: common_source, method: de, seed: 0, simulation_budget: 50, output_dir: research_runs/task3_de, resume: false, timeout: 60.0, phase: baseline}
+search_space:
+  width_m: {type: float, low: 2.0e-6, high: 100.0e-6, log: true, unit: m, technology_limits: {low: 0.5e-6, high: 200.0e-6}}
+  length_m: {type: float, low: 0.5e-6, high: 2.0e-6, log: false, unit: m, technology_limits: {low: 0.3e-6, high: 10.0e-6}}
+  drain_resistance_ohm: {type: float, low: 2000.0, high: 50000.0, log: true, unit: ohm, technology_limits: {low: 100.0, high: 1.0e6}}
+  input_bias_v: {type: float, low: 0.65, high: 1.2, log: false, unit: V, technology_limits: {low: 0.0, high: 1.8}}
+objectives: {dc_power_w: {type: minimize, weight: 1.0}}
+constraints:
+  gain_min: {metric: gain_db, operator: ">=", threshold: 8.0}
+  bandwidth_min: {metric: bandwidth_hz, operator: ">=", threshold: 1.0e7}
+  power_max: {metric: dc_power_w, operator: "<=", threshold: 3.5e-4}
+  output_bias_low: {metric: output_dc_voltage, operator: ">=", threshold: 0.3}
+  output_bias_high: {metric: output_dc_voltage, operator: "<=", threshold: 1.5}
+success_criterion: {type: all_constraints}
+optimizer_config: {population_size: 8, mutation: 0.8, recombination: 0.7, strategy: best1bin}
+ngspice_config: {executable: ngspice, start_frequency_hz: 10.0, stop_frequency_hz: 1.0e9, points_per_decade: 30}
+circuit_config: {supply_voltage_v: 1.8, load_capacitance_f: 1.0e-12, temperature_c: 27.0, mosfet_model: {model_library: ../../research/models/ngspice_bsim3_nmos.lib, model_name: N1, corner: reference, model_section: null, device_kind: mosfet, provenance: "ngspice 46 official binary distribution, examples/mos/modelcard.nmos; not SKY130"}}
+pvt_config: {}

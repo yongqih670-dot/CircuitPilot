@@ -30,8 +30,12 @@ class FairnessValidator:
 
     FIELDS = (
         "search_space_hash",
+        "benchmark_config_hash",
         "circuit",
+        "circuit_config",
+        "transistor_model",
         "simulation_budget",
+        "experiment_phase",
         "pvt_config",
         "metric_definitions",
         "objectives",
@@ -54,10 +58,22 @@ class FairnessValidator:
             config = manifest["configuration"]
             environment = manifest["environment"]
             experiment = config["experiment"]
+            circuit_config = json.loads(json.dumps(config.get("circuit_config")))
+            if circuit_config is not None:
+                circuit_config.get("mosfet_model", {}).pop("model_library", None)
+            transistor_model = json.loads(json.dumps(manifest.get("transistor_model")))
+            if transistor_model is not None:
+                transistor_model.pop("model_path", None)
             return {
                 "search_space_hash": _stable_hash(config["search_space"]),
+                "benchmark_config_hash": manifest.get("reproducibility", {}).get(
+                    "benchmark_config_hash"
+                ),
                 "circuit": experiment["circuit"],
+                "circuit_config": circuit_config,
+                "transistor_model": transistor_model,
                 "simulation_budget": experiment["simulation_budget"],
+                "experiment_phase": experiment.get("phase", "baseline"),
                 "pvt_config": config.get("pvt_config", {}),
                 "metric_definitions": config["metric_definitions"],
                 "objectives": config["objectives"],

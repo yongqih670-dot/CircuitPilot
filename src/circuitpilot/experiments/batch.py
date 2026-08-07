@@ -36,6 +36,7 @@ class BaselineSuiteConfig:
     methods: Mapping[str, Path]
     seeds: tuple[int, ...]
     simulation_budget: int
+    phase: str = "baseline"
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -44,6 +45,7 @@ class BaselineSuiteConfig:
             "methods": {method: path.as_posix() for method, path in self.methods.items()},
             "seeds": list(self.seeds),
             "simulation_budget": self.simulation_budget,
+            "phase": self.phase,
         }
 
 
@@ -58,8 +60,8 @@ def load_suite_config(path: str | Path) -> BaselineSuiteConfig:
         raise ConfigError("baseline suite must contain only a suite mapping")
     suite = root["suite"]
     required = {"name", "output_dir", "methods", "seeds", "simulation_budget"}
-    if set(suite) != required:
-        raise ConfigError("suite fields must be: " + ", ".join(sorted(required)))
+    if not required <= set(suite) or set(suite) - (required | {"phase"}):
+        raise ConfigError("suite fields must be name, output_dir, methods, seeds, simulation_budget, and optional phase")
     methods = suite["methods"]
     if not isinstance(methods, Mapping) or set(methods) != {"random", "de", "tpe", "bo"}:
         raise ConfigError("suite.methods must define exactly random, de, tpe, and bo")
@@ -81,7 +83,10 @@ def load_suite_config(path: str | Path) -> BaselineSuiteConfig:
     output = Path(suite["output_dir"])
     if not output.is_absolute():
         output = (source.parent.parent.parent / output).resolve()
-    return BaselineSuiteConfig(name, output, resolved_methods, tuple(seeds), budget)
+    phase = suite.get("phase", "baseline")
+    if phase not in {"baseline", "smoke"}:
+        raise ConfigError("suite.phase must be baseline or smoke")
+    return BaselineSuiteConfig(name, output, resolved_methods, tuple(seeds), budget, phase)
 
 
 def run_suite(config: BaselineSuiteConfig) -> Path:
@@ -108,6 +113,7 @@ def run_suite(config: BaselineSuiteConfig) -> Path:
                 simulation_budget=config.simulation_budget,
                 output_dir=suite_run.path / f"{method}_seed{seed}",
                 resume=False,
+                experiment_phase=config.phase,
             )
             result = execute_experiment(run_config)
             run_directories.append(result.output_directory)

@@ -61,3 +61,21 @@ baseline convergence、success-rate、best-objective 和 first-feasible 图只�
 ## 结果审计
 
 每个 run 必须保留 `experiment_config.yaml`、`evaluations.csv`、SQLite、optimizer state、每个候选的证据目录、summary、plot 和 `research_manifest.json`。manifest 必须包含环境指纹、Git commit、依赖版本、ngspice 版本与二进制 SHA-256，以及全部产物的 SHA-256。
+
+## Research Task 3 晶体管级扩展
+
+Task 2 的全部公平性规则继续强制执行。晶体管级比较还必须具有完全一致的
+`benchmark_config_hash`、模型库 SHA-256、模型名、section/corner、拓扑固定值、
+`.op`/`.ac` 设置、归一化约束、可行性合取条件和 scalar objective 公式。
+
+每个 candidate 消耗一个预算槽，最多启动一个包含 `.op + .ac` 的真实 ngspice
+进程。证据目录必须保存网表、ngspice 日志、原始 AC 数据、原始 DC 工作点以及
+可用的 MOS 工作点数据。失败必须保存类型、消息、可取得的返回码和 timeout 状态。
+
+Calibration 是单独预注册的确定性网格，不得进入 baseline `evaluations.csv`、
+summary、plot、seed set 或算法结论。benchmark hash 冻结后，任何语义修改都会使
+旧 hash 下的全部 run 失效，四种方法必须从 seed 0 重新开始。
+
+`is_feasible` 仅表示所有硬约束同时满足。删失 run 继续保持
+`simulations_to_first_feasible = null`，同时记录 survival-ready 的
+`event_observed` 和 `evaluation_time`；不得替换为 0 或 budget+1。

@@ -25,6 +25,9 @@ EVALUATION_COLUMNS = (
     "parameters",
     "simulation_status",
     "failure_type",
+    "error_message",
+    "ngspice_return_code",
+    "timed_out",
     "raw_metrics",
     "objective_value",
     "constraint_violation",
@@ -34,6 +37,10 @@ EVALUATION_COLUMNS = (
     "timestamp",
     "run_directory",
     "ngspice_called",
+    "benchmark_config_hash",
+    "experiment_phase",
+    "event_observed",
+    "evaluation_time",
 )
 
 
@@ -105,6 +112,13 @@ class EvaluationRecord:
     ngspice_called: bool
     optimizer_phase: str = "search"
     is_feasible: bool = False
+    error_message: str | None = None
+    ngspice_return_code: int | None = None
+    timed_out: bool = False
+    benchmark_config_hash: str | None = None
+    experiment_phase: str = "baseline"
+    event_observed: bool = False
+    evaluation_time: int | None = None
 
     def __post_init__(self) -> None:
         """Reject malformed, non-finite, or internally inconsistent records."""
@@ -129,6 +143,30 @@ class EvaluationRecord:
             not isinstance(self.failure_type, str) or not self.failure_type
         ):
             raise ValueError("failure_type must be a non-empty string or null")
+        if self.error_message is not None and not isinstance(self.error_message, str):
+            raise ValueError("error_message must be a string or null")
+        if self.ngspice_return_code is not None and (
+            isinstance(self.ngspice_return_code, bool)
+            or not isinstance(self.ngspice_return_code, int)
+        ):
+            raise ValueError("ngspice_return_code must be an integer or null")
+        if not isinstance(self.timed_out, bool):
+            raise ValueError("timed_out must be a boolean")
+        if self.benchmark_config_hash is not None and (
+            not isinstance(self.benchmark_config_hash, str)
+            or len(self.benchmark_config_hash) != 64
+        ):
+            raise ValueError("benchmark_config_hash must be a SHA-256 string or null")
+        if self.experiment_phase not in {"baseline", "smoke", "calibration"}:
+            raise ValueError("experiment_phase must be baseline, smoke, or calibration")
+        if not isinstance(self.event_observed, bool):
+            raise ValueError("event_observed must be a boolean")
+        if self.evaluation_time is not None and (
+            isinstance(self.evaluation_time, bool)
+            or not isinstance(self.evaluation_time, int)
+            or self.evaluation_time <= 0
+        ):
+            raise ValueError("evaluation_time must be a positive integer or null")
         _numeric_mapping(self.raw_metrics, "raw_metrics")
         _finite_optional(self.objective_value, "objective_value")
         violation = _finite_optional(
@@ -157,6 +195,8 @@ class EvaluationRecord:
                 raise ValueError("successful records require raw_metrics")
             if not self.ngspice_called:
                 raise ValueError("successful records require a real ngspice call")
+            if self.error_message is not None or self.timed_out:
+                raise ValueError("successful records cannot contain failure evidence")
         elif self.objective_value is not None or self.constraint_violation is not None:
             raise ValueError("failed records cannot contain optimizer-facing values")
         elif self.is_feasible:
@@ -184,6 +224,13 @@ class EvaluationRecord:
         ngspice_called: bool,
         optimizer_phase: str = "search",
         is_feasible: bool = False,
+        error_message: str | None = None,
+        ngspice_return_code: int | None = None,
+        timed_out: bool = False,
+        benchmark_config_hash: str | None = None,
+        experiment_phase: str = "baseline",
+        event_observed: bool = False,
+        evaluation_time: int | None = None,
     ) -> "EvaluationRecord":
         """Construct a record with a UTC timestamp."""
         return cls(
@@ -206,13 +253,20 @@ class EvaluationRecord:
             ngspice_called=ngspice_called,
             optimizer_phase=optimizer_phase,
             is_feasible=is_feasible,
+            error_message=error_message,
+            ngspice_return_code=ngspice_return_code,
+            timed_out=timed_out,
+            benchmark_config_hash=benchmark_config_hash,
+            experiment_phase=experiment_phase,
+            event_observed=event_observed,
+            evaluation_time=evaluation_time,
         )
 
 
 class EvaluationRecorder:
     """Persist identical evaluation rows to CSV and SQLite after every tell."""
 
-    SCHEMA_VERSION = 2
+    SCHEMA_VERSION = 3
 
     def __init__(self, output_directory: str | Path) -> None:
         """Initialize the per-run CSV and SQLite stores."""
@@ -256,6 +310,9 @@ class EvaluationRecorder:
                         parameters_json TEXT NOT NULL,
                         simulation_status TEXT NOT NULL,
                         failure_type TEXT,
+                        error_message TEXT,
+                        ngspice_return_code INTEGER,
+                        timed_out INTEGER NOT NULL DEFAULT 0,
                         raw_metrics_json TEXT NOT NULL,
                         objective_value REAL,
                         constraint_violation REAL,
@@ -265,12 +322,16 @@ class EvaluationRecorder:
                         timestamp TEXT NOT NULL,
                         run_directory TEXT NOT NULL,
                         ngspice_called INTEGER NOT NULL,
+                        benchmark_config_hash TEXT,
+                        experiment_phase TEXT NOT NULL DEFAULT 'baseline',
+                        event_observed INTEGER NOT NULL DEFAULT 0,
+                        evaluation_time INTEGER,
                         PRIMARY KEY (run_id, iteration)
                     );
                     """
                 )
                 version = connection.execute("PRAGMA user_version").fetchone()[0]
-                if version not in (0, 1, self.SCHEMA_VERSION):
+                if version not in (0, 1, 2, self.SCHEMA_VERSION):
                     raise ResearchExperimentError(
                         f"unsupported evaluation database schema {version}"
                     )
@@ -279,6 +340,20 @@ class EvaluationRecorder:
                     connection.execute("ALTER TABLE research_evaluations ADD COLUMN optimizer_phase TEXT NOT NULL DEFAULT 'search'")
                 if "is_feasible" not in columns:
                     connection.execute("ALTER TABLE research_evaluations ADD COLUMN is_feasible INTEGER NOT NULL DEFAULT 0")
+                migrations = {
+                    "error_message": "TEXT",
+                    "ngspice_return_code": "INTEGER",
+                    "timed_out": "INTEGER NOT NULL DEFAULT 0",
+                    "benchmark_config_hash": "TEXT",
+                    "experiment_phase": "TEXT NOT NULL DEFAULT 'baseline'",
+                    "event_observed": "INTEGER NOT NULL DEFAULT 0",
+                    "evaluation_time": "INTEGER",
+                }
+                for name, declaration in migrations.items():
+                    if name not in columns:
+                        connection.execute(
+                            f"ALTER TABLE research_evaluations ADD COLUMN {name} {declaration}"
+                        )
                 connection.execute(f"PRAGMA user_version = {self.SCHEMA_VERSION}")
         except sqlite3.Error as exc:
             raise ResearchExperimentError(
@@ -300,10 +375,12 @@ class EvaluationRecorder:
                     INSERT INTO research_evaluations (
                         run_id, iteration, experiment_id, circuit, method, optimizer_phase, seed,
                         parameters_json, simulation_status, failure_type,
+                        error_message, ngspice_return_code, timed_out,
                         raw_metrics_json, objective_value, constraint_violation, is_feasible,
                         simulation_time, total_elapsed_time, timestamp,
-                        run_directory, ngspice_called
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        run_directory, ngspice_called, benchmark_config_hash,
+                        experiment_phase, event_observed, evaluation_time
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         record.run_id,
@@ -316,6 +393,9 @@ class EvaluationRecorder:
                         parameters_json,
                         record.simulation_status,
                         record.failure_type,
+                        record.error_message,
+                        record.ngspice_return_code,
+                        int(record.timed_out),
                         metrics_json,
                         record.objective_value,
                         record.constraint_violation,
@@ -325,6 +405,10 @@ class EvaluationRecorder:
                         record.timestamp,
                         record.run_directory,
                         int(record.ngspice_called),
+                        record.benchmark_config_hash,
+                        record.experiment_phase,
+                        int(record.event_observed),
+                        record.evaluation_time,
                     ),
                 )
         except sqlite3.IntegrityError as exc:
@@ -356,6 +440,9 @@ class EvaluationRecorder:
             parameters=parameters,
             simulation_status=row["simulation_status"],
             failure_type=row["failure_type"],
+            error_message=row["error_message"],
+            ngspice_return_code=row["ngspice_return_code"],
+            timed_out=bool(row["timed_out"]),
             raw_metrics=raw_metrics,
             objective_value=row["objective_value"],
             constraint_violation=row["constraint_violation"],
@@ -365,6 +452,10 @@ class EvaluationRecorder:
             timestamp=row["timestamp"],
             run_directory=row["run_directory"],
             ngspice_called=bool(row["ngspice_called"]),
+            benchmark_config_hash=row["benchmark_config_hash"],
+            experiment_phase=row["experiment_phase"],
+            event_observed=bool(row["event_observed"]),
+            evaluation_time=row["evaluation_time"],
         )
 
     def records(self) -> tuple[EvaluationRecord, ...]:
@@ -403,6 +494,11 @@ class EvaluationRecorder:
                             ),
                             "simulation_status": record.simulation_status,
                             "failure_type": record.failure_type or "",
+                            "error_message": record.error_message or "",
+                            "ngspice_return_code": (
+                                "" if record.ngspice_return_code is None else record.ngspice_return_code
+                            ),
+                            "timed_out": str(record.timed_out).lower(),
                             "raw_metrics": json.dumps(
                                 record.raw_metrics,
                                 sort_keys=True,
@@ -425,6 +521,12 @@ class EvaluationRecorder:
                             "timestamp": record.timestamp,
                             "run_directory": record.run_directory,
                             "ngspice_called": str(record.ngspice_called).lower(),
+                            "benchmark_config_hash": record.benchmark_config_hash or "",
+                            "experiment_phase": record.experiment_phase,
+                            "event_observed": str(record.event_observed).lower(),
+                            "evaluation_time": (
+                                "" if record.evaluation_time is None else record.evaluation_time
+                            ),
                         }
                     )
             temporary.replace(self.csv_path)
