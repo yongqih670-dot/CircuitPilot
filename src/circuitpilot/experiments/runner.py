@@ -16,7 +16,11 @@ from circuitpilot.exceptions import (
     ResearchExperimentError,
     SimulationError,
 )
-from circuitpilot.experiments.analyzer import CandidateAnalyzer, RCLowPassAnalyzer
+from circuitpilot.experiments.analyzer import (
+    CandidateAnalyzer,
+    CommonSourceAnalyzer,
+    RCLowPassAnalyzer,
+)
 from circuitpilot.experiments.budget import SimulationBudget
 from circuitpilot.experiments.config import (
     ExperimentConfig,
@@ -29,6 +33,7 @@ from circuitpilot.experiments.recorder import EvaluationRecord, EvaluationRecord
 from circuitpilot.experiments.seeding import SeedRegistry, initialize_seeds
 from circuitpilot.experiments.simulation import (
     CandidateSimulator,
+    CommonSourceNgspiceSimulator,
     RCLowPassNgspiceSimulator,
 )
 from circuitpilot.research_artifacts import write_research_manifest
@@ -117,6 +122,9 @@ class ExperimentRunner:
             is_feasible = False
             simulation_status = "success"
             failure_type: str | None = None
+            error_message: str | None = None
+            ngspice_return_code: int | None = None
+            timed_out = False
             ngspice_calls_before = self.budget.ngspice_calls
 
             try:
@@ -124,6 +132,7 @@ class ExperimentRunner:
             except ValueError as exc:
                 simulation_status = "invalid_parameters"
                 failure_type = type(exc).__name__
+                error_message = str(exc)
                 error_path = evaluation_directory / "validation_error.txt"
                 error_path.write_text(str(exc) + "\n", encoding="utf-8")
             else:
@@ -141,6 +150,10 @@ class ExperimentRunner:
                 except (CircuitPilotError, OSError, ValueError) as exc:
                     simulation_status = _failure_status(exc)
                     failure_type = type(exc).__name__
+                    error_message = str(exc)
+                    if isinstance(exc, SimulationError):
+                        ngspice_return_code = exc.returncode
+                        timed_out = exc.timed_out
                     error_path = evaluation_directory / "evaluation_error.txt"
                     error_path.write_text(str(exc) + "\n", encoding="utf-8")
                     metrics = {}
@@ -159,6 +172,7 @@ class ExperimentRunner:
                 objective_value,
                 simulation_status,
             )
+            already_feasible = any(record.is_feasible for record in self.recorder.records())
             record = EvaluationRecord.now(
                 experiment_id=self.config.experiment_name,
                 run_id=self.run.run_id,
@@ -178,6 +192,13 @@ class ExperimentRunner:
                 ngspice_called=ngspice_called,
                 optimizer_phase=optimizer_phase,
                 is_feasible=is_feasible,
+                error_message=error_message,
+                ngspice_return_code=ngspice_return_code,
+                timed_out=timed_out,
+                benchmark_config_hash=self.config.computed_benchmark_hash(),
+                experiment_phase=self.config.experiment_phase,
+                event_observed=is_feasible and not already_feasible,
+                evaluation_time=iteration,
             )
             self.recorder.save(record)
             self.optimizer.save_state(self.optimizer_state_path)
@@ -374,12 +395,19 @@ def execute_experiment(
             )
         selected_optimizer.load_state(state_path)
 
+    if config.circuit_name == "rc_lowpass":
+        selected_simulator = simulator or RCLowPassNgspiceSimulator(config)
+        selected_analyzer = analyzer or RCLowPassAnalyzer(config)
+    else:
+        selected_simulator = simulator or CommonSourceNgspiceSimulator(config)
+        selected_analyzer = analyzer or CommonSourceAnalyzer(config)
+
     runner = ExperimentRunner(
         config=config,
         run=run,
         optimizer=selected_optimizer,
-        simulator=simulator or RCLowPassNgspiceSimulator(config),
-        analyzer=analyzer or RCLowPassAnalyzer(config),
+        simulator=selected_simulator,
+        analyzer=selected_analyzer,
         objective_evaluator=objective_evaluator or ObjectiveEvaluator(config),
         recorder=recorder,
         budget=budget,
@@ -398,6 +426,18 @@ def execute_experiment(
         "first_feasible_iteration": next((record.iteration for record in result.records if record.is_feasible), None),
         **result.budget,
     }
+    model_metadata = None
+    if config.circuit_config is not None:
+        model = config.circuit_config.model
+        model_metadata = {
+            "model_path": str(model.require_library()),
+            "model_library_sha256": model.library_sha256(),
+            "model_name": model.model_name,
+            "model_section": model.model_section,
+            "corner": model.corner,
+            "device_kind": model.device_kind,
+            "provenance": model.provenance,
+        }
     write_research_manifest(
         result.output_directory,
         workflow="research_experiment",
@@ -413,5 +453,7 @@ def execute_experiment(
         resumed=run.resumed,
         resume_count=run.resume_count,
         experiment_name=config.experiment_name,
+        benchmark_config_hash=config.computed_benchmark_hash(),
+        model_metadata=model_metadata,
     )
     return result

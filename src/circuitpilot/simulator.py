@@ -118,7 +118,8 @@ def run_ngspice(
         )
     except subprocess.TimeoutExpired as exc:
         raise SimulationError(
-            f"ngspice timed out after {timeout_seconds:g} seconds"
+            f"ngspice timed out after {timeout_seconds:g} seconds",
+            timed_out=True,
         ) from exc
     except OSError as exc:
         raise SimulationError(f"failed to start ngspice: {exc}") from exc
@@ -130,7 +131,8 @@ def run_ngspice(
             details = details[-1_000:]
         suffix = f": {details}" if details else ""
         raise SimulationError(
-            f"ngspice exited with status {completed.returncode}{suffix}"
+            f"ngspice exited with status {completed.returncode}{suffix}",
+            returncode=completed.returncode,
         )
 
     return SimulationResult(

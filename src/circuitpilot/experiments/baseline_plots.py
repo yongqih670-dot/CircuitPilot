@@ -12,7 +12,7 @@ from circuitpilot.experiments.statistics import load_evaluations
 
 
 def plot_baseline(run_directories: Iterable[str | Path], output_directory: str | Path) -> tuple[Path, ...]:
-    """Create the four protocol plots without modifying or imputing data."""
+    """Create protocol plots directly from canonical real-evaluation rows."""
     output = Path(output_directory).resolve()
     output.mkdir(parents=True, exist_ok=True)
     runs = [(Path(path), load_evaluations(path)) for path in run_directories]
@@ -78,4 +78,54 @@ def plot_baseline(run_directories: Iterable[str | Path], output_directory: str |
     axis.set(xlabel="Method", ylabel="Simulations to first feasible", title="First-feasible distribution (censored runs omitted)")
     axis.grid(True, axis="y", linestyle=":", alpha=0.5)
     destination = output / "simulations_to_first_feasible.png"; figure.savefig(destination, dpi=150); plt.close(figure); destinations.append(destination)
+
+    figure, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
+    for _, rows in runs:
+        best = None
+        xs, ys = [], []
+        for row in rows:
+            value = row["constraint_violation"]
+            if value is not None:
+                best = float(value) if best is None else min(best, float(value))
+            if best is not None:
+                xs.append(row["iteration"]); ys.append(best)
+        if xs:
+            axis.plot(xs, ys, alpha=0.55, label=f"{rows[0]['method']}/seed{rows[0]['seed']}")
+    axis.set(xlabel="Simulation evaluations", ylabel="Best normalized constraint violation", title="Constraint violation vs evaluations")
+    axis.grid(True, linestyle=":", alpha=0.5); axis.legend(fontsize=7, ncol=2)
+    destination = output / "constraint_violation_vs_evaluations.png"; figure.savefig(destination, dpi=150); plt.close(figure); destinations.append(destination)
+
+    common_source_rows = [
+        row for _, rows in runs for row in rows
+        if row["simulation_status"] == "success"
+        and {"gain_db", "bandwidth_hz", "dc_power_w"} <= set(row["raw_metrics"])
+    ]
+    if common_source_rows:
+        for x_metric, y_metric, filename, xlabel, ylabel in (
+            ("bandwidth_hz", "gain_db", "gain_vs_bandwidth.png", "Bandwidth (Hz)", "Gain (dB)"),
+            ("dc_power_w", "gain_db", "gain_vs_power.png", "DC supply power (W)", "Gain (dB)"),
+        ):
+            figure, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
+            for feasible, label, marker in ((False, "infeasible", "x"), (True, "feasible", "o")):
+                selected = [row for row in common_source_rows if row["is_feasible"] is feasible]
+                if selected:
+                    axis.scatter(
+                        [row["raw_metrics"][x_metric] for row in selected],
+                        [row["raw_metrics"][y_metric] for row in selected],
+                        alpha=0.6, marker=marker, label=label,
+                    )
+            axis.set(xlabel=xlabel, ylabel=ylabel, title=f"{ylabel} vs {xlabel}")
+            axis.set_xscale("log")
+            axis.grid(True, linestyle=":", alpha=0.5); axis.legend()
+            destination = output / filename; figure.savefig(destination, dpi=150); plt.close(figure); destinations.append(destination)
+
+        figure, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
+        labels = sorted(methods)
+        feasible_counts = [sum(row["is_feasible"] for rows in methods[method] for row in rows) for method in labels]
+        infeasible_counts = [sum(not row["is_feasible"] for rows in methods[method] for row in rows) for method in labels]
+        axis.bar(labels, infeasible_counts, label="infeasible")
+        axis.bar(labels, feasible_counts, bottom=infeasible_counts, label="feasible")
+        axis.set(xlabel="Method", ylabel="Candidate count", title="Feasible / infeasible candidate distribution")
+        axis.legend(); axis.grid(True, axis="y", linestyle=":", alpha=0.5)
+        destination = output / "feasible_infeasible_distribution.png"; figure.savefig(destination, dpi=150); plt.close(figure); destinations.append(destination)
     return tuple(destinations)

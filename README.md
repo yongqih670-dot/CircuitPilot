@@ -523,3 +523,21 @@ python -m circuitpilot.experiments.batch --config experiments/configs/rc_baselin
 The batch command refuses unfair combinations before producing comparison tables, then writes `baseline_results.csv`, `baseline_summary.csv`, `fairness_validation.json`, and four plots sourced only from each run's real `evaluations.csv`. Task 2 design and limitations are documented in [research/BASELINE_DESIGN.md](research/BASELINE_DESIGN.md); the actual validation record is [research/TASK2_BASELINE_REPORT.md](research/TASK2_BASELINE_REPORT.md).
 
 集成测试会自动检测本机 ngspice；未安装时明确显示为 `SKIPPED`。
+
+### Transistor-level Common-Source benchmark (Research Task 3)
+
+Task 3 uses a content-locked ngspice BSIM3 reference model (explicitly not
+SKY130) and one combined real `.op + .ac` process per candidate. The frozen
+definition, calibration, results, and limitations are documented in
+[COMMON_SOURCE_BENCHMARK.md](research/common_source/COMMON_SOURCE_BENCHMARK.md)
+and [TASK3_COMMON_SOURCE_REPORT.md](research/common_source/TASK3_COMMON_SOURCE_REPORT.md).
+
+```console
+python -m circuitpilot.experiments.calibration --config research/common_source/calibration_config.yaml --grid research/common_source/calibration_grid.yaml
+python -m circuitpilot.experiments.batch --config experiments/configs/common_source_smoke_suite.yaml
+python -m circuitpilot.experiments.batch --config experiments/configs/common_source_baseline_suite.yaml
+```
+
+Calibration is a one-time protocol action, not part of optimizer comparison.
+Changing model bytes, topology, search space, specification, or AC/DC setup
+requires a new benchmark hash and invalidates comparisons with the frozen runs.
