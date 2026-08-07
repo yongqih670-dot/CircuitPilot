@@ -2,7 +2,7 @@
 
 Status: frozen for Research Task 3  
 Freeze timestamp: 2026-08-07T08:20:00Z  
-Freeze Git commit: `PENDING_FREEZE_COMMIT`  
+Freeze Git commit: `51ac2714df4c5fc8661ec0fedd06c3447e4c21e9`  
 Benchmark configuration SHA-256: `d60664b436ce9a928da2db86ca83378d556f18ddcf54b633394609f67288bec9`
 
 ## Topology and model
