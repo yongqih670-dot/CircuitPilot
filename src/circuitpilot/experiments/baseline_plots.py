@@ -6,6 +6,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Iterable
 
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from circuitpilot.experiments.statistics import load_evaluations
