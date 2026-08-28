@@ -23,6 +23,11 @@ from circuitpilot.sky130_common_source import (
     Sky130CommonSourceCircuitConfig,
     sky130_common_source_config_from_mapping,
 )
+from circuitpilot.sky130_differential_amplifier import (
+    SKY130_DIFFERENTIAL_PARAMETER_NAMES,
+    Sky130DifferentialAmplifierCircuitConfig,
+    sky130_differential_config_from_mapping,
+)
 
 
 ParameterValue = float | int | str | bool
@@ -44,6 +49,18 @@ SKY130_COMMON_SOURCE_METRIC_DEFINITIONS = {
     "dc_power_w": "abs(VDD * I(VDD)) from parsed real SKY130 ngspice operating point",
     "output_dc_voltage": "V(out) from parsed real SKY130 ngspice operating point",
     "operating_region_valid": "1 iff VGS > VTH and VDS >= VGS - VTH from real MOS OP vectors",
+}
+SKY130_DIFFERENTIAL_METRIC_DEFINITIONS = {
+    "differential_gain_db": "direct low-frequency gain from the opposed-input AC testbench",
+    "common_mode_gain_db": "direct low-frequency gain from the equal-input AC testbench",
+    "cmrr_db": "exact Ad(dB)-Acm(dB), null when common-mode gain is below the reliable floor",
+    "cmrr_lower_bound_db": "conservative CMRR lower bound when common-mode gain is below the frozen floor",
+    "bandwidth_hz": "exact differential post-peak -3 dB crossing or null when right-censored",
+    "bandwidth_lower_bound_hz": "fixed f_stop lower bound only when differential bandwidth is right-censored",
+    "dc_power_w": "abs(VDD * I(VDD)) from the differential-copy real SKY130 operating point",
+    "output_dc_voltage": "V(out) from the differential-copy real SKY130 operating point",
+    "tail_current_a": "absolute current through the differential-copy zero-volt tail sense source",
+    "operating_region_valid": "1 iff every critical NMOS/PMOS passes its explicit voltage inequality",
 }
 
 
@@ -386,7 +403,12 @@ class ExperimentConfig:
     optimizer_config: Mapping[str, Any] = field(default_factory=dict)
     ngspice_config: NgspiceConfig = NgspiceConfig()
     pvt_config: Mapping[str, Any] = field(default_factory=dict)
-    circuit_config: CommonSourceCircuitConfig | Sky130CommonSourceCircuitConfig | None = None
+    circuit_config: (
+        CommonSourceCircuitConfig
+        | Sky130CommonSourceCircuitConfig
+        | Sky130DifferentialAmplifierCircuitConfig
+        | None
+    ) = None
     benchmark_config_hash: str | None = None
     experiment_phase: str = "baseline"
     resume: bool = False
@@ -395,9 +417,14 @@ class ExperimentConfig:
     def __post_init__(self) -> None:
         if not isinstance(self.experiment_name, str) or not self.experiment_name.strip():
             raise ValueError("experiment_name must be non-empty")
-        if self.circuit_name not in {"rc_lowpass", "common_source", "sky130_common_source"}:
+        if self.circuit_name not in {
+            "rc_lowpass",
+            "common_source",
+            "sky130_common_source",
+            "sky130_differential_amplifier",
+        }:
             raise ValueError(
-                "research circuit must be rc_lowpass, common_source, or sky130_common_source"
+                "unsupported research circuit"
             )
         if not isinstance(self.method, str) or not self.method.strip():
             raise ValueError("method must be non-empty")
@@ -415,13 +442,18 @@ class ExperimentConfig:
             "rc_lowpass": {"resistance", "capacitance"},
             "common_source": COMMON_SOURCE_PARAMETER_NAMES,
             "sky130_common_source": SKY130_COMMON_SOURCE_PARAMETER_NAMES,
+            "sky130_differential_amplifier": SKY130_DIFFERENTIAL_PARAMETER_NAMES,
         }[self.circuit_name]
         if set(names) != expected_parameters:
             readable = ", ".join(sorted(expected_parameters))
             raise ValueError(
                 f"{self.circuit_name} search_space must contain exactly: {readable}"
             )
-        if self.circuit_name in {"common_source", "sky130_common_source"}:
+        if self.circuit_name in {
+            "common_source",
+            "sky130_common_source",
+            "sky130_differential_amplifier",
+        }:
             for parameter in self.search_space:
                 if parameter.unit is None:
                     raise ValueError(
@@ -476,6 +508,17 @@ class ExperimentConfig:
                 raise ValueError("Task 4 circuit_config must bind model_sha256")
             if self.circuit_config.model.expected_library_sha256 is None:
                 raise ValueError("Task 4 circuit_config must bind library_sha256")
+        elif self.circuit_name == "sky130_differential_amplifier":
+            if not isinstance(
+                self.circuit_config, Sky130DifferentialAmplifierCircuitConfig
+            ):
+                raise ValueError(
+                    "sky130_differential_amplifier requires a typed SKY130 circuit_config"
+                )
+            if self.circuit_config.model.expected_model_sha256 is None:
+                raise ValueError("Task 5 circuit_config must bind model_sha256")
+            if self.circuit_config.model.expected_library_sha256 is None:
+                raise ValueError("Task 5 circuit_config must bind library_sha256")
         elif self.circuit_config is not None:
             raise ValueError("rc_lowpass cannot define circuit_config")
         if self.benchmark_config_hash is not None:
@@ -525,6 +568,7 @@ class ExperimentConfig:
             "rc_lowpass": RC_METRIC_DEFINITIONS,
             "common_source": COMMON_SOURCE_METRIC_DEFINITIONS,
             "sky130_common_source": SKY130_COMMON_SOURCE_METRIC_DEFINITIONS,
+            "sky130_differential_amplifier": SKY130_DIFFERENTIAL_METRIC_DEFINITIONS,
         }[self.circuit_name]
         result = {
             "experiment": {
@@ -583,6 +627,7 @@ class ExperimentConfig:
             "rc_lowpass": RC_METRIC_DEFINITIONS,
             "common_source": COMMON_SOURCE_METRIC_DEFINITIONS,
             "sky130_common_source": SKY130_COMMON_SOURCE_METRIC_DEFINITIONS,
+            "sky130_differential_amplifier": SKY130_DIFFERENTIAL_METRIC_DEFINITIONS,
         }[self.circuit_name]
         payload: dict[str, Any] = {
             "circuit": self.circuit_name,
@@ -627,6 +672,17 @@ class ExperimentConfig:
             payload["circuit_config"] = circuit_payload
             payload["model_library_sha256"] = self.circuit_config.model.library_sha256()
         elif isinstance(self.circuit_config, Sky130CommonSourceCircuitConfig):
+            circuit_payload = self.circuit_config.to_dict()
+            model_payload = dict(circuit_payload["sky130_model"])
+            model_payload["pdk_root"] = "<content-addressed-sky130-pdk>"
+            model_payload["model_library"] = "<content-addressed-model>"
+            circuit_payload["sky130_model"] = model_payload
+            payload["circuit_config"] = circuit_payload
+            payload["model_sha256"] = self.circuit_config.model.model_sha256()
+            payload["model_library_sha256"] = self.circuit_config.model.library_sha256()
+        elif isinstance(
+            self.circuit_config, Sky130DifferentialAmplifierCircuitConfig
+        ):
             circuit_payload = self.circuit_config.to_dict()
             model_payload = dict(circuit_payload["sky130_model"])
             model_payload["pdk_root"] = "<content-addressed-sky130-pdk>"
@@ -853,10 +909,11 @@ def experiment_config_from_mapping(
             "rc_lowpass": RC_METRIC_DEFINITIONS,
             "common_source": COMMON_SOURCE_METRIC_DEFINITIONS,
             "sky130_common_source": SKY130_COMMON_SOURCE_METRIC_DEFINITIONS,
+            "sky130_differential_amplifier": SKY130_DIFFERENTIAL_METRIC_DEFINITIONS,
         }[circuit_name]
     except KeyError:
         raise ConfigError(
-            "experiment.circuit must be rc_lowpass, common_source, or sky130_common_source"
+            "experiment.circuit is unsupported"
         ) from None
     metric_definitions = _mapping(
         root.get("metric_definitions", expected_metric_definitions), "metric_definitions"
@@ -889,7 +946,13 @@ def experiment_config_from_mapping(
                         root.get("circuit_config"), base_directory=base_directory
                     )
                     if circuit_name == "sky130_common_source"
-                    else None
+                    else (
+                        sky130_differential_config_from_mapping(
+                            root.get("circuit_config"), base_directory=base_directory
+                        )
+                        if circuit_name == "sky130_differential_amplifier"
+                        else None
+                    )
                 )
             ),
             benchmark_config_hash=root.get("benchmark_config_hash"),

@@ -14,14 +14,17 @@ from circuitpilot.experiments.survival import kaplan_meier
 
 RESULT_COLUMNS = (
     "method", "seed", "run_id", "output_directory", "simulation_budget",
-    "evaluations_total", "evaluations_success", "evaluations_failed", "ngspice_calls",
+    "evaluations_total", "evaluations_success", "evaluations_failed",
+    "candidate_evaluations", "ngspice_calls", "ngspice_process_calls", "analysis_calls",
     "best_objective", "best_parameters", "best_metrics", "is_feasible",
     "first_feasible_iteration", "simulations_to_first_feasible",
     "event_observed", "evaluation_time", "budget_at_censoring",
     "total_runtime", "mean_simulation_time", "best_constraint_violation",
-    "best_gain", "best_bandwidth", "best_bandwidth_lower_bound", "best_power",
+    "best_gain", "best_common_mode_gain", "best_cmrr", "best_cmrr_lower_bound",
+    "best_bandwidth", "best_bandwidth_lower_bound", "best_power",
     "ngspice_failure_rate", "analysis_error_rate", "invalid_response_rate",
-    "bandwidth_right_censored_rate", "complete_exact_metric_rate",
+    "bandwidth_right_censored_rate", "cmrr_lower_bound_rate",
+    "operating_region_invalid_rate", "complete_exact_metric_rate",
 )
 
 SUMMARY_COLUMNS = (
@@ -31,9 +34,12 @@ SUMMARY_COLUMNS = (
     "median_constraint_violation", "mean_runtime", "mean_simulation_time",
     "failure_rate", "ngspice_failure_rate", "analysis_error_rate",
     "invalid_response_rate", "bandwidth_right_censored_rate",
-    "complete_exact_metric_rate", "ngspice_calls", "event_observed_count",
+    "complete_exact_metric_rate", "cmrr_lower_bound_rate",
+    "operating_region_invalid_rate", "candidate_evaluations",
+    "ngspice_calls", "ngspice_process_calls", "analysis_calls", "event_observed_count",
     "censored_count", "km_median_time_to_feasible", "rmst",
-    "best_gain", "best_bandwidth", "best_bandwidth_lower_bound", "best_power",
+    "best_gain", "best_common_mode_gain", "best_cmrr", "best_cmrr_lower_bound",
+    "best_bandwidth", "best_bandwidth_lower_bound", "best_power",
 )
 
 SURVIVAL_COLUMNS = (
@@ -65,6 +71,12 @@ def load_evaluations(run_directory: str | Path) -> list[dict[str, Any]]:
                 "simulation_time": float(raw["simulation_time"]),
                 "total_elapsed_time": float(raw["total_elapsed_time"]),
                 "ngspice_called": raw["ngspice_called"].lower() == "true",
+                "ngspice_process_calls": int(
+                    raw.get("ngspice_process_calls") or int(
+                        raw["ngspice_called"].lower() == "true"
+                    )
+                ),
+                "analysis_calls": int(raw.get("analysis_calls") or 0),
                 "is_feasible": raw["is_feasible"].lower() == "true",
                 "measurement_status": raw.get("measurement_status") or None,
                 "bandwidth_status": raw.get("bandwidth_status") or None,
@@ -72,6 +84,12 @@ def load_evaluations(run_directory: str | Path) -> list[dict[str, Any]]:
                     None
                     if raw.get("bandwidth_lower_bound_hz", "") == ""
                     else float(raw["bandwidth_lower_bound_hz"])
+                ),
+                "cmrr_status": raw.get("cmrr_status") or None,
+                "cmrr_lower_bound_db": (
+                    None
+                    if raw.get("cmrr_lower_bound_db", "") == ""
+                    else float(raw["cmrr_lower_bound_db"])
                 ),
                 "experiment_phase": raw.get("experiment_phase", "baseline"),
                 "event_observed": raw.get("event_observed", "false").lower() == "true",
@@ -130,13 +148,28 @@ def summarize_run(run_directory: str | Path) -> dict[str, Any]:
         for row in rows
         if row["bandwidth_lower_bound_hz"] is not None
     ]
+    exact_cmrrs = [
+        float(row["raw_metrics"]["cmrr_db"])
+        for row in rows
+        if row["raw_metrics"].get("cmrr_db") is not None
+    ]
+    cmrr_bounds = [
+        float(row["cmrr_lower_bound_db"])
+        for row in rows
+        if row["cmrr_lower_bound_db"] is not None
+    ]
     count = len(rows)
     return {
         "method": rows[0]["method"], "seed": rows[0]["seed"], "run_id": rows[0]["run_id"],
         "output_directory": str(directory), "simulation_budget": budget,
         "evaluations_total": len(rows), "evaluations_success": len(process_successful),
         "evaluations_failed": len(rows) - len(process_successful),
-        "ngspice_calls": sum(bool(row["ngspice_called"]) for row in rows),
+        "candidate_evaluations": len(rows),
+        "ngspice_calls": sum(int(row["ngspice_process_calls"]) for row in rows),
+        "ngspice_process_calls": sum(
+            int(row["ngspice_process_calls"]) for row in rows
+        ),
+        "analysis_calls": sum(int(row["analysis_calls"]) for row in rows),
         "best_objective": None if best is None else best["objective_value"],
         "best_parameters": None if best is None else best["parameters"],
         "best_metrics": None if best is None else best["raw_metrics"],
@@ -151,7 +184,12 @@ def summarize_run(run_directory: str | Path) -> dict[str, Any]:
         "total_runtime": max(row["total_elapsed_time"] for row in rows),
         "mean_simulation_time": fmean(row["simulation_time"] for row in rows),
         "best_constraint_violation": min(observed_violations) if observed_violations else None,
-        "best_gain": best_metrics.get("gain_db"),
+        "best_gain": best_metrics.get(
+            "gain_db", best_metrics.get("differential_gain_db")
+        ),
+        "best_common_mode_gain": best_metrics.get("common_mode_gain_db"),
+        "best_cmrr": max(exact_cmrrs) if exact_cmrrs else None,
+        "best_cmrr_lower_bound": max(cmrr_bounds) if cmrr_bounds else None,
         "best_bandwidth": max(exact_bandwidths) if exact_bandwidths else None,
         "best_bandwidth_lower_bound": max(bandwidth_bounds) if bandwidth_bounds else None,
         "best_power": best_metrics.get("dc_power_w"),
@@ -166,6 +204,13 @@ def summarize_run(run_directory: str | Path) -> dict[str, Any]:
         ) / count,
         "bandwidth_right_censored_rate": sum(
             row["bandwidth_status"] == "right_censored" for row in rows
+        ) / count,
+        "cmrr_lower_bound_rate": sum(
+            row["cmrr_status"] == "lower_bound" for row in rows
+        ) / count,
+        "operating_region_invalid_rate": sum(
+            row["raw_metrics"].get("operating_region_valid") == 0.0
+            for row in rows
         ) / count,
         "complete_exact_metric_rate": sum(
             row["bandwidth_status"] == "measured" for row in rows
@@ -185,6 +230,9 @@ def summarize_methods(results: Iterable[dict[str, Any]]) -> list[dict[str, Any]]
         violations = [float(row["best_constraint_violation"]) for row in rows if row["best_constraint_violation"] is not None]
         simulation_times = [float(row["mean_simulation_time"]) for row in rows]
         best_gains = [float(row["best_gain"]) for row in rows if row["best_gain"] is not None]
+        best_common_mode_gains = [float(row["best_common_mode_gain"]) for row in rows if row.get("best_common_mode_gain") is not None]
+        best_cmrrs = [float(row["best_cmrr"]) for row in rows if row.get("best_cmrr") is not None]
+        best_cmrr_bounds = [float(row["best_cmrr_lower_bound"]) for row in rows if row.get("best_cmrr_lower_bound") is not None]
         best_bandwidths = [float(row["best_bandwidth"]) for row in rows if row["best_bandwidth"] is not None]
         best_bandwidth_bounds = [float(row["best_bandwidth_lower_bound"]) for row in rows if row.get("best_bandwidth_lower_bound") is not None]
         best_powers = [float(row["best_power"]) for row in rows if row["best_power"] is not None]
@@ -209,13 +257,21 @@ def summarize_methods(results: Iterable[dict[str, Any]]) -> list[dict[str, Any]]
             "analysis_error_rate": fmean(float(row.get("analysis_error_rate", 0.0)) for row in rows),
             "invalid_response_rate": fmean(float(row.get("invalid_response_rate", 0.0)) for row in rows),
             "bandwidth_right_censored_rate": fmean(float(row.get("bandwidth_right_censored_rate", 0.0)) for row in rows),
+            "cmrr_lower_bound_rate": fmean(float(row.get("cmrr_lower_bound_rate", 0.0)) for row in rows),
+            "operating_region_invalid_rate": fmean(float(row.get("operating_region_invalid_rate", 0.0)) for row in rows),
             "complete_exact_metric_rate": fmean(float(row.get("complete_exact_metric_rate", 0.0)) for row in rows),
+            "candidate_evaluations": total_evaluations,
             "ngspice_calls": sum(int(row["ngspice_calls"]) for row in rows),
+            "ngspice_process_calls": sum(int(row["ngspice_process_calls"]) for row in rows),
+            "analysis_calls": sum(int(row["analysis_calls"]) for row in rows),
             "event_observed_count": sum(bool(row["event_observed"]) for row in rows),
             "censored_count": sum(not bool(row["event_observed"]) for row in rows),
             "km_median_time_to_feasible": km.median_time_to_event,
             "rmst": km.rmst,
             "best_gain": max(best_gains) if best_gains else None,
+            "best_common_mode_gain": min(best_common_mode_gains) if best_common_mode_gains else None,
+            "best_cmrr": max(best_cmrrs) if best_cmrrs else None,
+            "best_cmrr_lower_bound": max(best_cmrr_bounds) if best_cmrr_bounds else None,
             "best_bandwidth": max(best_bandwidths) if best_bandwidths else None,
             "best_bandwidth_lower_bound": max(best_bandwidth_bounds) if best_bandwidth_bounds else None,
             "best_power": min(best_powers) if best_powers else None,

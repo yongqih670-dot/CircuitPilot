@@ -15,6 +15,13 @@ from circuitpilot.experiments.config import ExperimentConfig
 from circuitpilot.experiments.simulation import CandidateSimulation
 from circuitpilot.power_metrics import derived_rc_power
 from circuitpilot.power_metrics import dc_supply_power
+from circuitpilot.sky130_differential_amplifier import (
+    CmrrStatus,
+    DifferentialOperatingPoint,
+    Sky130DifferentialAmplifierCircuitConfig,
+    device_operating_region_valid,
+    measure_cmrr,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -25,6 +32,8 @@ class AnalysisOutcome:
     measurement_status: str = "complete"
     bandwidth_status: str | None = None
     bandwidth_lower_bound_hz: float | None = None
+    cmrr_status: str | None = None
+    cmrr_lower_bound_db: float | None = None
     message: str | None = None
 
 
@@ -306,4 +315,169 @@ class Sky130CommonSourceAnalyzer:
             bandwidth_status=bandwidth.bandwidth_status.value,
             bandwidth_lower_bound_hz=bandwidth.bandwidth_lower_bound_hz,
             message=bandwidth.message,
+        )
+
+
+class Sky130DifferentialAmplifierAnalyzer:
+    """Extract direct Ad/Acm, censored bandwidth, CMRR, power, and OP metrics."""
+
+    _SUPPORTED = {
+        "differential_gain_db",
+        "common_mode_gain_db",
+        "cmrr_db",
+        "cmrr_lower_bound_db",
+        "bandwidth_hz",
+        "bandwidth_lower_bound_hz",
+        "dc_power_w",
+        "output_dc_voltage",
+        "tail_current_a",
+        "operating_region_valid",
+    }
+
+    def __init__(self, config: ExperimentConfig) -> None:
+        if (
+            config.circuit_name != "sky130_differential_amplifier"
+            or not isinstance(
+                config.circuit_config, Sky130DifferentialAmplifierCircuitConfig
+            )
+        ):
+            raise ValueError(
+                "Sky130DifferentialAmplifierAnalyzer requires Task 5 config"
+            )
+        requested = {
+            definition.metric for definition in (*config.objectives, *config.constraints)
+        }
+        unsupported = sorted(requested - self._SUPPORTED)
+        if unsupported:
+            raise ValueError(
+                "unsupported SKY130 differential metric(s): " + ", ".join(unsupported)
+            )
+        self._requested = requested
+        self._circuit = config.circuit_config
+
+    def extract(
+        self,
+        simulation: CandidateSimulation,
+        parameters: Mapping[str, float | int],
+    ) -> AnalysisOutcome:
+        del parameters
+        operating_point = simulation.operating_point
+        common = simulation.common_mode_response
+        if not isinstance(operating_point, DifferentialOperatingPoint):
+            return AnalysisOutcome(
+                {},
+                measurement_status="analysis_error",
+                bandwidth_status=BandwidthStatus.ANALYSIS_ERROR.value,
+                cmrr_status=CmrrStatus.INVALID.value,
+                message="Task 5 simulation has no parsed differential operating point",
+            )
+        if common is None or len(common) < 2 or len(simulation.response) < 2:
+            return AnalysisOutcome(
+                {},
+                measurement_status="invalid_response",
+                bandwidth_status=BandwidthStatus.INVALID_RESPONSE.value,
+                cmrr_status=CmrrStatus.INVALID.value,
+                message="differential/common-mode AC response is incomplete",
+            )
+        differential = simulation.response
+        bandwidth = measure_bandwidth(
+            differential.frequency_hz, differential.gain_db
+        )
+        if bandwidth.bandwidth_status in {
+            BandwidthStatus.INVALID_RESPONSE,
+            BandwidthStatus.ANALYSIS_ERROR,
+        }:
+            return AnalysisOutcome(
+                {},
+                measurement_status=bandwidth.measurement_status,
+                bandwidth_status=bandwidth.bandwidth_status.value,
+                cmrr_status=CmrrStatus.INVALID.value,
+                message="invalid differential response: " + (bandwidth.message or ""),
+            )
+        differential_gain = float(differential.gain_db[0])
+        common_mode_gain = float(common.gain_db[0])
+        cmrr = measure_cmrr(
+            differential_gain,
+            common_mode_gain,
+            common_mode_gain_floor_db=self._circuit.common_mode_gain_floor_db,
+        )
+        if cmrr.status is CmrrStatus.INVALID:
+            return AnalysisOutcome(
+                {},
+                measurement_status="invalid_response",
+                bandwidth_status=bandwidth.bandwidth_status.value,
+                bandwidth_lower_bound_hz=bandwidth.bandwidth_lower_bound_hz,
+                cmrr_status=cmrr.status.value,
+                message=cmrr.message,
+            )
+        flattened_devices = {
+            f"{role}_{quantity}": float(value)
+            for role, quantities in operating_point.device_quantities.items()
+            for quantity, value in quantities.items()
+        }
+        region_by_role = {
+            role: device_operating_region_valid(role, quantities)
+            for role, quantities in operating_point.device_quantities.items()
+        }
+        power = dc_supply_power(
+            operating_point.supply_voltage_v, operating_point.supply_current_a
+        )
+        measured: dict[str, float | None] = {
+            "differential_gain_db": differential_gain,
+            "common_mode_gain_db": common_mode_gain,
+            "cmrr_db": cmrr.cmrr_db,
+            "cmrr_lower_bound_db": cmrr.lower_bound_db,
+            "bandwidth_hz": bandwidth.bandwidth_hz,
+            "bandwidth_lower_bound_hz": bandwidth.bandwidth_lower_bound_hz,
+            "dc_power_w": power,
+            "output_dc_voltage": operating_point.output_voltage_v,
+            "tail_current_a": operating_point.tail_current_a,
+            "supply_current_a": operating_point.supply_current_a,
+            "tail_node_voltage_v": operating_point.tail_node_voltage_v,
+            "operating_region_valid": float(all(region_by_role.values())),
+            "differential_sample_count": float(len(differential)),
+            "common_mode_sample_count": float(len(common)),
+            "candidate_evaluations": 1.0,
+            "ngspice_process_calls": float(simulation.ngspice_process_calls),
+            "analysis_calls": float(simulation.analysis_calls),
+            **{
+                f"{role}_operating_region_valid": float(valid)
+                for role, valid in region_by_role.items()
+            },
+            **flattened_devices,
+        }
+        missing = sorted(
+            name
+            for name in self._requested
+            if name not in measured
+            or (
+                measured[name] is None
+                and not (
+                    name == "bandwidth_hz"
+                    and bandwidth.bandwidth_status is BandwidthStatus.RIGHT_CENSORED
+                )
+                and not (
+                    name == "cmrr_db"
+                    and cmrr.status is CmrrStatus.LOWER_BOUND
+                )
+            )
+        )
+        if missing:
+            return AnalysisOutcome(
+                measured,
+                measurement_status="analysis_error",
+                bandwidth_status=bandwidth.bandwidth_status.value,
+                bandwidth_lower_bound_hz=bandwidth.bandwidth_lower_bound_hz,
+                cmrr_status=cmrr.status.value,
+                cmrr_lower_bound_db=cmrr.lower_bound_db,
+                message="requested Task 5 metric(s) unavailable: " + ", ".join(missing),
+            )
+        return AnalysisOutcome(
+            measured,
+            measurement_status="complete",
+            bandwidth_status=bandwidth.bandwidth_status.value,
+            bandwidth_lower_bound_hz=bandwidth.bandwidth_lower_bound_hz,
+            cmrr_status=cmrr.status.value,
+            cmrr_lower_bound_db=cmrr.lower_bound_db,
+            message=cmrr.message or bandwidth.message,
         )

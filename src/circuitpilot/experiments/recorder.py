@@ -27,6 +27,8 @@ EVALUATION_COLUMNS = (
     "measurement_status",
     "bandwidth_status",
     "bandwidth_lower_bound_hz",
+    "cmrr_status",
+    "cmrr_lower_bound_db",
     "failure_type",
     "error_message",
     "ngspice_return_code",
@@ -40,6 +42,8 @@ EVALUATION_COLUMNS = (
     "timestamp",
     "run_directory",
     "ngspice_called",
+    "ngspice_process_calls",
+    "analysis_calls",
     "benchmark_config_hash",
     "experiment_phase",
     "event_observed",
@@ -130,6 +134,10 @@ class EvaluationRecord:
     measurement_status: str | None = None
     bandwidth_status: str | None = None
     bandwidth_lower_bound_hz: float | None = None
+    cmrr_status: str | None = None
+    cmrr_lower_bound_db: float | None = None
+    ngspice_process_calls: int = 0
+    analysis_calls: int = 0
 
     def __post_init__(self) -> None:
         """Reject malformed, non-finite, or internally inconsistent records."""
@@ -172,6 +180,19 @@ class EvaluationRecord:
             raise ValueError("right-censored bandwidth requires a lower bound")
         if self.bandwidth_status != "right_censored" and lower_bound is not None:
             raise ValueError("only right-censored bandwidth can have a lower bound")
+        if self.cmrr_status is not None and self.cmrr_status not in {
+            "measured",
+            "lower_bound",
+            "invalid",
+        }:
+            raise ValueError("cmrr_status is invalid")
+        cmrr_bound = _finite_optional(
+            self.cmrr_lower_bound_db, "cmrr_lower_bound_db"
+        )
+        if self.cmrr_status == "lower_bound" and cmrr_bound is None:
+            raise ValueError("lower-bound CMRR requires a lower bound")
+        if self.cmrr_status != "lower_bound" and cmrr_bound is not None:
+            raise ValueError("only lower-bound CMRR can have a lower bound")
         if self.failure_type is not None and (
             not isinstance(self.failure_type, str) or not self.failure_type
         ):
@@ -217,6 +238,12 @@ class EvaluationRecord:
             raise ValueError("run_directory must be non-empty")
         if not isinstance(self.ngspice_called, bool):
             raise ValueError("ngspice_called must be a boolean")
+        for name in ("ngspice_process_calls", "analysis_calls"):
+            value = getattr(self, name)
+            if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                raise ValueError(f"{name} must be a non-negative integer")
+        if self.ngspice_called != (self.ngspice_process_calls > 0):
+            raise ValueError("ngspice_called must match ngspice_process_calls")
         if not isinstance(self.is_feasible, bool):
             raise ValueError("is_feasible must be a boolean")
         complete_measurement = self.measurement_status in {None, "complete"}
@@ -275,6 +302,10 @@ class EvaluationRecord:
         measurement_status: str | None = None,
         bandwidth_status: str | None = None,
         bandwidth_lower_bound_hz: float | None = None,
+        cmrr_status: str | None = None,
+        cmrr_lower_bound_db: float | None = None,
+        ngspice_process_calls: int | None = None,
+        analysis_calls: int = 0,
     ) -> "EvaluationRecord":
         """Construct a record with a UTC timestamp."""
         return cls(
@@ -307,13 +338,21 @@ class EvaluationRecord:
             measurement_status=measurement_status,
             bandwidth_status=bandwidth_status,
             bandwidth_lower_bound_hz=bandwidth_lower_bound_hz,
+            cmrr_status=cmrr_status,
+            cmrr_lower_bound_db=cmrr_lower_bound_db,
+            ngspice_process_calls=(
+                int(ngspice_called)
+                if ngspice_process_calls is None
+                else ngspice_process_calls
+            ),
+            analysis_calls=analysis_calls,
         )
 
 
 class EvaluationRecorder:
     """Persist identical evaluation rows to CSV and SQLite after every tell."""
 
-    SCHEMA_VERSION = 4
+    SCHEMA_VERSION = 5
 
     def __init__(self, output_directory: str | Path) -> None:
         """Initialize the per-run CSV and SQLite stores."""
@@ -359,6 +398,8 @@ class EvaluationRecorder:
                         measurement_status TEXT,
                         bandwidth_status TEXT,
                         bandwidth_lower_bound_hz REAL,
+                        cmrr_status TEXT,
+                        cmrr_lower_bound_db REAL,
                         failure_type TEXT,
                         error_message TEXT,
                         ngspice_return_code INTEGER,
@@ -372,6 +413,8 @@ class EvaluationRecorder:
                         timestamp TEXT NOT NULL,
                         run_directory TEXT NOT NULL,
                         ngspice_called INTEGER NOT NULL,
+                        ngspice_process_calls INTEGER NOT NULL DEFAULT 0,
+                        analysis_calls INTEGER NOT NULL DEFAULT 0,
                         benchmark_config_hash TEXT,
                         experiment_phase TEXT NOT NULL DEFAULT 'baseline',
                         event_observed INTEGER NOT NULL DEFAULT 0,
@@ -381,7 +424,7 @@ class EvaluationRecorder:
                     """
                 )
                 version = connection.execute("PRAGMA user_version").fetchone()[0]
-                if version not in (0, 1, 2, 3, self.SCHEMA_VERSION):
+                if version not in (0, 1, 2, 3, 4, self.SCHEMA_VERSION):
                     raise ResearchExperimentError(
                         f"unsupported evaluation database schema {version}"
                     )
@@ -401,12 +444,21 @@ class EvaluationRecorder:
                     "measurement_status": "TEXT",
                     "bandwidth_status": "TEXT",
                     "bandwidth_lower_bound_hz": "REAL",
+                    "cmrr_status": "TEXT",
+                    "cmrr_lower_bound_db": "REAL",
+                    "ngspice_process_calls": "INTEGER NOT NULL DEFAULT 0",
+                    "analysis_calls": "INTEGER NOT NULL DEFAULT 0",
                 }
                 for name, declaration in migrations.items():
                     if name not in columns:
                         connection.execute(
                             f"ALTER TABLE research_evaluations ADD COLUMN {name} {declaration}"
                         )
+                connection.execute(
+                    "UPDATE research_evaluations "
+                    "SET ngspice_process_calls = ngspice_called "
+                    "WHERE ngspice_process_calls = 0 AND ngspice_called = 1"
+                )
                 connection.execute(f"PRAGMA user_version = {self.SCHEMA_VERSION}")
         except sqlite3.Error as exc:
             raise ResearchExperimentError(
@@ -429,12 +481,19 @@ class EvaluationRecorder:
                         run_id, iteration, experiment_id, circuit, method, optimizer_phase, seed,
                         parameters_json, simulation_status, failure_type,
                         measurement_status, bandwidth_status, bandwidth_lower_bound_hz,
+                        cmrr_status, cmrr_lower_bound_db,
                         error_message, ngspice_return_code, timed_out,
                         raw_metrics_json, objective_value, constraint_violation, is_feasible,
                         simulation_time, total_elapsed_time, timestamp,
-                        run_directory, ngspice_called, benchmark_config_hash,
+                        run_directory, ngspice_called, ngspice_process_calls,
+                        analysis_calls, benchmark_config_hash,
                         experiment_phase, event_observed, evaluation_time
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ) VALUES (
+                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                        ?, ?, ?
+                    )
                     """,
                     (
                         record.run_id,
@@ -450,6 +509,8 @@ class EvaluationRecorder:
                         record.measurement_status,
                         record.bandwidth_status,
                         record.bandwidth_lower_bound_hz,
+                        record.cmrr_status,
+                        record.cmrr_lower_bound_db,
                         record.error_message,
                         record.ngspice_return_code,
                         int(record.timed_out),
@@ -462,6 +523,8 @@ class EvaluationRecorder:
                         record.timestamp,
                         record.run_directory,
                         int(record.ngspice_called),
+                        record.ngspice_process_calls,
+                        record.analysis_calls,
                         record.benchmark_config_hash,
                         record.experiment_phase,
                         int(record.event_observed),
@@ -499,6 +562,8 @@ class EvaluationRecorder:
             measurement_status=row["measurement_status"],
             bandwidth_status=row["bandwidth_status"],
             bandwidth_lower_bound_hz=row["bandwidth_lower_bound_hz"],
+            cmrr_status=row["cmrr_status"],
+            cmrr_lower_bound_db=row["cmrr_lower_bound_db"],
             failure_type=row["failure_type"],
             error_message=row["error_message"],
             ngspice_return_code=row["ngspice_return_code"],
@@ -512,6 +577,8 @@ class EvaluationRecorder:
             timestamp=row["timestamp"],
             run_directory=row["run_directory"],
             ngspice_called=bool(row["ngspice_called"]),
+            ngspice_process_calls=row["ngspice_process_calls"],
+            analysis_calls=row["analysis_calls"],
             benchmark_config_hash=row["benchmark_config_hash"],
             experiment_phase=row["experiment_phase"],
             event_observed=bool(row["event_observed"]),
@@ -560,6 +627,12 @@ class EvaluationRecorder:
                                 if record.bandwidth_lower_bound_hz is None
                                 else f"{record.bandwidth_lower_bound_hz:.17g}"
                             ),
+                            "cmrr_status": record.cmrr_status or "",
+                            "cmrr_lower_bound_db": (
+                                ""
+                                if record.cmrr_lower_bound_db is None
+                                else f"{record.cmrr_lower_bound_db:.17g}"
+                            ),
                             "failure_type": record.failure_type or "",
                             "error_message": record.error_message or "",
                             "ngspice_return_code": (
@@ -588,6 +661,8 @@ class EvaluationRecorder:
                             "timestamp": record.timestamp,
                             "run_directory": record.run_directory,
                             "ngspice_called": str(record.ngspice_called).lower(),
+                            "ngspice_process_calls": record.ngspice_process_calls,
+                            "analysis_calls": record.analysis_calls,
                             "benchmark_config_hash": record.benchmark_config_hash or "",
                             "experiment_phase": record.experiment_phase,
                             "event_observed": str(record.event_observed).lower(),

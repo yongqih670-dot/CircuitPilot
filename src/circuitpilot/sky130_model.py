@@ -14,6 +14,7 @@ from circuitpilot.exceptions import ConfigError
 
 
 SKY130_DEVICE_NAME = "sky130_fd_pr__nfet_01v8"
+SKY130_PFET_DEVICE_NAME = "sky130_fd_pr__pfet_01v8"
 SKY130_MODEL_SOURCE = "FOSSi Foundation Ciel/Open_PDKs prebuilt SKY130"
 
 
@@ -150,6 +151,17 @@ class Sky130ModelConfig:
         )
 
     @property
+    def pfet_corner_path(self) -> Path:
+        """Return the official nominal PFET corner used by Task 5."""
+        return (
+            self.pdk_root
+            / "libs.ref"
+            / "sky130_fd_pr"
+            / "spice"
+            / "sky130_fd_pr__pfet_01v8__tt.corner.spice"
+        )
+
+    @property
     def nodeinfo_path(self) -> Path:
         return self.pdk_root / ".config" / "nodeinfo.json"
 
@@ -159,6 +171,7 @@ class Sky130ModelConfig:
             ("Open_PDKs ngspice library", self.model_library),
             ("SKY130 invariant parameters", self.invariant_path),
             ("sky130_fd_pr__nfet_01v8 TT corner", self.corner_path),
+            ("sky130_fd_pr__pfet_01v8 TT corner", self.pfet_corner_path),
         ):
             if not path.is_file():
                 raise ConfigError(f"missing {description}: '{path}'")

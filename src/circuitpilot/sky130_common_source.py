@@ -220,6 +220,7 @@ class NgspiceRuntimePaths:
     runtime_log: Path
     runtime_invariant: str
     runtime_corner: str
+    runtime_pfet_corner: str
 
 
 def _run_subst(arguments: list[str], *, tolerate_missing: bool = False) -> None:
@@ -276,6 +277,7 @@ def sky130_runtime_paths(
             log_path,
             model.invariant_path.as_posix(),
             model.corner_path.as_posix(),
+            model.pfet_corner_path.as_posix(),
         )
         return
 
@@ -301,6 +303,7 @@ def sky130_runtime_paths(
             Path(f"{run_drive}\\{log_path.name}"),
             f"{pdk_prefix}libs.tech/ngspice/parameters/invariant.spice",
             f"{pdk_prefix}libs.ref/sky130_fd_pr/spice/sky130_fd_pr__nfet_01v8__tt.corner.spice",
+            f"{pdk_prefix}libs.ref/sky130_fd_pr/spice/sky130_fd_pr__pfet_01v8__tt.corner.spice",
         )
     finally:
         for drive in reversed(created):

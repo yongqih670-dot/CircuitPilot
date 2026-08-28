@@ -37,10 +37,16 @@ class FairnessValidator:
         "model_sha256",
         "pdk_release",
         "pdk_commit",
+        "topology_hash",
+        "device_role_mapping_hash",
+        "differential_testbench_hash",
+        "common_mode_testbench_hash",
+        "cmrr_semantics_version",
         "bandwidth_semantics_version",
         "measurement_window",
         "censoring_policy",
         "difficulty_protocol_version",
+        "simulation_cost_semantics",
         "simulation_budget",
         "experiment_phase",
         "pvt_config",
@@ -88,10 +94,36 @@ class FairnessValidator:
                 "model_sha256": None if transistor_model is None else transistor_model.get("model_sha256"),
                 "pdk_release": None if transistor_model is None else transistor_model.get("pdk_release"),
                 "pdk_commit": None if transistor_model is None else transistor_model.get("pdk_commit"),
+                "topology_hash": (
+                    None
+                    if circuit_config is None
+                    else _stable_hash(circuit_config.get("topology_definition"))
+                ),
+                "device_role_mapping_hash": (
+                    None
+                    if circuit_config is None
+                    else _stable_hash(circuit_config.get("device_role_mapping"))
+                ),
+                "differential_testbench_hash": (
+                    None
+                    if circuit_config is None
+                    else _stable_hash(
+                        circuit_config.get("differential_testbench_definition")
+                    )
+                ),
+                "common_mode_testbench_hash": (
+                    None
+                    if circuit_config is None
+                    else _stable_hash(
+                        circuit_config.get("common_mode_testbench_definition")
+                    )
+                ),
+                "cmrr_semantics_version": None if circuit_config is None else circuit_config.get("cmrr_semantics_version"),
                 "bandwidth_semantics_version": None if circuit_config is None else circuit_config.get("bandwidth_semantics_version"),
                 "measurement_window": measurement_window,
                 "censoring_policy": None if circuit_config is None else circuit_config.get("censoring_policy"),
                 "difficulty_protocol_version": None if circuit_config is None else circuit_config.get("difficulty_protocol_version"),
+                "simulation_cost_semantics": None if circuit_config is None else circuit_config.get("simulation_cost_semantics"),
                 "simulation_budget": experiment["simulation_budget"],
                 "experiment_phase": experiment.get("phase", "baseline"),
                 "pvt_config": config.get("pvt_config", {}),

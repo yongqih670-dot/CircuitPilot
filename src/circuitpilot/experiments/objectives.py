@@ -39,6 +39,8 @@ class ObjectiveEvaluator:
         *,
         bandwidth_status: str | None = None,
         bandwidth_lower_bound_hz: float | None = None,
+        cmrr_status: str | None = None,
+        cmrr_lower_bound_db: float | None = None,
     ) -> ObjectiveEvaluation:
         """Convert measured physical metrics into optimizer-facing scalars."""
         normalized: dict[str, float] = {}
@@ -63,6 +65,14 @@ class ObjectiveEvaluator:
                 and isfinite(float(bandwidth_lower_bound_hz))
             ):
                 metric = float(bandwidth_lower_bound_hz)
+            elif (
+                definition.metric == "cmrr_db"
+                and definition.operator is ConstraintOperator.GREATER_EQUAL
+                and cmrr_status == "lower_bound"
+                and cmrr_lower_bound_db is not None
+                and isfinite(float(cmrr_lower_bound_db))
+            ):
+                metric = float(cmrr_lower_bound_db)
             else:
                 raise ResearchExperimentError(
                     f"required constraint metric '{definition.metric}' is unavailable"

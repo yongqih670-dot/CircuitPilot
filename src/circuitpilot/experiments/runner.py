@@ -22,6 +22,7 @@ from circuitpilot.experiments.analyzer import (
     CommonSourceAnalyzer,
     RCLowPassAnalyzer,
     Sky130CommonSourceAnalyzer,
+    Sky130DifferentialAmplifierAnalyzer,
 )
 from circuitpilot.experiments.budget import SimulationBudget
 from circuitpilot.experiments.config import (
@@ -38,8 +39,12 @@ from circuitpilot.experiments.simulation import (
     CommonSourceNgspiceSimulator,
     RCLowPassNgspiceSimulator,
     Sky130CommonSourceNgspiceSimulator,
+    Sky130DifferentialAmplifierNgspiceSimulator,
 )
 from circuitpilot.sky130_common_source import Sky130CommonSourceCircuitConfig
+from circuitpilot.sky130_differential_amplifier import (
+    Sky130DifferentialAmplifierCircuitConfig,
+)
 from circuitpilot.research_artifacts import write_research_manifest
 from circuitpilot.run_directory import (
     ResearchRunDirectory,
@@ -132,6 +137,9 @@ class ExperimentRunner:
             measurement_status: str | None = None
             bandwidth_status: str | None = None
             bandwidth_lower_bound_hz: float | None = None
+            cmrr_status: str | None = None
+            cmrr_lower_bound_db: float | None = None
+            analysis_calls = 0
             ngspice_calls_before = self.budget.ngspice_calls
 
             try:
@@ -149,17 +157,22 @@ class ExperimentRunner:
                         evaluation_directory,
                         self.budget.mark_ngspice_call,
                     )
+                    analysis_calls = simulation.analysis_calls
                     extracted = self.analyzer.extract(simulation, parameters)
                     if isinstance(extracted, AnalysisOutcome):
                         metrics = extracted.metrics
                         measurement_status = extracted.measurement_status
                         bandwidth_status = extracted.bandwidth_status
                         bandwidth_lower_bound_hz = extracted.bandwidth_lower_bound_hz
+                        cmrr_status = extracted.cmrr_status
+                        cmrr_lower_bound_db = extracted.cmrr_lower_bound_db
                         if measurement_status == "complete":
                             objective = self.objective_evaluator.evaluate(
                                 metrics,
                                 bandwidth_status=bandwidth_status,
                                 bandwidth_lower_bound_hz=bandwidth_lower_bound_hz,
+                                cmrr_status=cmrr_status,
+                                cmrr_lower_bound_db=cmrr_lower_bound_db,
                             )
                             objective_value = objective.objective_value
                             constraint_violation = objective.constraint_violation
@@ -179,17 +192,22 @@ class ExperimentRunner:
                         constraint_violation = objective.constraint_violation
                         is_feasible = objective.is_feasible
                 except (CircuitPilotError, OSError, ValueError) as exc:
-                    task4_postprocess_failure = (
-                        self.config.circuit_name == "sky130_common_source"
+                    sky130_postprocess_failure = (
+                        self.config.circuit_name in {
+                            "sky130_common_source",
+                            "sky130_differential_amplifier",
+                        }
                         and self.budget.ngspice_calls > ngspice_calls_before
                         and not isinstance(exc, SimulationError)
                     )
                     simulation_status = (
-                        "success" if task4_postprocess_failure else _failure_status(exc)
+                        "success" if sky130_postprocess_failure else _failure_status(exc)
                     )
-                    if task4_postprocess_failure:
+                    if sky130_postprocess_failure:
                         measurement_status = "analysis_error"
                         bandwidth_status = "analysis_error"
+                        if self.config.circuit_name == "sky130_differential_amplifier":
+                            cmrr_status = "invalid"
                     failure_type = type(exc).__name__
                     error_message = str(exc)
                     if isinstance(exc, SimulationError):
@@ -207,6 +225,7 @@ class ExperimentRunner:
             else:
                 self.budget.mark_failure()
             ngspice_called = self.budget.ngspice_calls > ngspice_calls_before
+            ngspice_process_calls = self.budget.ngspice_calls - ngspice_calls_before
             optimizer_status = (
                 "success"
                 if simulation_status == "success" and objective_value is not None
@@ -248,6 +267,10 @@ class ExperimentRunner:
                 measurement_status=measurement_status,
                 bandwidth_status=bandwidth_status,
                 bandwidth_lower_bound_hz=bandwidth_lower_bound_hz,
+                cmrr_status=cmrr_status,
+                cmrr_lower_bound_db=cmrr_lower_bound_db,
+                ngspice_process_calls=ngspice_process_calls,
+                analysis_calls=analysis_calls,
             )
             self.recorder.save(record)
             self.optimizer.save_state(self.optimizer_state_path)
@@ -304,7 +327,7 @@ def _budget_from_records(
         evaluations_total=len(records),
         evaluations_success=successful,
         evaluations_failed=len(records) - successful,
-        ngspice_calls=sum(record.ngspice_called for record in records),
+        ngspice_calls=sum(record.ngspice_process_calls for record in records),
     )
 
 
@@ -330,6 +353,11 @@ def _write_summary(config: ExperimentConfig, result: ExperimentRunResult) -> Pat
         "evaluations_success": result.budget["evaluations_success"],
         "evaluations_failed": result.budget["evaluations_failed"],
         "ngspice_calls": result.budget["ngspice_calls"],
+        "candidate_evaluations": result.budget["evaluations_total"],
+        "ngspice_process_calls": sum(
+            record.ngspice_process_calls for record in result.records
+        ),
+        "analysis_calls": sum(record.analysis_calls for record in result.records),
         "budget": result.budget,
         "elapsed_seconds": result.elapsed_seconds,
         "total_runtime": result.elapsed_seconds,
@@ -460,9 +488,14 @@ def execute_experiment(
     elif config.circuit_name == "common_source":
         selected_simulator = simulator or CommonSourceNgspiceSimulator(config)
         selected_analyzer = analyzer or CommonSourceAnalyzer(config)
-    else:
+    elif config.circuit_name == "sky130_common_source":
         selected_simulator = simulator or Sky130CommonSourceNgspiceSimulator(config)
         selected_analyzer = analyzer or Sky130CommonSourceAnalyzer(config)
+    else:
+        selected_simulator = (
+            simulator or Sky130DifferentialAmplifierNgspiceSimulator(config)
+        )
+        selected_analyzer = analyzer or Sky130DifferentialAmplifierAnalyzer(config)
 
     runner = ExperimentRunner(
         config=config,
@@ -489,15 +522,31 @@ def execute_experiment(
         **result.budget,
     }
     model_metadata = None
-    if isinstance(config.circuit_config, Sky130CommonSourceCircuitConfig):
+    if isinstance(
+        config.circuit_config,
+        (Sky130CommonSourceCircuitConfig, Sky130DifferentialAmplifierCircuitConfig),
+    ):
         model_metadata = config.circuit_config.model.metadata()
-        model_metadata.update(
-            {
-                "bandwidth_semantics_version": config.circuit_config.bandwidth_semantics_version,
-                "censoring_policy": config.circuit_config.censoring_policy,
-                "difficulty_protocol_version": config.circuit_config.difficulty_protocol_version,
-            }
-        )
+        model_metadata.update({
+            "bandwidth_semantics_version": config.circuit_config.bandwidth_semantics_version,
+            "censoring_policy": config.circuit_config.censoring_policy,
+            "difficulty_protocol_version": config.circuit_config.difficulty_protocol_version,
+        })
+        if isinstance(
+            config.circuit_config, Sky130DifferentialAmplifierCircuitConfig
+        ):
+            model_metadata.update({
+                "device_names": [
+                    config.circuit_config.nfet_device_name,
+                    config.circuit_config.pfet_device_name,
+                ],
+                "topology_version": config.circuit_config.topology_version,
+                "device_role_mapping_version": config.circuit_config.device_role_mapping_version,
+                "differential_testbench_version": config.circuit_config.differential_testbench_version,
+                "common_mode_testbench_version": config.circuit_config.common_mode_testbench_version,
+                "cmrr_semantics_version": config.circuit_config.cmrr_semantics_version,
+                "simulation_cost_semantics": config.circuit_config.simulation_cost_semantics,
+            })
     elif config.circuit_config is not None:
         model = config.circuit_config.model
         model_metadata = {
