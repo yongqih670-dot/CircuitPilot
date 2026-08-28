@@ -4,12 +4,14 @@
 
 研究冻结版本：`v0.5-research-baseline`。
 
-Research Task 4 已冻结独立的 SKY130 Common-Source Benchmark 2.0：真实
-`sky130_fd_pr__nfet_01v8`、内容锁定 Open_PDKs 模型、真实 `.op + .ac`、固定
-AC 窗口、带宽右删失语义以及 Random/DE/TPE/BO 公平基线。完整定义和证据见
-[`research/sky130/common_source/SKY130_COMMON_SOURCE_BENCHMARK.md`](research/sky130/common_source/SKY130_COMMON_SOURCE_BENCHMARK.md)
+Research Task 5 已冻结独立的 SKY130 Differential-Amplifier Benchmark：真实
+`sky130_fd_pr__nfet_01v8` / `sky130_fd_pr__pfet_01v8`、五管单端差分拓扑、显式
+bulk、真实 `.op + .ac`、差模/共模双测试台、CMRR 下界与带宽右删失语义，以及
+Random/DE/TPE/BO 公平基线。完整定义和证据见
+[`research/sky130/differential_amplifier/DIFFERENTIAL_AMPLIFIER_BENCHMARK.md`](research/sky130/differential_amplifier/DIFFERENTIAL_AMPLIFIER_BENCHMARK.md)
 与
-[`research/sky130/common_source/TASK4_SKY130_COMMON_SOURCE_REPORT.md`](research/sky130/common_source/TASK4_SKY130_COMMON_SOURCE_REPORT.md)。Task 3 历史结果和哈希保持不变。
+[`research/sky130/differential_amplifier/TASK5_DIFFERENTIAL_AMPLIFIER_REPORT.md`](research/sky130/differential_amplifier/TASK5_DIFFERENTIAL_AMPLIFIER_REPORT.md)。
+Task 3 与 Task 4 的冻结配置、结果和哈希均保持不变。
 
 CircuitPilot 是一个采用 `src/` 目录结构的参数化 ngspice 电路仿真与自动优化平台。它可以从 YAML 读取单次仿真、离散参数扫描或连续优化配置，并将仿真过程与设计结果归档到 SQLite。
 
