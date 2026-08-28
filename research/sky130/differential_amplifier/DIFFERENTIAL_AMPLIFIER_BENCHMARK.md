@@ -36,3 +36,10 @@ The benchmark reuses the content-locked Task 4 SKY130A/Open_PDKs 1.0.606 TT
 installation and its model-tree and top-library hashes. Devices are the real
 sky130_fd_pr__nfet_01v8 and sky130_fd_pr__pfet_01v8 primitives.
 
+## Frozen Task 5 definition
+
+Calibration selected Ad >= 15 dB, differential bandwidth >= 20 MHz, CMRR >=
+35 dB, DC power <= 1 mW, output DC voltage in [0.25, 1.55] V, and valid
+operation for all five critical devices. The formal budget is 100 candidate
+evaluations. The independent Task 5 benchmark hash is
+57d2183621ecf37e5ca22e012452c43fce6459be7d347a5cfc93d0b394c14378.

@@ -1,0 +1,11 @@
+suite:
+  name: sky130_differential_task5_baseline
+  output_dir: research_runs/task5_sky130_differential_baseline
+  methods:
+    random: sky130_differential_random.yaml
+    de: sky130_differential_de.yaml
+    tpe: sky130_differential_tpe.yaml
+    bo: sky130_differential_bo.yaml
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  simulation_budget: 100
+  phase: baseline

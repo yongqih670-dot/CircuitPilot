@@ -178,12 +178,21 @@ class ExperimentRunner:
                             constraint_violation = objective.constraint_violation
                             is_feasible = objective.is_feasible
                         else:
-                            failure_type = (
-                                "InvalidResponse"
-                                if measurement_status == "invalid_response"
-                                else "AnalysisError"
-                            )
                             error_message = extracted.message
+                            if self.config.circuit_name == "sky130_differential_amplifier":
+                                lowered = (error_message or "").lower()
+                                if "common-mode" in lowered:
+                                    failure_type = "invalid_common_mode_response"
+                                elif "differential" in lowered:
+                                    failure_type = "invalid_differential_response"
+                                else:
+                                    failure_type = "analysis_error"
+                            else:
+                                failure_type = (
+                                    "InvalidResponse"
+                                    if measurement_status == "invalid_response"
+                                    else "AnalysisError"
+                                )
                     else:
                         metrics = extracted
                         measurement_status = "complete"
@@ -210,6 +219,19 @@ class ExperimentRunner:
                             cmrr_status = "invalid"
                     failure_type = type(exc).__name__
                     error_message = str(exc)
+                    if (
+                        self.config.circuit_name == "sky130_differential_amplifier"
+                        and sky130_postprocess_failure
+                    ):
+                        lowered = error_message.lower()
+                        if "common_ac" in lowered:
+                            failure_type = "common_mode_ac_error"
+                        elif "ac.dat" in lowered:
+                            failure_type = "differential_ac_error"
+                        elif "op.dat" in lowered or "operating-point" in lowered:
+                            failure_type = "dc_non_convergence"
+                        else:
+                            failure_type = "analysis_error"
                     if isinstance(exc, SimulationError):
                         ngspice_return_code = exc.returncode
                         timed_out = exc.timed_out

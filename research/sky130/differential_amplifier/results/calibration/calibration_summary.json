@@ -1,0 +1,164 @@
+{
+  "analysis_calls": 512,
+  "bandwidth_status_counts": {
+    "measured": 256
+  },
+  "calibration_csv": "F:/\u82af\u7247\u8bbe\u8ba1/CircuitPilot\uff1aAgentic Circuit Simulation and Optimization Platform/research/sky130/differential_amplifier/calibration.csv",
+  "candidate_design": {
+    "count": 256,
+    "kind": "sobol",
+    "scramble": false,
+    "seed_metadata": 0
+  },
+  "candidate_evaluations": 256,
+  "cmrr_status_counts": {
+    "measured": 256
+  },
+  "distributions": {
+    "bandwidth_hz_exact": {
+      "count": 256,
+      "maximum": 698599854.3440423,
+      "median": 4205083.271903827,
+      "minimum": 39128.8666414191,
+      "q25": 1293265.9138037544,
+      "q75": 12102165.188290859
+    },
+    "candidate_runtime_s": {
+      "count": 256,
+      "maximum": 0.8440000000409782,
+      "median": 0.7339999999385327,
+      "minimum": 0.625,
+      "q25": 0.7029999999795109,
+      "q75": 0.75
+    },
+    "cmrr_db_exact": {
+      "count": 256,
+      "maximum": 80.86894699999999,
+      "median": 55.9683463,
+      "minimum": -0.9259022300000002,
+      "q25": 39.5585316825,
+      "q75": 67.14840945
+    },
+    "dc_power_w": {
+      "count": 256,
+      "maximum": 0.0002312900082,
+      "median": 1.6394926833e-05,
+      "minimum": 3.961238706e-08,
+      "q25": 4.170113694e-06,
+      "q75": 4.089129678e-05
+    },
+    "differential_gain_db": {
+      "count": 256,
+      "maximum": 41.9083505,
+      "median": 33.178601,
+      "minimum": -12.840458,
+      "q25": 29.081075525,
+      "q75": 36.73643645
+    },
+    "output_dc_voltage": {
+      "count": 256,
+      "maximum": 1.40178668,
+      "median": 0.757720849,
+      "minimum": 0.099090969,
+      "q25": 0.60914556125,
+      "q75": 0.872888927
+    },
+    "tail_current_a": {
+      "count": 256,
+      "maximum": 0.000128494447,
+      "median": 9.108290405e-06,
+      "minimum": 2.20028897e-08,
+      "q25": 2.31672752e-06,
+      "q75": 2.27173856e-05
+    }
+  },
+  "formal_budget": 100,
+  "ngspice_process_calls": 256,
+  "operating_region_valid_count": 40,
+  "selected_specification": {
+    "bandwidth_min_hz": 20000000.0,
+    "cmrr_min_db": 35.0,
+    "differential_gain_min_db": 15.0,
+    "feasible_candidates": 2,
+    "feasible_fraction": 0.0078125,
+    "power_max_w": 0.001,
+    "row": 1
+  },
+  "simulation_failures": 0,
+  "simulation_successes": 256,
+  "specification_ladder": [
+    {
+      "bandwidth_min_hz": 20000000.0,
+      "cmrr_min_db": 35.0,
+      "differential_gain_min_db": 15.0,
+      "feasible_candidates": 2,
+      "feasible_fraction": 0.0078125,
+      "power_max_w": 0.001,
+      "row": 1
+    },
+    {
+      "bandwidth_min_hz": 30000000.0,
+      "cmrr_min_db": 40.0,
+      "differential_gain_min_db": 18.0,
+      "feasible_candidates": 0,
+      "feasible_fraction": 0.0,
+      "power_max_w": 0.0008,
+      "row": 2
+    },
+    {
+      "bandwidth_min_hz": 50000000.0,
+      "cmrr_min_db": 45.0,
+      "differential_gain_min_db": 20.0,
+      "feasible_candidates": 0,
+      "feasible_fraction": 0.0,
+      "power_max_w": 0.0006,
+      "row": 3
+    },
+    {
+      "bandwidth_min_hz": 75000000.0,
+      "cmrr_min_db": 50.0,
+      "differential_gain_min_db": 22.0,
+      "feasible_candidates": 0,
+      "feasible_fraction": 0.0,
+      "power_max_w": 0.0005,
+      "row": 4
+    },
+    {
+      "bandwidth_min_hz": 100000000.0,
+      "cmrr_min_db": 55.0,
+      "differential_gain_min_db": 24.0,
+      "feasible_candidates": 0,
+      "feasible_fraction": 0.0,
+      "power_max_w": 0.0004,
+      "row": 5
+    },
+    {
+      "bandwidth_min_hz": 150000000.0,
+      "cmrr_min_db": 60.0,
+      "differential_gain_min_db": 26.0,
+      "feasible_candidates": 0,
+      "feasible_fraction": 0.0,
+      "power_max_w": 0.0003,
+      "row": 6
+    },
+    {
+      "bandwidth_min_hz": 200000000.0,
+      "cmrr_min_db": 65.0,
+      "differential_gain_min_db": 28.0,
+      "feasible_candidates": 0,
+      "feasible_fraction": 0.0,
+      "power_max_w": 0.00025,
+      "row": 7
+    },
+    {
+      "bandwidth_min_hz": 300000000.0,
+      "cmrr_min_db": 70.0,
+      "differential_gain_min_db": 30.0,
+      "feasible_candidates": 0,
+      "feasible_fraction": 0.0,
+      "power_max_w": 0.0002,
+      "row": 8
+    }
+  ],
+  "target_band_met": true
+}

@@ -116,22 +116,31 @@ def plot_baseline(run_directories: Iterable[str | Path], output_directory: str |
     axis.grid(True, linestyle=":", alpha=0.5); axis.legend(fontsize=7, ncol=2)
     destination = output / "constraint_violation_vs_evaluations.png"; figure.savefig(destination, dpi=150); plt.close(figure); destinations.append(destination)
 
-    common_source_rows = [
+    gain_metric = (
+        "differential_gain_db"
+        if any(
+            "differential_gain_db" in row["raw_metrics"]
+            for _, rows in runs
+            for row in rows
+        )
+        else "gain_db"
+    )
+    amplifier_rows = [
         row for _, rows in runs for row in rows
         if row["simulation_status"] == "success"
         and all(
             row["raw_metrics"].get(name) is not None
-            for name in ("gain_db", "bandwidth_hz", "dc_power_w")
+            for name in (gain_metric, "bandwidth_hz", "dc_power_w")
         )
     ]
-    if common_source_rows:
+    if amplifier_rows:
         for x_metric, y_metric, filename, xlabel, ylabel in (
-            ("bandwidth_hz", "gain_db", "gain_vs_bandwidth.png", "Bandwidth (Hz)", "Gain (dB)"),
-            ("dc_power_w", "gain_db", "gain_vs_power.png", "DC supply power (W)", "Gain (dB)"),
+            ("bandwidth_hz", gain_metric, "gain_vs_bandwidth.png", "Bandwidth (Hz)", "Gain (dB)"),
+            ("dc_power_w", gain_metric, "gain_vs_power.png", "DC supply power (W)", "Gain (dB)"),
         ):
             figure, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
             for feasible, label, marker in ((False, "infeasible", "x"), (True, "feasible", "o")):
-                selected = [row for row in common_source_rows if row["is_feasible"] is feasible]
+                selected = [row for row in amplifier_rows if row["is_feasible"] is feasible]
                 if selected:
                     axis.scatter(
                         [row["raw_metrics"][x_metric] for row in selected],
@@ -142,6 +151,38 @@ def plot_baseline(run_directories: Iterable[str | Path], output_directory: str |
             axis.set_xscale("log")
             axis.grid(True, linestyle=":", alpha=0.5); axis.legend()
             destination = output / filename; figure.savefig(destination, dpi=150); plt.close(figure); destinations.append(destination)
+
+        cmrr_rows = [
+            row
+            for row in amplifier_rows
+            if row["raw_metrics"].get("cmrr_db") is not None
+        ]
+        if cmrr_rows:
+            figure, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
+            for feasible, label, marker in (
+                (False, "infeasible", "x"),
+                (True, "feasible", "o"),
+            ):
+                selected = [row for row in cmrr_rows if row["is_feasible"] is feasible]
+                if selected:
+                    axis.scatter(
+                        [row["raw_metrics"][gain_metric] for row in selected],
+                        [row["raw_metrics"]["cmrr_db"] for row in selected],
+                        alpha=0.6,
+                        marker=marker,
+                        label=label,
+                    )
+            axis.set(
+                xlabel="Differential gain (dB)",
+                ylabel="CMRR (dB)",
+                title="CMRR vs differential gain",
+            )
+            axis.grid(True, linestyle=":", alpha=0.5)
+            axis.legend()
+            destination = output / "cmrr_vs_gain.png"
+            figure.savefig(destination, dpi=150)
+            plt.close(figure)
+            destinations.append(destination)
 
         figure, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
         labels = sorted(methods)

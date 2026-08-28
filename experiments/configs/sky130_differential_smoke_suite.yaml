@@ -1,0 +1,12 @@
+suite:
+  name: sky130_differential_task5_smoke
+  output_dir: research_runs/task5_sky130_differential_smoke
+  methods:
+    random: sky130_differential_random.yaml
+    de: sky130_differential_de.yaml
+    tpe: sky130_differential_tpe.yaml
+    bo: sky130_differential_bo.yaml
+  seeds: [0, 1, 2]
+  simulation_budget: 25
+  phase: smoke
+

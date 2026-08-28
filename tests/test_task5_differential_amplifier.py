@@ -29,6 +29,7 @@ from circuitpilot.sky130_differential_amplifier import (
 
 
 TASK4_HASH = "1a577200d71a900eb8ffec3fe680e3dd53e0298e87692dc66f407481de46c664"
+TASK5_HASH = "57d2183621ecf37e5ca22e012452c43fce6459be7d347a5cfc93d0b394c14378"
 
 
 def _config():
@@ -203,6 +204,25 @@ def test_task4_frozen_hash_remains_unchanged() -> None:
     assert load_experiment_config(
         "research/sky130/common_source/sky130_common_source_frozen.yaml"
     ).computed_benchmark_hash() == TASK4_HASH
+
+
+def test_task5_frozen_hash_is_independent() -> None:
+    config = load_experiment_config(
+        "research/sky130/differential_amplifier/differential_amplifier_frozen.yaml"
+    )
+    assert config.computed_benchmark_hash() == TASK5_HASH
+    assert TASK5_HASH != TASK4_HASH
+
+
+def test_all_four_optimizers_share_task5_hash() -> None:
+    paths = (
+        "experiments/configs/sky130_differential_random.yaml",
+        "experiments/configs/sky130_differential_de.yaml",
+        "experiments/configs/sky130_differential_tpe.yaml",
+        "experiments/configs/sky130_differential_bo.yaml",
+    )
+    hashes = {load_experiment_config(path).computed_benchmark_hash() for path in paths}
+    assert hashes == {TASK5_HASH}
 
 
 @pytest.mark.integration
