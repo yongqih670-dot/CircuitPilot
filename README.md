@@ -4,10 +4,34 @@
 
 研究冻结版本：`v0.5-research-baseline`。
 
+Research Task 6 已完成并冻结：在不修改 Task 5 基准的前提下，加入透明的
+OP-first 分阶段评估策略，并以 Random/DE/TPE/BO、10 个配对 seed、等候选与
+等逻辑 AC 两种正式设计完成公平比较。Formal A 的配对 AC 节省中位数为
+81.5%；Formal B 中 Screened 的 pooled AC-RMST 为 34.74（Full 119.85），
+成功率为 92.5%（Full 70%）。墙钟时间因额外进程与更多候选而增加，因此不
+宣称主机时间加速。完整报告、统计和原始 SPICE 证据见
+[`research/sky130/differential_amplifier/TASK6_PHYSICS_AWARE_REPORT.md`](research/sky130/differential_amplifier/TASK6_PHYSICS_AWARE_REPORT.md)
+与
+[`research/sky130/differential_amplifier/task6/results/`](research/sky130/differential_amplifier/task6/results/)。
+
+Research Task 5 已冻结独立的 SKY130 Differential-Amplifier Benchmark：真实
+`sky130_fd_pr__nfet_01v8` / `sky130_fd_pr__pfet_01v8`、五管单端差分拓扑、显式
+bulk、真实 `.op + .ac`、差模/共模双测试台、CMRR 下界与带宽右删失语义，以及
+Random/DE/TPE/BO 公平基线。完整定义和证据见
+[`research/sky130/differential_amplifier/DIFFERENTIAL_AMPLIFIER_BENCHMARK.md`](research/sky130/differential_amplifier/DIFFERENTIAL_AMPLIFIER_BENCHMARK.md)
+与
+[`research/sky130/differential_amplifier/TASK5_DIFFERENTIAL_AMPLIFIER_REPORT.md`](research/sky130/differential_amplifier/TASK5_DIFFERENTIAL_AMPLIFIER_REPORT.md)。
+Task 3 与 Task 4 的冻结配置、结果和哈希均保持不变。
+
 CircuitPilot 是一个采用 `src/` 目录结构的参数化 ngspice 电路仿真与自动优化平台。它可以从 YAML 读取单次仿真、离散参数扫描或连续优化配置，并将仿真过程与设计结果归档到 SQLite。
 
-当前第五阶段支持：
+当前第六阶段支持：
 
+- 冻结 Task 5 SKY130 差分放大器基准上的 Full/OP-Screened 评估策略；
+- 显式 OP 物理规则、标准化违规反馈、无 AC 的无效候选拒绝语义；
+- 候选、ngspice 进程、OP、双 AC、物理分析的精确成本计数；
+- 可恢复 SQLite/CSV 记录、优化器状态重放与跨套件公平性验证；
+- Kaplan-Meier、RMST、成对 bootstrap、违规分布与 H1-H3 机器判定；
 - RC low-pass filter；
 - RC high-pass filter；
 - Voltage divider；
@@ -23,7 +47,7 @@ CircuitPilot 是一个采用 `src/` 目录结构的参数化 ngspice 电路仿�
 - 每一次优化评估的 CSV/运行目录、JSON 摘要和收敛曲线；
 - 单组失败隔离、ngspice 缺失预检和每组独立运行目录。
 
-前四阶段的 API 和命令行方式继续保留。
+前五阶段的 API、冻结基准和命令行方式继续保留。
 
 ## 项目结构
 
@@ -492,4 +516,52 @@ python -m pytest -m "not integration"
 python -m pytest -m integration
 ```
 
+## Unified research experiments
+
+Research Task 1 adds one optimizer-independent experiment path. The YAML form is:
+
+```console
+python -m circuitpilot.experiments.run --config research/configs/rc_baseline_seed0.yaml
+```
+
+The equivalent minimum CLI form is:
+
+```console
+python -m circuitpilot.experiments.run --circuit rc_lowpass --method random --seed 0 --budget 50
+```
+
+Every run receives a unique directory under `research_runs/` containing the resolved `experiment_config.yaml`, uniform `evaluations.csv` and SQLite records, per-candidate netlist/log/raw output, optimizer state, plots, summary, and the environment-fingerprinted `research_manifest.json`. Research comparison rules are defined in `research/EXPERIMENT_PROTOCOL.md`.
+
+Research Task 2 adds four traditional methods through the same Runner: `random`, `de`, `tpe`, and `bo`. The fixed, directly comparable configurations are under `experiments/configs/`. Run one method with:
+
+```console
+python -m circuitpilot.experiments.run --config experiments/configs/rc_baseline_tpe.yaml
+```
+
+Run the complete 4-method × 3-seed × 20-evaluation validation suite with:
+
+```console
+python -m circuitpilot.experiments.batch --config experiments/configs/rc_baseline_suite.yaml
+```
+
+The batch command refuses unfair combinations before producing comparison tables, then writes `baseline_results.csv`, `baseline_summary.csv`, `fairness_validation.json`, and four plots sourced only from each run's real `evaluations.csv`. Task 2 design and limitations are documented in [research/BASELINE_DESIGN.md](research/BASELINE_DESIGN.md); the actual validation record is [research/TASK2_BASELINE_REPORT.md](research/TASK2_BASELINE_REPORT.md).
+
 集成测试会自动检测本机 ngspice；未安装时明确显示为 `SKIPPED`。
+
+### Transistor-level Common-Source benchmark (Research Task 3)
+
+Task 3 uses a content-locked ngspice BSIM3 reference model (explicitly not
+SKY130) and one combined real `.op + .ac` process per candidate. The frozen
+definition, calibration, results, and limitations are documented in
+[COMMON_SOURCE_BENCHMARK.md](research/common_source/COMMON_SOURCE_BENCHMARK.md)
+and [TASK3_COMMON_SOURCE_REPORT.md](research/common_source/TASK3_COMMON_SOURCE_REPORT.md).
+
+```console
+python -m circuitpilot.experiments.calibration --config research/common_source/calibration_config.yaml --grid research/common_source/calibration_grid.yaml
+python -m circuitpilot.experiments.batch --config experiments/configs/common_source_smoke_suite.yaml
+python -m circuitpilot.experiments.batch --config experiments/configs/common_source_baseline_suite.yaml
+```
+
+Calibration is a one-time protocol action, not part of optimizer comparison.
+Changing model bytes, topology, search space, specification, or AC/DC setup
+requires a new benchmark hash and invalidates comparisons with the frozen runs.

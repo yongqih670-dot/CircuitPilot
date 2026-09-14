@@ -1,0 +1,10 @@
+suite:
+  name: rc_task2_baseline
+  output_dir: research_runs/task2_baseline
+  methods:
+    random: rc_baseline_random.yaml
+    de: rc_baseline_de.yaml
+    tpe: rc_baseline_tpe.yaml
+    bo: rc_baseline_bo.yaml
+  seeds: [0, 1, 2]
+  simulation_budget: 20

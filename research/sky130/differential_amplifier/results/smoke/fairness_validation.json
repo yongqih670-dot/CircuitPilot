@@ -1,0 +1,237 @@
+{
+  "bandwidth_semantics_version": "post_peak_minus_3db_right_censoring_v1",
+  "benchmark_config_hash": "57d2183621ecf37e5ca22e012452c43fce6459be7d347a5cfc93d0b394c14378",
+  "censoring_policy": "fixed_window_right_censored_lower_bound_v1",
+  "circuit": "sky130_differential_amplifier",
+  "circuit_config": {
+    "bandwidth_semantics_version": "post_peak_minus_3db_right_censoring_v1",
+    "censoring_policy": "fixed_window_right_censored_lower_bound_v1",
+    "cmrr_semantics_version": "direct_ad_acm_floor_lower_bound_v1",
+    "common_mode_gain_floor_db": -120.0,
+    "common_mode_testbench_definition": {
+      "common_mode_input_magnitude": 1.0,
+      "vinn_ac_magnitude": 1.0,
+      "vinn_ac_phase_deg": 0.0,
+      "vinp_ac_magnitude": 1.0,
+      "vinp_ac_phase_deg": 0.0
+    },
+    "common_mode_testbench_version": "equal_unit_sources_direct_common_mode_v1",
+    "device_role_mapping": {
+      "input_m1": {
+        "device": "sky130_fd_pr__nfet_01v8",
+        "nodes": [
+          "mirror",
+          "vinp",
+          "tail",
+          "gnd"
+        ],
+        "size_role": "input_pair"
+      },
+      "input_m2": {
+        "device": "sky130_fd_pr__nfet_01v8",
+        "nodes": [
+          "vout",
+          "vinn",
+          "tail",
+          "gnd"
+        ],
+        "size_role": "input_pair"
+      },
+      "load_mirror": {
+        "device": "sky130_fd_pr__pfet_01v8",
+        "nodes": [
+          "mirror",
+          "mirror",
+          "vdd",
+          "vdd"
+        ],
+        "size_role": "active_load"
+      },
+      "load_output": {
+        "device": "sky130_fd_pr__pfet_01v8",
+        "nodes": [
+          "vout",
+          "mirror",
+          "vdd",
+          "vdd"
+        ],
+        "size_role": "active_load"
+      },
+      "tail": {
+        "device": "sky130_fd_pr__nfet_01v8",
+        "nodes": [
+          "tail",
+          "tail_bias",
+          "gnd",
+          "gnd"
+        ],
+        "size_role": "tail"
+      }
+    },
+    "device_role_mapping_version": "matched_role_shared_sizing_v1",
+    "differential_testbench_definition": {
+      "differential_input_magnitude": 1.0,
+      "vinn_ac_magnitude": 0.5,
+      "vinn_ac_phase_deg": 180.0,
+      "vinp_ac_magnitude": 0.5,
+      "vinp_ac_phase_deg": 0.0
+    },
+    "differential_testbench_version": "opposed_half_volt_sources_unit_differential_v1",
+    "difficulty_protocol_version": "task5_sky130_differential_difficulty_v1",
+    "input_common_mode_v": 0.9,
+    "load_capacitance_f": 5e-14,
+    "nfet_device_name": "sky130_fd_pr__nfet_01v8",
+    "pfet_device_name": "sky130_fd_pr__pfet_01v8",
+    "simulation_cost_definition": {
+      "logical_ac_testbenches_per_candidate": 2,
+      "ngspice_process_calls_per_candidate": 1,
+      "physical_analysis_calls_per_candidate": 2,
+      "primary_budget_unit": "candidate_evaluation"
+    },
+    "simulation_cost_semantics": "candidate_primary_one_process_op_plus_dual_testbench_ac_v1",
+    "sky130_model": {
+      "corner": "tt",
+      "device_name": "sky130_fd_pr__nfet_01v8",
+      "library_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+      "model_library": "F:\\\u82af\u7247\u8bbe\u8ba1\\CircuitPilot\uff1aAgentic Circuit Simulation and Optimization Platform\\tools\\sky130\\ciel\\ciel\\sky130\\versions\\026824c7969ce6f4fc9678e6ca04b0a06a596c4b\\sky130A\\libs.tech\\ngspice\\sky130.lib.spice",
+      "model_sha256": "d88fa42b4f42f7b1f6987141aa92161865cfc9ff5fbdce9bbc9f137bde3a2f61",
+      "pdk_commit": "026824c7969ce6f4fc9678e6ca04b0a06a596c4b",
+      "pdk_release": "1.0.606",
+      "pdk_root": "F:\\\u82af\u7247\u8bbe\u8ba1\\CircuitPilot\uff1aAgentic Circuit Simulation and Optimization Platform\\tools\\sky130\\ciel\\ciel\\sky130\\versions\\026824c7969ce6f4fc9678e6ca04b0a06a596c4b\\sky130A",
+      "primitive_commit": "403964dc7f9cca5ec1a8cc7b4f2a6f532b781676",
+      "provenance": "FOSSi Foundation Ciel/Open_PDKs prebuilt SKY130"
+    },
+    "supply_voltage_v": 1.8,
+    "temperature_c": 27.0,
+    "topology_definition": {
+      "active_load": "1:1 PMOS current mirror",
+      "input_pair": "NMOS",
+      "kind": "five_transistor_single_ended",
+      "tail_source": "NMOS voltage-biased current source"
+    },
+    "topology_version": "sky130_five_transistor_single_ended_ota_v1"
+  },
+  "circuitpilot_version": "0.5.0",
+  "cmrr_semantics_version": "direct_ad_acm_floor_lower_bound_v1",
+  "common_mode_testbench_hash": "720ead7c375b9ea5236d2150c6b6d203889f90b5e6624e2ba6bbe3296318c81c",
+  "constraints": {
+    "bandwidth_min": {
+      "metric": "bandwidth_hz",
+      "operator": ">=",
+      "threshold": 20000000.0
+    },
+    "cmrr_min": {
+      "metric": "cmrr_db",
+      "operator": ">=",
+      "threshold": 35.0
+    },
+    "differential_gain_min": {
+      "metric": "differential_gain_db",
+      "operator": ">=",
+      "threshold": 15.0
+    },
+    "operating_region": {
+      "metric": "operating_region_valid",
+      "operator": ">=",
+      "threshold": 1.0
+    },
+    "output_bias_high": {
+      "metric": "output_dc_voltage",
+      "operator": "<=",
+      "threshold": 1.55
+    },
+    "output_bias_low": {
+      "metric": "output_dc_voltage",
+      "operator": ">=",
+      "threshold": 0.25
+    },
+    "power_max": {
+      "metric": "dc_power_w",
+      "operator": "<=",
+      "threshold": 0.001
+    }
+  },
+  "device_role_mapping_hash": "1d1f2d19cd43a1a574a98c59392c2519af4efea49b002231bb9c4ec7fe954de8",
+  "differential_testbench_hash": "70754f04577d51d1deec81027ccc01b75426639d34cfa6db2133b3b97a82019a",
+  "difficulty_protocol_version": "task5_sky130_differential_difficulty_v1",
+  "experiment_phase": "smoke",
+  "git_commit_hash": "5f9e9b53cb2faf413bd4a7f7c78b577b994d7ead",
+  "git_worktree_dirty": false,
+  "measurement_window": {
+    "points_per_decade": 30,
+    "start_frequency_hz": 10.0,
+    "stop_frequency_hz": 10000000000.0
+  },
+  "metric_definitions": {
+    "bandwidth_hz": "exact differential post-peak -3 dB crossing or null when right-censored",
+    "bandwidth_lower_bound_hz": "fixed f_stop lower bound only when differential bandwidth is right-censored",
+    "cmrr_db": "exact Ad(dB)-Acm(dB), null when common-mode gain is below the reliable floor",
+    "cmrr_lower_bound_db": "conservative CMRR lower bound when common-mode gain is below the frozen floor",
+    "common_mode_gain_db": "direct low-frequency gain from the equal-input AC testbench",
+    "dc_power_w": "abs(VDD * I(VDD)) from the differential-copy real SKY130 operating point",
+    "differential_gain_db": "direct low-frequency gain from the opposed-input AC testbench",
+    "operating_region_valid": "1 iff every critical NMOS/PMOS passes its explicit voltage inequality",
+    "output_dc_voltage": "V(out) from the differential-copy real SKY130 operating point",
+    "tail_current_a": "absolute current through the differential-copy zero-volt tail sense source"
+  },
+  "model_sha256": "d88fa42b4f42f7b1f6987141aa92161865cfc9ff5fbdce9bbc9f137bde3a2f61",
+  "ngspice_config": {
+    "executable": "ngspice",
+    "points_per_decade": 30,
+    "start_frequency_hz": 10.0,
+    "stop_frequency_hz": 10000000000.0
+  },
+  "ngspice_executable_sha256": "86c9ea5f645ca919e305639fa7bdb522355364c424d14e197f1ade617feb3453",
+  "ngspice_version_string": "ngspice-46 : Circuit level simulation program",
+  "numpy_version": "2.5.1",
+  "objectives": {
+    "dc_power_w": {
+      "type": "minimize",
+      "weight": 1.0
+    }
+  },
+  "optuna_version": "4.9.0",
+  "pdk_commit": "026824c7969ce6f4fc9678e6ca04b0a06a596c4b",
+  "pdk_release": "1.0.606",
+  "pvt_config": {},
+  "python_version": "3.12.7",
+  "scipy_version": "1.18.0",
+  "search_space_hash": "7062b039a55f943552ae407fba40bf40f64c478d1605295eeae9ae54022b148c",
+  "seed_set": [
+    0,
+    1,
+    2
+  ],
+  "simulation_budget": 25,
+  "simulation_cost_semantics": "candidate_primary_one_process_op_plus_dual_testbench_ac_v1",
+  "success_criterion": {
+    "type": "all_constraints"
+  },
+  "topology_hash": "1d0df9c01fb860cf8c55db05cff4b954b5db0a53bee87cc8bd602a02cef51516",
+  "transistor_model": {
+    "bandwidth_semantics_version": "post_peak_minus_3db_right_censoring_v1",
+    "censoring_policy": "fixed_window_right_censored_lower_bound_v1",
+    "cmrr_semantics_version": "direct_ad_acm_floor_lower_bound_v1",
+    "common_mode_testbench_version": "equal_unit_sources_direct_common_mode_v1",
+    "corner": "tt",
+    "device_name": "sky130_fd_pr__nfet_01v8",
+    "device_names": [
+      "sky130_fd_pr__nfet_01v8",
+      "sky130_fd_pr__pfet_01v8"
+    ],
+    "device_role_mapping_version": "matched_role_shared_sizing_v1",
+    "differential_testbench_version": "opposed_half_volt_sources_unit_differential_v1",
+    "difficulty_protocol_version": "task5_sky130_differential_difficulty_v1",
+    "model_file_count": 840,
+    "model_library_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+    "model_section": "tt",
+    "model_sha256": "d88fa42b4f42f7b1f6987141aa92161865cfc9ff5fbdce9bbc9f137bde3a2f61",
+    "node": "sky130A",
+    "pdk_commit": "026824c7969ce6f4fc9678e6ca04b0a06a596c4b",
+    "pdk_release": "1.0.606",
+    "primitive_commit": "403964dc7f9cca5ec1a8cc7b4f2a6f532b781676",
+    "simulation_cost_semantics": "candidate_primary_one_process_op_plus_dual_testbench_ac_v1",
+    "source": "FOSSi Foundation Ciel/Open_PDKs prebuilt SKY130",
+    "topology_version": "sky130_five_transistor_single_ended_ota_v1"
+  }
+}

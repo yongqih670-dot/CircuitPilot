@@ -1,0 +1,97 @@
+{
+  "benchmark_config_hash": "d60664b436ce9a928da2db86ca83378d556f18ddcf54b633394609f67288bec9",
+  "circuit": "common_source",
+  "circuit_config": {
+    "load_capacitance_f": 1e-12,
+    "mosfet_model": {
+      "corner": "reference",
+      "device_kind": "mosfet",
+      "model_name": "N1",
+      "model_section": null,
+      "provenance": "ngspice 46 official binary distribution, examples/mos/modelcard.nmos; not SKY130"
+    },
+    "supply_voltage_v": 1.8,
+    "temperature_c": 27.0
+  },
+  "circuitpilot_version": "0.5.0",
+  "constraints": {
+    "bandwidth_min": {
+      "metric": "bandwidth_hz",
+      "operator": ">=",
+      "threshold": 10000000.0
+    },
+    "gain_min": {
+      "metric": "gain_db",
+      "operator": ">=",
+      "threshold": 8.0
+    },
+    "output_bias_high": {
+      "metric": "output_dc_voltage",
+      "operator": "<=",
+      "threshold": 1.5
+    },
+    "output_bias_low": {
+      "metric": "output_dc_voltage",
+      "operator": ">=",
+      "threshold": 0.3
+    },
+    "power_max": {
+      "metric": "dc_power_w",
+      "operator": "<=",
+      "threshold": 0.00035
+    }
+  },
+  "experiment_phase": "baseline",
+  "git_commit_hash": "7bae910f599b6e9402427c5983a05ca52b58f8aa",
+  "git_worktree_dirty": false,
+  "metric_definitions": {
+    "bandwidth_hz": "interpolated post-peak -3 dB bandwidth from parsed real ngspice AC output",
+    "dc_power_w": "abs(VDD * I(VDD)) from parsed real ngspice operating-point output",
+    "gain_db": "low-frequency magnitude gain from parsed real ngspice AC output",
+    "output_dc_voltage": "V(out) from parsed real ngspice operating-point output"
+  },
+  "ngspice_config": {
+    "executable": "ngspice",
+    "points_per_decade": 30,
+    "start_frequency_hz": 10.0,
+    "stop_frequency_hz": 1000000000.0
+  },
+  "ngspice_executable_sha256": "86c9ea5f645ca919e305639fa7bdb522355364c424d14e197f1ade617feb3453",
+  "ngspice_version_string": "ngspice-46 : Circuit level simulation program",
+  "numpy_version": "2.5.1",
+  "objectives": {
+    "dc_power_w": {
+      "type": "minimize",
+      "weight": 1.0
+    }
+  },
+  "optuna_version": "4.9.0",
+  "pvt_config": {},
+  "python_version": "3.12.7",
+  "scipy_version": "1.18.0",
+  "search_space_hash": "d00795ecbc92f6acf34b06698bd749d5cf8e23f6af7e44e0f067e37862822e86",
+  "seed_set": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "simulation_budget": 50,
+  "success_criterion": {
+    "type": "all_constraints"
+  },
+  "transistor_model": {
+    "corner": "reference",
+    "device_kind": "mosfet",
+    "model_library_sha256": "e14792f8adbe569d6f4152292343bc9fb0a41364a5aa1a5ad476b82f70316168",
+    "model_name": "N1",
+    "model_section": null,
+    "provenance": "ngspice 46 official binary distribution, examples/mos/modelcard.nmos; not SKY130"
+  }
+}

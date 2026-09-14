@@ -1,0 +1,11 @@
+suite:
+  name: sky130_common_source_task4_baseline
+  output_dir: research_runs/task4_sky130_common_source_baseline
+  methods:
+    random: sky130_common_source_random.yaml
+    de: sky130_common_source_de.yaml
+    tpe: sky130_common_source_tpe.yaml
+    bo: sky130_common_source_bo.yaml
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  simulation_budget: 50
+  phase: baseline

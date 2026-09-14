@@ -1,0 +1,25 @@
+{
+  "H2": {
+    "decision": "fully_supported",
+    "policy_results": {
+      "full": {
+        "events": 28,
+        "pooled_expensive_ac_km_median": 114,
+        "pooled_expensive_ac_rmst": 119.85000000000002,
+        "runs": 40,
+        "success_rate": 0.7
+      },
+      "op_screened": {
+        "events": 37,
+        "pooled_expensive_ac_km_median": 24,
+        "pooled_expensive_ac_rmst": 34.74166666666667,
+        "runs": 40,
+        "success_rate": 0.925
+      }
+    },
+    "screened_lower_pooled_expensive_ac_rmst": true,
+    "screened_no_lower_success_rate": true
+  },
+  "decision_rules": "RESEARCH_HYPOTHESES.md",
+  "schema_version": 1
+}

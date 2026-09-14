@@ -1,0 +1,41 @@
+benchmark_config_hash: 57d2183621ecf37e5ca22e012452c43fce6459be7d347a5cfc93d0b394c14378
+experiment: {name: sky130_differential_bo, circuit: sky130_differential_amplifier, method: bo, seed: 0, simulation_budget: 100, output_dir: research_runs/task5_sky130_differential_bo, resume: false, timeout: 30.0, phase: baseline}
+search_space:
+  input_pair_width_m: {type: float, low: 0.84e-6, high: 10.0e-6, log: true, unit: m, technology_limits: {low: 0.42e-6, high: 20.0e-6}}
+  input_pair_length_m: {type: float, low: 0.15e-6, high: 0.80e-6, log: false, unit: m, technology_limits: {low: 0.15e-6, high: 1.0e-6}}
+  active_load_width_m: {type: float, low: 0.84e-6, high: 20.0e-6, log: true, unit: m, technology_limits: {low: 0.42e-6, high: 20.0e-6}}
+  active_load_length_m: {type: float, low: 0.15e-6, high: 1.0e-6, log: false, unit: m, technology_limits: {low: 0.15e-6, high: 1.0e-6}}
+  tail_width_m: {type: float, low: 0.42e-6, high: 12.0e-6, log: true, unit: m, technology_limits: {low: 0.42e-6, high: 20.0e-6}}
+  tail_length_m: {type: float, low: 0.15e-6, high: 1.0e-6, log: false, unit: m, technology_limits: {low: 0.15e-6, high: 1.0e-6}}
+  tail_bias_v: {type: float, low: 0.55, high: 1.00, log: false, unit: V, technology_limits: {low: 0.0, high: 1.8}}
+objectives: {dc_power_w: {type: minimize, weight: 1.0}}
+constraints:
+  differential_gain_min: {metric: differential_gain_db, operator: ">=", threshold: 15.0}
+  bandwidth_min: {metric: bandwidth_hz, operator: ">=", threshold: 2.0e7}
+  cmrr_min: {metric: cmrr_db, operator: ">=", threshold: 35.0}
+  power_max: {metric: dc_power_w, operator: "<=", threshold: 1.0e-3}
+  output_bias_low: {metric: output_dc_voltage, operator: ">=", threshold: 0.25}
+  output_bias_high: {metric: output_dc_voltage, operator: "<=", threshold: 1.55}
+  operating_region: {metric: operating_region_valid, operator: ">=", threshold: 1.0}
+success_criterion: {type: all_constraints}
+optimizer_config: {}
+ngspice_config: {executable: ngspice, start_frequency_hz: 10.0, stop_frequency_hz: 1.0e10, points_per_decade: 30}
+circuit_config:
+  supply_voltage_v: 1.8
+  input_common_mode_v: 0.9
+  load_capacitance_f: 50.0e-15
+  temperature_c: 27.0
+  common_mode_gain_floor_db: -120.0
+  nfet_device_name: sky130_fd_pr__nfet_01v8
+  pfet_device_name: sky130_fd_pr__pfet_01v8
+  topology_version: sky130_five_transistor_single_ended_ota_v1
+  device_role_mapping_version: matched_role_shared_sizing_v1
+  differential_testbench_version: opposed_half_volt_sources_unit_differential_v1
+  common_mode_testbench_version: equal_unit_sources_direct_common_mode_v1
+  cmrr_semantics_version: direct_ad_acm_floor_lower_bound_v1
+  bandwidth_semantics_version: post_peak_minus_3db_right_censoring_v1
+  censoring_policy: fixed_window_right_censored_lower_bound_v1
+  simulation_cost_semantics: candidate_primary_one_process_op_plus_dual_testbench_ac_v1
+  difficulty_protocol_version: task5_sky130_differential_difficulty_v1
+  sky130_model: {pdk_root: ../../tools/sky130/ciel/ciel/sky130/versions/026824c7969ce6f4fc9678e6ca04b0a06a596c4b/sky130A, model_library: ../../tools/sky130/ciel/ciel/sky130/versions/026824c7969ce6f4fc9678e6ca04b0a06a596c4b/sky130A/libs.tech/ngspice/sky130.lib.spice, device_name: sky130_fd_pr__nfet_01v8, corner: tt, provenance: FOSSi Foundation Ciel/Open_PDKs prebuilt SKY130, pdk_release: 1.0.606, pdk_commit: 026824c7969ce6f4fc9678e6ca04b0a06a596c4b, primitive_commit: 403964dc7f9cca5ec1a8cc7b4f2a6f532b781676, model_sha256: d88fa42b4f42f7b1f6987141aa92161865cfc9ff5fbdce9bbc9f137bde3a2f61, library_sha256: 17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64}
+pvt_config: {}

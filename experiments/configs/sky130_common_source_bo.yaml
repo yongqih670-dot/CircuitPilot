@@ -1,0 +1,27 @@
+benchmark_config_hash: 1a577200d71a900eb8ffec3fe680e3dd53e0298e87692dc66f407481de46c664
+experiment: {name: sky130_common_source_bo, circuit: sky130_common_source, method: bo, seed: 0, simulation_budget: 50, output_dir: research_runs/task4_sky130_bo, resume: false, timeout: 30.0, phase: baseline}
+search_space:
+  width_m: {type: float, low: 0.42e-6, high: 7.0e-6, log: true, unit: m, technology_limits: {low: 0.42e-6, high: 7.0e-6}}
+  length_m: {type: float, low: 0.15e-6, high: 1.0e-6, log: false, unit: m, technology_limits: {low: 0.15e-6, high: 1.0e-6}}
+  drain_resistance_ohm: {type: float, low: 2000.0, high: 100000.0, log: true, unit: ohm, technology_limits: {low: 100.0, high: 1.0e6}}
+  input_bias_v: {type: float, low: 0.55, high: 1.05, log: false, unit: V, technology_limits: {low: 0.0, high: 1.8}}
+objectives: {dc_power_w: {type: minimize, weight: 1.0}}
+constraints:
+  gain_min: {metric: gain_db, operator: ">=", threshold: 14.0}
+  bandwidth_min: {metric: bandwidth_hz, operator: ">=", threshold: 2.0e8}
+  power_max: {metric: dc_power_w, operator: "<=", threshold: 5.0e-4}
+  output_bias_low: {metric: output_dc_voltage, operator: ">=", threshold: 0.3}
+  output_bias_high: {metric: output_dc_voltage, operator: "<=", threshold: 1.5}
+  operating_region: {metric: operating_region_valid, operator: ">=", threshold: 1.0}
+success_criterion: {type: all_constraints}
+optimizer_config: {initial_random_points: 5, candidate_pool_size: 512, exploration_xi: 0.01, noise: 1.0e-8}
+ngspice_config: {executable: ngspice, start_frequency_hz: 10.0, stop_frequency_hz: 1.0e10, points_per_decade: 30}
+circuit_config:
+  supply_voltage_v: 1.8
+  load_capacitance_f: 20.0e-15
+  temperature_c: 27.0
+  bandwidth_semantics_version: post_peak_minus_3db_right_censoring_v1
+  censoring_policy: fixed_window_right_censored_lower_bound_v1
+  difficulty_protocol_version: task4_sky130_difficulty_v1
+  sky130_model: {pdk_root: ../../tools/sky130/ciel/ciel/sky130/versions/026824c7969ce6f4fc9678e6ca04b0a06a596c4b/sky130A, model_library: ../../tools/sky130/ciel/ciel/sky130/versions/026824c7969ce6f4fc9678e6ca04b0a06a596c4b/sky130A/libs.tech/ngspice/sky130.lib.spice, device_name: sky130_fd_pr__nfet_01v8, corner: tt, provenance: FOSSi Foundation Ciel/Open_PDKs prebuilt SKY130, pdk_release: 1.0.606, pdk_commit: 026824c7969ce6f4fc9678e6ca04b0a06a596c4b, primitive_commit: 403964dc7f9cca5ec1a8cc7b4f2a6f532b781676, model_sha256: d88fa42b4f42f7b1f6987141aa92161865cfc9ff5fbdce9bbc9f137bde3a2f61, library_sha256: 17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64}
+pvt_config: {}

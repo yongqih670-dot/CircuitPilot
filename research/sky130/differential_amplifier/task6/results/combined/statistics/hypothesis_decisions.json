@@ -1,0 +1,109 @@
+{
+  "H1": {
+    "decision": "supported",
+    "paired_bootstrap_median_ci95": [
+      68.0,
+      86.0
+    ],
+    "pairs": 40,
+    "pooled_paired_median_percent_ac_saved": 81.5
+  },
+  "H2": {
+    "decision": "fully_supported",
+    "policy_results": {
+      "full": {
+        "events": 28,
+        "pooled_expensive_ac_km_median": 114,
+        "pooled_expensive_ac_rmst": 119.85000000000002,
+        "runs": 40,
+        "success_rate": 0.7
+      },
+      "op_screened": {
+        "events": 37,
+        "pooled_expensive_ac_km_median": 24,
+        "pooled_expensive_ac_rmst": 34.74166666666667,
+        "runs": 40,
+        "success_rate": 0.925
+      }
+    },
+    "screened_lower_pooled_expensive_ac_rmst": true,
+    "screened_no_lower_success_rate": true
+  },
+  "H3": {
+    "decision": "supported",
+    "method_results": [
+      {
+        "median_percent_ac_saved": 90.0,
+        "method": "bo",
+        "op_rejection_rate": 0.903,
+        "paired_percent_ac_saved": [
+          85.0,
+          88.0,
+          92.0,
+          91.0,
+          90.0,
+          91.0,
+          87.0,
+          90.0,
+          99.0,
+          90.0
+        ]
+      },
+      {
+        "median_percent_ac_saved": 70.0,
+        "method": "de",
+        "op_rejection_rate": 0.696,
+        "paired_percent_ac_saved": [
+          58.0,
+          77.0,
+          62.0,
+          59.0,
+          78.0,
+          83.0,
+          62.0,
+          77.0,
+          70.0,
+          70.0
+        ]
+      },
+      {
+        "median_percent_ac_saved": 86.0,
+        "method": "random",
+        "op_rejection_rate": 0.863,
+        "paired_percent_ac_saved": [
+          85.0,
+          86.0,
+          81.0,
+          86.0,
+          90.0,
+          84.0,
+          89.0,
+          86.0,
+          82.0,
+          94.0
+        ]
+      },
+      {
+        "median_percent_ac_saved": 52.0,
+        "method": "tpe",
+        "op_rejection_rate": 0.526,
+        "paired_percent_ac_saved": [
+          47.0,
+          66.0,
+          58.0,
+          60.0,
+          47.0,
+          53.0,
+          47.0,
+          57.0,
+          40.0,
+          51.0
+        ]
+      }
+    ],
+    "range_method_median_percent_ac_saved": 38.0,
+    "spearman_op_rejection_vs_percent_saved": 1.0
+  },
+  "decision_rules": "RESEARCH_HYPOTHESES.md",
+  "schema_version": 1
+}

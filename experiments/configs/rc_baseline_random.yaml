@@ -1,0 +1,35 @@
+experiment:
+  name: rc_baseline_random
+  circuit: rc_lowpass
+  method: random
+  seed: 0
+  simulation_budget: 20
+  output_dir: research_runs/task2_random
+  resume: false
+  timeout: 30
+search_space:
+  resistance:
+    type: float
+    low: 100
+    high: 100000
+    log: true
+  capacitance:
+    type: float
+    low: 1e-10
+    high: 1e-5
+    log: true
+objectives:
+  bandwidth:
+    type: target
+    target: 10000
+constraints: {}
+success_criterion:
+  metric: bandwidth
+  relative_error_threshold: 0.05
+optimizer_config: {}
+ngspice_config:
+  executable: ngspice
+  start_frequency_hz: 0.01
+  stop_frequency_hz: 100000000
+  points_per_decade: 40
+pvt_config: {}

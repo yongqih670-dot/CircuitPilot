@@ -189,6 +189,7 @@ def collect_environment_fingerprint(ngspice_executable: str) -> dict[str, Any]:
         },
         "numpy_version": _distribution_version("numpy"),
         "scipy_version": _distribution_version("scipy"),
+        "optuna_version": _distribution_version("optuna"),
         "pyyaml_version": _distribution_version("PyYAML"),
         "ngspice_version_string": _ngspice_version(executable_path),
         "ngspice_executable_path": str(executable_path),

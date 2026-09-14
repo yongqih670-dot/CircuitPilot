@@ -227,6 +227,7 @@ analysis:
     assert environment["os_information"]["system"] == "Windows"
     assert environment["numpy_version"] == metadata.version("numpy")
     assert environment["scipy_version"] == metadata.version("scipy")
+    assert environment["optuna_version"] == metadata.version("optuna")
     assert environment["pyyaml_version"] == metadata.version("PyYAML")
     assert "ngspice-" in environment["ngspice_version_string"].lower()
     assert re.fullmatch(
