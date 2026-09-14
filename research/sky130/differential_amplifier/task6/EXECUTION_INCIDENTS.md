@@ -33,3 +33,23 @@ Verification after the fix:
 Wall time from concurrently scheduled formal suites is descriptive only.
 Candidate count and logical differential-plus-common-mode AC count remain the
 pre-registered primary axes.
+
+## 2026-09-14 Windows CSV replacement rejection
+
+The first formal-B launch from commit
+4740ac38af261c828307dd2d463a1a14d430eb77 was stopped after Windows briefly
+denied replacement of one run's evaluations.csv. SQLite had already committed
+that candidate, while the optimizer checkpoint was still one row behind.
+Although the physical result was intact, the existing resume path did not yet
+prove that it could advance the optimizer without duplicating a candidate.
+
+All four formal-B roots from that launch were permanently deleted and excluded.
+CSV replacement now has bounded retries for transient Windows readers. Resume
+also compares optimizer-history length with committed SQLite rows, regenerates
+each missing candidate, requires exact parameter equality, replays its recorded
+feedback, and saves the repaired checkpoint before continuing.
+
+The added stale-checkpoint regression reproduces a database one row ahead of
+the optimizer state and proves that the next candidate remains identical.
+After this change the Task 6 suite has 22 passing tests, and the full repository
+regression reports 238 passed with one unrelated environment-dependent skip.

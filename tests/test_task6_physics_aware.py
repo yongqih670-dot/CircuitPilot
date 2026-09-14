@@ -1,11 +1,13 @@
 from dataclasses import replace
 import json
 from pathlib import Path
+import shutil
 from types import SimpleNamespace
 
 import pytest
 
 from circuitpilot.experiments.optimizers.base import Optimizer
+from circuitpilot.experiments.optimizers.factory import create_optimizer
 from circuitpilot.experiments.task6_policy import (
     CandidateCostTracker,
     FullEvaluationPolicy,
@@ -16,6 +18,7 @@ from circuitpilot.experiments.task6_recorder import Task6Recorder
 from circuitpilot.experiments.task6_runner import (
     Task6RunDefinition,
     Task6Runner,
+    _restore_optimizer_state,
 )
 from circuitpilot.experiments.task6_statistics import validate_task6_fairness
 from circuitpilot.experiments.seeding import initialize_seeds
@@ -333,6 +336,32 @@ def test_task6_resume_continues_exact_candidate_sequence(tmp_path: Path) -> None
     assert [row.iteration for row in complete.records] == [1, 2, 3, 4]
     assert [row.parameters for row in complete.records] == _candidates()
     assert sum(row.event_observed for row in complete.records) == 1
+
+
+def test_optimizer_replay_recovers_db_row_ahead_of_checkpoint(
+    tmp_path: Path,
+) -> None:
+    definition = Task6RunDefinition(
+        FROZEN, "random", SCREENED_POLICY, 3, 4, None, "smoke", tmp_path
+    )
+    seeds = initialize_seeds(definition.seed)
+    optimizer = create_optimizer(definition.resolved_config(), seeds)
+    runner = _runner(
+        tmp_path, definition, optimizer, FakePolicy(SCREENED_POLICY)
+    )
+    first = runner.run_to_budget(max_new_candidates=1)
+    state = tmp_path / "run" / "summary" / "optimizer_state.json"
+    stale = tmp_path / "stale_optimizer_state.json"
+    shutil.copy2(state, stale)
+    second = runner.run_to_budget(max_new_candidates=1)
+    assert len(second.records) == 2
+
+    recovered = create_optimizer(
+        definition.resolved_config(), initialize_seeds(definition.seed)
+    )
+    _restore_optimizer_state(recovered, second.records, stale)
+    assert len(recovered.get_history()) == 2
+    assert recovered.ask() == optimizer.ask()
 
 
 def test_recorder_rejects_ac_metrics_on_op_rejection(tmp_path: Path) -> None:

@@ -9,6 +9,7 @@ import json
 from math import isfinite
 from pathlib import Path
 import sqlite3
+from time import sleep
 from typing import Any, Mapping
 
 from circuitpilot.exceptions import ResearchExperimentError
@@ -398,4 +399,16 @@ class Task6Recorder:
                 row["is_feasible"] = str(record.is_feasible).lower()
                 row["event_observed"] = str(record.event_observed).lower()
                 writer.writerow(row)
-        temporary.replace(self.csv_path)
+        last_error: PermissionError | None = None
+        for delay_seconds in (0.0, 0.01, 0.05, 0.1, 0.25, 0.5, 1.0):
+            if delay_seconds:
+                sleep(delay_seconds)
+            try:
+                temporary.replace(self.csv_path)
+                return
+            except PermissionError as exc:
+                last_error = exc
+        assert last_error is not None
+        raise ResearchExperimentError(
+            f"failed to atomically replace Task 6 CSV after retries: {last_error}"
+        ) from last_error

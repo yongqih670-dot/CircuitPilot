@@ -278,6 +278,49 @@ def _best_record(
     )
 
 
+def _restore_optimizer_state(
+    optimizer: Optimizer,
+    records: tuple[Task6EvaluationRecord, ...],
+    state_path: Path,
+) -> None:
+    """Load a checkpoint and replay DB-committed rows not yet in that state."""
+    optimizer.load_state(state_path)
+    history_count = len(optimizer.get_history())
+    if history_count > len(records):
+        raise ResearchExperimentError(
+            "optimizer checkpoint is ahead of committed Task 6 records"
+        )
+    for record in records[history_count:]:
+        replayed_parameters = optimizer.ask()
+        if replayed_parameters != record.parameters:
+            raise ResearchExperimentError(
+                "optimizer replay candidate does not match committed Task 6 record"
+            )
+        optimizer_status = (
+            "success"
+            if record.simulation_status == "success"
+            and record.objective_value is not None
+            else (record.measurement_status or record.simulation_status)
+        )
+        metrics = (
+            {
+                name: value
+                for name, value in record.raw_metrics.items()
+                if value is not None
+            }
+            if record.objective_value is not None
+            else {}
+        )
+        optimizer.tell(
+            record.parameters,
+            metrics,
+            record.objective_value,
+            optimizer_status,
+        )
+    if history_count < len(records):
+        optimizer.save_state(state_path)
+
+
 def _summary_payload(
     definition: Task6RunDefinition,
     result: Task6RunResult,
@@ -578,7 +621,7 @@ def execute_task6_run(
             raise ResearchExperimentError(
                 "cannot resume Task 6 without optimizer state"
             )
-        selected_optimizer.load_state(state_path)
+        _restore_optimizer_state(selected_optimizer, existing, state_path)
     selected_policy = policy or create_evaluation_policy(
         definition.evaluation_policy, config
     )
