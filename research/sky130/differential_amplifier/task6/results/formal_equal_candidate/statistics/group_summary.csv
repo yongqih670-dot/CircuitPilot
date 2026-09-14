@@ -1,0 +1,9 @@
+experiment_design,method,evaluation_policy,runs,success_rate,events,censored,candidate_km_median,candidate_rmst,expensive_ac_km_median,expensive_ac_rmst,median_wall_time_to_first_feasible,candidate_evaluations,expensive_ac_analysis_count,ac_analyses_avoided_vs_full_nominal,percent_ac_saved_vs_full_nominal,op_rejected_candidates,full_evaluated_candidates,physics_invalid_candidates,feasible_candidates,ngspice_process_calls,physical_analysis_calls,total_runtime
+formal_equal_candidate,bo,full,10,0.5,5,5,72,69.0,144,138.0,36.93699999999808,1000,2000,0,0.0,0,1000,949,11,1000,2000,906.6090000000113
+formal_equal_candidate,bo,op_screened,10,0.3,3,7,,83.4,,137.675,39.29700000000594,1000,194,1806,90.3,903,97,903,6,1097,1097,865.9380000000092
+formal_equal_candidate,de,full,10,1.0,10,0,24,31.500000000000004,48,63.00000000000001,23.648000000001048,1000,2000,0,0.0,0,1000,698,103,1000,2000,926.4190000000017
+formal_equal_candidate,de,op_screened,10,0.9,9,1,50,50.8,22,37.2,45.31199999999808,1000,608,1392,69.6,696,304,696,66,1304,1304,1051.827999999994
+formal_equal_candidate,random,full,10,0.5,5,5,98,79.7,196,159.4,54.20299999999406,1000,2000,0,0.0,0,1000,863,6,1000,2000,922.8589999999967
+formal_equal_candidate,random,op_screened,10,0.5,5,5,98,79.7,34,24.949999999999996,56.18699999999808,1000,274,1726,86.3,863,137,863,6,1137,1137,905.9670000000115
+formal_equal_candidate,tpe,full,10,0.8,8,2,49,59.5,98,119.0,44.40599999999904,1000,2000,0,0.0,0,1000,588,122,1000,2000,904.1729999999952
+formal_equal_candidate,tpe,op_screened,10,0.9,9,1,40,49.8,24,35.8,41.875,1000,948,1052,52.6,526,474,526,189,1474,1474,1152.1880000000092

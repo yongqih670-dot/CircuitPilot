@@ -344,6 +344,7 @@ def build_paired_effects(
     rng = np.random.default_rng(62006)
     directions = {
         "ac_analyses_saved": "full_minus_screened_positive_favors_screened",
+        "percent_ac_saved": "full_minus_screened_positive_favors_screened",
         "candidate_restricted_time_to_feasible":
             "screened_minus_full_negative_favors_screened",
         "expensive_ac_restricted_time_to_feasible":
@@ -371,6 +372,13 @@ def build_paired_effects(
                 "ac_analyses_saved": [
                     float(cells[(FULL_POLICY, seed)]["expensive_ac_analysis_count"])
                     - float(cells[(SCREENED_POLICY, seed)]["expensive_ac_analysis_count"])
+                    for seed in seeds
+                ],
+                "percent_ac_saved": [
+                    100.0 * (
+                        float(cells[(FULL_POLICY, seed)]["expensive_ac_analysis_count"])
+                        - float(cells[(SCREENED_POLICY, seed)]["expensive_ac_analysis_count"])
+                    ) / float(cells[(FULL_POLICY, seed)]["expensive_ac_analysis_count"])
                     for seed in seeds
                 ],
                 "candidate_restricted_time_to_feasible": [
@@ -420,6 +428,162 @@ def build_paired_effects(
                 "ci95_high": high,
                 "paired_differences": json.dumps(differences),
             })
+    return output
+
+
+def _bootstrap_median(
+    values: list[float], rng: np.random.Generator
+) -> tuple[float, float]:
+    array = np.asarray(values, dtype=float)
+    indices = rng.integers(0, len(array), size=(10_000, len(array)))
+    return tuple(float(value) for value in np.percentile(
+        np.median(array[indices], axis=1), [2.5, 97.5]
+    ))
+
+
+def _rank(values: list[float]) -> np.ndarray:
+    """Return deterministic average ranks for the small H3 method table."""
+    array = np.asarray(values, dtype=float)
+    order = np.argsort(array, kind="mergesort")
+    ranks = np.empty(len(array), dtype=float)
+    start = 0
+    while start < len(order):
+        stop = start + 1
+        while stop < len(order) and array[order[stop]] == array[order[start]]:
+            stop += 1
+        ranks[order[start:stop]] = (start + 1 + stop) / 2.0
+        start = stop
+    return ranks
+
+
+def _spearman(left: list[float], right: list[float]) -> float | None:
+    if len(left) != len(right) or len(left) < 2:
+        return None
+    left_rank, right_rank = _rank(left), _rank(right)
+    if np.std(left_rank) == 0.0 or np.std(right_rank) == 0.0:
+        return None
+    return float(np.corrcoef(left_rank, right_rank)[0, 1])
+
+
+def build_hypothesis_decisions(
+    summaries: Iterable[dict[str, Any]],
+) -> dict[str, Any]:
+    """Apply only the frozen H1-H3 decision rules to accepted formal rows."""
+    rows = list(summaries)
+    output: dict[str, Any] = {
+        "schema_version": 1,
+        "decision_rules": "RESEARCH_HYPOTHESES.md",
+    }
+    formal_a = [
+        row for row in rows
+        if row["experiment_design"] == "formal_equal_candidate"
+    ]
+    if formal_a:
+        cells = {
+            (str(row["method"]), str(row["evaluation_policy"]), int(row["seed"])):
+            row for row in formal_a
+        }
+        paired_percentages: list[float] = []
+        method_rows = []
+        for method in sorted({str(row["method"]) for row in formal_a}):
+            percentages = []
+            screened = [
+                row for row in formal_a
+                if row["method"] == method
+                and row["evaluation_policy"] == SCREENED_POLICY
+            ]
+            for seed in sorted(int(row["seed"]) for row in screened):
+                full_ac = float(cells[(method, FULL_POLICY, seed)][
+                    "expensive_ac_analysis_count"
+                ])
+                screened_ac = float(cells[(method, SCREENED_POLICY, seed)][
+                    "expensive_ac_analysis_count"
+                ])
+                percentages.append(100.0 * (full_ac - screened_ac) / full_ac)
+            paired_percentages.extend(percentages)
+            candidates = sum(int(row["candidate_evaluations"]) for row in screened)
+            rejection_rate = (
+                sum(int(row["op_rejected_candidates"]) for row in screened)
+                / candidates
+            )
+            method_rows.append({
+                "method": method,
+                "op_rejection_rate": rejection_rate,
+                "median_percent_ac_saved": median(percentages),
+                "paired_percent_ac_saved": percentages,
+            })
+        low, high = _bootstrap_median(
+            paired_percentages, np.random.default_rng(62006)
+        )
+        pooled_median = median(paired_percentages)
+        output["H1"] = {
+            "decision": (
+                "supported" if pooled_median > 0.0 and low > 0.0
+                else "unsupported"
+            ),
+            "pooled_paired_median_percent_ac_saved": pooled_median,
+            "paired_bootstrap_median_ci95": [low, high],
+            "pairs": len(paired_percentages),
+        }
+        benefits = [float(row["median_percent_ac_saved"]) for row in method_rows]
+        rejection_rates = [float(row["op_rejection_rate"]) for row in method_rows]
+        benefit_range = max(benefits) - min(benefits)
+        rho = _spearman(rejection_rates, benefits)
+        output["H3"] = {
+            "decision": (
+                "supported" if benefit_range >= 10.0
+                and rho is not None and rho > 0.5 else "unsupported"
+            ),
+            "method_results": method_rows,
+            "range_method_median_percent_ac_saved": benefit_range,
+            "spearman_op_rejection_vs_percent_saved": rho,
+        }
+
+    formal_b = [
+        row for row in rows if row["experiment_design"] == "formal_equal_cost"
+    ]
+    if formal_b:
+        policy_results = {}
+        for policy in (FULL_POLICY, SCREENED_POLICY):
+            selected = [
+                row for row in formal_b if row["evaluation_policy"] == policy
+            ]
+            observations = [(
+                int(
+                    row["expensive_ac_time_to_first_feasible"]
+                    if row["event_observed"] else row["expensive_ac_censor_time"]
+                ),
+                bool(row["event_observed"]),
+            ) for row in selected]
+            _, rmst, km_median = _km(observations, 200)
+            policy_results[policy] = {
+                "runs": len(selected),
+                "events": sum(bool(row["event_observed"]) for row in selected),
+                "success_rate": (
+                    sum(bool(row["event_observed"]) for row in selected)
+                    / len(selected)
+                ),
+                "pooled_expensive_ac_rmst": rmst,
+                "pooled_expensive_ac_km_median": km_median,
+            }
+        full = policy_results[FULL_POLICY]
+        screened = policy_results[SCREENED_POLICY]
+        lower_rmst = (
+            screened["pooled_expensive_ac_rmst"]
+            < full["pooled_expensive_ac_rmst"]
+        )
+        no_lower_success = screened["success_rate"] >= full["success_rate"]
+        improvements = int(lower_rmst) + int(no_lower_success)
+        output["H2"] = {
+            "decision": (
+                "fully_supported" if improvements == 2
+                else "partially_supported" if improvements == 1
+                else "unsupported"
+            ),
+            "screened_lower_pooled_expensive_ac_rmst": lower_rmst,
+            "screened_no_lower_success_rate": no_lower_success,
+            "policy_results": policy_results,
+        }
     return output
 
 
@@ -607,5 +771,14 @@ def write_task6_statistics(
             VIOLATION_ITERATION_COLUMNS, iterations,
         ),
     }
+    decisions_path = output / "hypothesis_decisions.json"
+    decisions_path.write_text(
+        json.dumps(
+            build_hypothesis_decisions(rows), indent=2, sort_keys=True,
+            allow_nan=False,
+        ) + "\n",
+        encoding="utf-8",
+    )
+    paths["hypothesis_decisions"] = decisions_path
     _plot_statistics(survival, iterations, output)
     return paths

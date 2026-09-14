@@ -4,6 +4,16 @@
 
 研究冻结版本：`v0.5-research-baseline`。
 
+Research Task 6 已完成并冻结：在不修改 Task 5 基准的前提下，加入透明的
+OP-first 分阶段评估策略，并以 Random/DE/TPE/BO、10 个配对 seed、等候选与
+等逻辑 AC 两种正式设计完成公平比较。Formal A 的配对 AC 节省中位数为
+81.5%；Formal B 中 Screened 的 pooled AC-RMST 为 34.74（Full 119.85），
+成功率为 92.5%（Full 70%）。墙钟时间因额外进程与更多候选而增加，因此不
+宣称主机时间加速。完整报告、统计和原始 SPICE 证据见
+[`research/sky130/differential_amplifier/TASK6_PHYSICS_AWARE_REPORT.md`](research/sky130/differential_amplifier/TASK6_PHYSICS_AWARE_REPORT.md)
+与
+[`research/sky130/differential_amplifier/task6/results/`](research/sky130/differential_amplifier/task6/results/)。
+
 Research Task 5 已冻结独立的 SKY130 Differential-Amplifier Benchmark：真实
 `sky130_fd_pr__nfet_01v8` / `sky130_fd_pr__pfet_01v8`、五管单端差分拓扑、显式
 bulk、真实 `.op + .ac`、差模/共模双测试台、CMRR 下界与带宽右删失语义，以及
@@ -15,8 +25,13 @@ Task 3 与 Task 4 的冻结配置、结果和哈希均保持不变。
 
 CircuitPilot 是一个采用 `src/` 目录结构的参数化 ngspice 电路仿真与自动优化平台。它可以从 YAML 读取单次仿真、离散参数扫描或连续优化配置，并将仿真过程与设计结果归档到 SQLite。
 
-当前第五阶段支持：
+当前第六阶段支持：
 
+- 冻结 Task 5 SKY130 差分放大器基准上的 Full/OP-Screened 评估策略；
+- 显式 OP 物理规则、标准化违规反馈、无 AC 的无效候选拒绝语义；
+- 候选、ngspice 进程、OP、双 AC、物理分析的精确成本计数；
+- 可恢复 SQLite/CSV 记录、优化器状态重放与跨套件公平性验证；
+- Kaplan-Meier、RMST、成对 bootstrap、违规分布与 H1-H3 机器判定；
 - RC low-pass filter；
 - RC high-pass filter；
 - Voltage divider；
@@ -32,7 +47,7 @@ CircuitPilot 是一个采用 `src/` 目录结构的参数化 ngspice 电路仿�
 - 每一次优化评估的 CSV/运行目录、JSON 摘要和收敛曲线；
 - 单组失败隔离、ngspice 缺失预检和每组独立运行目录。
 
-前四阶段的 API 和命令行方式继续保留。
+前五阶段的 API、冻结基准和命令行方式继续保留。
 
 ## 项目结构
 

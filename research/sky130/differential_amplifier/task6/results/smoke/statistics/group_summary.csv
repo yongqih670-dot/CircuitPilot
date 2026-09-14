@@ -1,0 +1,9 @@
+experiment_design,method,evaluation_policy,runs,success_rate,events,censored,candidate_km_median,candidate_rmst,expensive_ac_km_median,expensive_ac_rmst,median_wall_time_to_first_feasible,candidate_evaluations,expensive_ac_analysis_count,ac_analyses_avoided_vs_full_nominal,percent_ac_saved_vs_full_nominal,op_rejected_candidates,full_evaluated_candidates,physics_invalid_candidates,feasible_candidates,ngspice_process_calls,physical_analysis_calls,total_runtime
+smoke,bo,full,3,0.0,0,3,,25.0,,50.0,,75,150,0,0.0,0,75,67,0,75,150,45.82799999999406
+smoke,bo,op_screened,3,0.0,0,3,,25.0,,50.0,,75,12,138,92.0,69,6,69,0,81,81,45.99899999999616
+smoke,de,full,3,0.3333333333333333,1,2,,23.0,,46.0,11.360000000000582,75,150,0,0.0,0,75,66,2,75,150,45.87399999999616
+smoke,de,op_screened,3,0.0,0,3,,25.0,,50.0,,75,10,140,93.33333333333333,70,5,70,0,80,80,45.0
+smoke,random,full,3,0.0,0,3,,25.0,,50.0,,75,150,0,0.0,0,75,66,0,75,150,44.23399999999674
+smoke,random,op_screened,3,0.0,0,3,,25.0,,50.0,,75,18,132,88.0,66,9,66,0,84,84,43.28100000000268
+smoke,tpe,full,3,0.0,0,3,,25.0,,50.0,,75,150,0,0.0,0,75,63,0,75,150,46.53199999999924
+smoke,tpe,op_screened,3,0.3333333333333333,1,2,,23.666666666666668,,36.66666666666667,14.625,75,44,106,70.66666666666667,53,22,53,4,97,97,55.14100000000326

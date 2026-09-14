@@ -20,7 +20,10 @@ from circuitpilot.experiments.task6_runner import (
     Task6Runner,
     _restore_optimizer_state,
 )
-from circuitpilot.experiments.task6_statistics import validate_task6_fairness
+from circuitpilot.experiments.task6_statistics import (
+    build_hypothesis_decisions,
+    validate_task6_fairness,
+)
 from circuitpilot.experiments.seeding import initialize_seeds
 from circuitpilot.run_directory import prepare_research_run_directory
 from circuitpilot.sky130_differential_amplifier import (
@@ -422,6 +425,43 @@ def test_fairness_validator_rejects_cost_drift() -> None:
             expected_seeds=(0,), candidate_cap=1, expensive_ac_budget=None,
             experiment_design="smoke",
         )
+
+
+def test_hypothesis_decisions_follow_frozen_rules() -> None:
+    rows = []
+    for method, screened_ac, rejected in (
+        ("bo", 180, 10), ("de", 160, 20),
+        ("random", 140, 30), ("tpe", 120, 40),
+    ):
+        for seed in (0, 1):
+            for policy, ac, op_rejected in (
+                (FULL_POLICY, 200, 0),
+                (SCREENED_POLICY, screened_ac, rejected),
+            ):
+                rows.append({
+                    "experiment_design": "formal_equal_candidate",
+                    "method": method, "evaluation_policy": policy,
+                    "seed": seed, "candidate_evaluations": 100,
+                    "expensive_ac_analysis_count": ac,
+                    "op_rejected_candidates": op_rejected,
+                })
+    for method in ("bo", "de", "random", "tpe"):
+        for seed in (0, 1):
+            for policy, time in ((FULL_POLICY, 180), (SCREENED_POLICY, 100)):
+                rows.append({
+                    "experiment_design": "formal_equal_cost",
+                    "method": method, "evaluation_policy": policy,
+                    "seed": seed, "event_observed": True,
+                    "expensive_ac_time_to_first_feasible": time,
+                    "expensive_ac_censor_time": time,
+                })
+    decisions = build_hypothesis_decisions(rows)
+    assert decisions["H1"]["decision"] == "supported"
+    assert decisions["H1"]["pooled_paired_median_percent_ac_saved"] == 25.0
+    assert decisions["H2"]["decision"] == "fully_supported"
+    assert decisions["H3"]["decision"] == "supported"
+    assert decisions["H3"]["range_method_median_percent_ac_saved"] == 30.0
+    assert decisions["H3"]["spearman_op_rejection_vs_percent_saved"] == 1.0
 
 
 @pytest.mark.integration
