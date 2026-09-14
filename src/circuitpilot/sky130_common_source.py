@@ -7,8 +7,8 @@ from dataclasses import dataclass
 from math import isfinite
 import os
 from pathlib import Path
-import string
-import subprocess
+import shutil
+import tempfile
 from typing import Any, Iterator, Mapping
 
 from circuitpilot.bandwidth import BANDWIDTH_SEMANTICS_VERSION
@@ -223,29 +223,67 @@ class NgspiceRuntimePaths:
     runtime_pfet_corner: str
 
 
-def _run_subst(arguments: list[str], *, tolerate_missing: bool = False) -> None:
-    completed = subprocess.run(
-        ["subst", *arguments],
-        check=False,
-        capture_output=True,
-        text=True,
+@contextmanager
+def _windows_model_cache_lock() -> Iterator[None]:
+    """Protect one-time construction of the shared ASCII model cache."""
+    import msvcrt
+
+    lock_path = Path(tempfile.gettempdir()) / "circuitpilot-sky130-cache.lock"
+    with lock_path.open("a+b") as stream:
+        stream.seek(0, os.SEEK_END)
+        if stream.tell() == 0:
+            stream.write(b"\0")
+            stream.flush()
+        stream.seek(0)
+        msvcrt.locking(stream.fileno(), msvcrt.LK_LOCK, 1)
+        try:
+            yield
+        finally:
+            stream.seek(0)
+            msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
+
+
+def _windows_ascii_model_paths(model: Sky130ModelConfig) -> tuple[Path, Path, Path]:
+    """Cache the frozen model fragments under a short ASCII-only path."""
+    identity = model.expected_model_sha256 or model.model_sha256()
+    cache = (
+        Path(tempfile.gettempdir())
+        / "circuitpilot-sky130-model-cache"
+        / identity[:20]
     )
-    if completed.returncode != 0 and not tolerate_missing:
-        detail = (completed.stderr or completed.stdout).strip()
-        raise SimulationError(
-            f"failed to create Windows short-path mapping: {detail or completed.returncode}"
+    marker = cache / "content_sha256.txt"
+    spice_root = model.corner_path.parent
+    files = (
+        (model.invariant_path, "invariant.spice"),
+        (model.corner_path, model.corner_path.name),
+        (
+            spice_root / "sky130_fd_pr__nfet_01v8__tt.pm3.spice",
+            "sky130_fd_pr__nfet_01v8__tt.pm3.spice",
+        ),
+        (model.pfet_corner_path, model.pfet_corner_path.name),
+        (
+            spice_root / "sky130_fd_pr__pfet_01v8__tt.pm3.spice",
+            "sky130_fd_pr__pfet_01v8__tt.pm3.spice",
+        ),
+    )
+    with _windows_model_cache_lock():
+        ready = (
+            marker.is_file()
+            and marker.read_text(encoding="ascii").strip() == identity
+            and all((cache / name).is_file() for _, name in files)
         )
-
-
-def _available_drive_letters(count: int) -> list[str]:
-    available = []
-    for letter in reversed(string.ascii_uppercase):
-        root = Path(f"{letter}:\\")
-        if not root.exists():
-            available.append(f"{letter}:")
-            if len(available) == count:
-                return available
-    raise SimulationError("not enough unused Windows drive letters for ngspice aliases")
+        if not ready:
+            cache.mkdir(parents=True, exist_ok=True)
+            for source, name in files:
+                temporary = cache / f".{name}.tmp"
+                shutil.copyfile(source, temporary)
+                temporary.replace(cache / name)
+            marker.write_text(identity + "\n", encoding="ascii")
+    return (
+        cache / "invariant.spice",
+        cache / model.corner_path.name,
+        cache / model.pfet_corner_path.name,
+    )
 
 
 @contextmanager
@@ -281,30 +319,32 @@ def sky130_runtime_paths(
         )
         return
 
-    pdk_drive, run_drive = _available_drive_letters(2)
-    created: list[str] = []
+    staging = Path(tempfile.mkdtemp(prefix="circuitpilot-sky130-"))
+    runtime_invariant, runtime_corner, runtime_pfet_corner = (
+        _windows_ascii_model_paths(model)
+    )
     try:
-        _run_subst([pdk_drive, str(model.pdk_root)])
-        created.append(pdk_drive)
-        _run_subst([run_drive, str(directory)])
-        created.append(run_drive)
-        pdk_prefix = f"{pdk_drive}/".replace(":/", ":/")
-        run_prefix = f"{run_drive}/".replace(":/", ":/")
         yield NgspiceRuntimePaths(
             netlist,
             ac_path,
             op_path,
             device_path,
             log_path,
-            Path(f"{run_drive}\\{netlist.name}"),
-            f"{run_prefix}{ac_path.name}",
-            f"{run_prefix}{op_path.name}",
-            f"{run_prefix}{device_path.name}",
-            Path(f"{run_drive}\\{log_path.name}"),
-            f"{pdk_prefix}libs.tech/ngspice/parameters/invariant.spice",
-            f"{pdk_prefix}libs.ref/sky130_fd_pr/spice/sky130_fd_pr__nfet_01v8__tt.corner.spice",
-            f"{pdk_prefix}libs.ref/sky130_fd_pr/spice/sky130_fd_pr__pfet_01v8__tt.corner.spice",
+            staging / netlist.name,
+            (staging / ac_path.name).as_posix(),
+            (staging / op_path.name).as_posix(),
+            (staging / device_path.name).as_posix(),
+            staging / log_path.name,
+            runtime_invariant.as_posix(),
+            runtime_corner.as_posix(),
+            runtime_pfet_corner.as_posix(),
         )
     finally:
-        for drive in reversed(created):
-            _run_subst([drive, "/D"], tolerate_missing=True)
+        for source in staging.iterdir():
+            if source.is_file():
+                destination = directory / source.name
+                try:
+                    shutil.copy2(source, destination)
+                except OSError:
+                    shutil.copy2(source, Path("\\\\?\\" + str(destination)))
+        shutil.rmtree(staging, ignore_errors=True)
