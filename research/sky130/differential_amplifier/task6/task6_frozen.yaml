@@ -1,0 +1,44 @@
+task6_policy_family_hash: 53b1eb73160b4d069135f406613cd1249fcdd002bfd6cb2b0c8892da1c3b4867
+task5_benchmark_hash: 57d2183621ecf37e5ca22e012452c43fce6459be7d347a5cfc93d0b394c14378
+task5_frozen_config: ../differential_amplifier_frozen.yaml
+definitions:
+  physics_rules:
+    version: task6_op_physics_rules_v1
+    hash: 704634265dcbc3e0e8a7dd56eb4bd07c385bf26b0ad4ce0f306bdc43401ce052
+  op_feedback:
+    version: task6_normalized_op_violation_feedback_v1
+    hash: 2890448082b38377353526406abcd78cdca7b23f86d8a6765bbfb9f26bce3d27
+  cost_model:
+    version: task6_logical_ac_primary_cost_v1
+    hash: 1ddf380b35fa8f5628c10e1f6e25cf87a32ef336a4ce229d071a7b4d796d7726
+  statistical_plan:
+    version: task6_paired_survival_effects_v1
+  wall_time_policy: measured_not_stopping_v1
+policies:
+  full:
+    version: task6_full_task5_reproduction_v1
+    hash: a07ea20ee7f16598602fa7f05218b45439e4bb87ac34c786d9881125372de0f0
+  op_screened:
+    version: task6_op_screened_two_stage_v1
+    hash: 28110a5127748f185c35f038b2a4dcf333356ae54e676391042cebeff0cfe065
+methods: [random, de, tpe, bo]
+smoke:
+  seeds: [0, 1, 2]
+  candidate_cap: 25
+  expensive_ac_budget:
+formal_equal_candidate:
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  candidate_cap: 100
+  expensive_ac_budget:
+formal_equal_cost:
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  candidate_cap: 300
+  expensive_ac_budget: 200
+pilot:
+  run_id: cp-20260914T035056918657Z-277c0ea80877
+  protocol_version: task6_cost_profile_paired_v1
+  seed: 6001
+  candidate_count: 32
+  candidate_design_sha256: b10e6bd63aca0d2bb1d87c46066375b73c79264c475abb9bc02869f8d7b9dd06
+  process_calls: 64
+  process_failures: 0
