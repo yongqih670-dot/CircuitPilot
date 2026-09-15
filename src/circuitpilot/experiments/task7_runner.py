@@ -35,6 +35,7 @@ from circuitpilot.task7_protocol import (
     evaluate_task7_objective,
     protocol_family_hash,
     stable_hash,
+    task7_component_hashes,
 )
 
 
@@ -424,12 +425,17 @@ class Task7Runner:
         )
 
 
-def _summary(definition: Task7RunDefinition, result: Task7RunResult) -> dict[str, Any]:
+def _summary(
+    definition: Task7RunDefinition,
+    result: Task7RunResult,
+    config: ExperimentConfig,
+) -> dict[str, Any]:
     records = result.records
     first = next((row for row in records if row.event_observed), None)
     best = result.best_record
     return {
         **definition.semantic_dict(),
+        "component_hashes": task7_component_hashes(config),
         "run_id": result.run_id,
         "completed": result.completed,
         "evaluations_success": sum(
@@ -512,7 +518,7 @@ def execute_task7_run(
         seed_registry=seeds.registry,
         optimizer_state_path=state_path,
     ).run_to_budget(max_new_candidates=max_new_candidates)
-    summary = _summary(definition, result)
+    summary = _summary(definition, result, config)
     _atomic_json(run.path / "summary" / "experiment_summary.json", summary)
     if result.completed:
         circuit = config.circuit_config

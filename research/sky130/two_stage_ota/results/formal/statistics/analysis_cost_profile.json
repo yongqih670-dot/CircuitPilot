@@ -1,0 +1,56 @@
+{
+  "ac_runtime_seconds": {
+    "count": 2000,
+    "iqr": 0.09299999999348074,
+    "maximum": 1.2030000000086147,
+    "mean": 0.5680454999998765,
+    "median": 0.5779999999795109,
+    "minimum": 0.48399999999674037,
+    "q1": 0.5160000000032596,
+    "q3": 0.6089999999967404
+  },
+  "interpretation": {
+    "analysis_runtime": "Each OP/AC/transient runtime includes its independent process startup, SKY130 model loading, analysis computation, copying, and parsing.",
+    "separation_limit": "ngspice does not expose a trustworthy portable split between model/process startup and solver computation; no synthetic split is reported."
+  },
+  "op_runtime_seconds": {
+    "count": 2000,
+    "iqr": 0.07800000000861473,
+    "maximum": 1.4839999999967404,
+    "mean": 0.5724400000000023,
+    "median": 0.5780000000086147,
+    "minimum": 0.48399999999674037,
+    "q1": 0.5309999999881256,
+    "q3": 0.6089999999967404
+  },
+  "orchestration_file_parse_overhead_seconds": {
+    "count": 2000,
+    "iqr": 0.0,
+    "maximum": 0.03200000000651926,
+    "mean": 0.0014755000000877773,
+    "median": 0.0,
+    "minimum": 0.0,
+    "q1": 0.0,
+    "q3": 0.0
+  },
+  "transient_runtime_seconds": {
+    "count": 2000,
+    "iqr": 0.09399999998277053,
+    "maximum": 1.937999999994645,
+    "mean": 0.6043635000000067,
+    "median": 0.6089999999967404,
+    "minimum": 0.5,
+    "q1": 0.5470000000204891,
+    "q3": 0.6410000000032596
+  },
+  "wall_clock_seconds": {
+    "count": 2000,
+    "iqr": 0.25,
+    "maximum": 3.5320000000065193,
+    "mean": 1.7463244999999734,
+    "median": 1.7820000000065193,
+    "minimum": 1.5,
+    "q1": 1.6089999999967404,
+    "q3": 1.8589999999967404
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "candidate_count": 512,
+  "derived_counts": {
+    "no_valid_ugf": 213,
+    "op_invalid": 503,
+    "phase_margin_insufficient": 98,
+    "simulation_errors": 0,
+    "transient_invalid": 0,
+    "ugf_right_censored": 0
+  },
+  "metric_distributions": {
+    "dc_gain_db": {
+      "count": 512,
+      "iqr": 47.0846016,
+      "maximum": 80.120269,
+      "mean": 1.013324720791797,
+      "median": 7.696953365000001,
+      "minimum": -148.076252,
+      "q1": -20.669032825000002,
+      "q3": 26.415568775
+    },
+    "dc_power_w": {
+      "count": 512,
+      "iqr": 6.82233031485e-05,
+      "maximum": 0.0010342668078000001,
+      "mean": 6.824175516643359e-05,
+      "median": 4.199833386e-05,
+      "minimum": 1.8408736980000001e-06,
+      "q1": 1.57148758215e-05,
+      "q3": 8.393817897e-05
+    },
+    "negative_slew_v_per_s": {
+      "count": 269,
+      "iqr": 14978286.629980281,
+      "maximum": 168558086.57619667,
+      "mean": 13971778.45414926,
+      "median": 7092028.628151784,
+      "minimum": 209013.62852278198,
+      "q1": 2337223.843903818,
+      "q3": 17315510.4738841
+    },
+    "output_dc_voltage": {
+      "count": 512,
+      "iqr": 1.7535024610599999,
+      "maximum": 1.80002777,
+      "mean": 0.6938734058283778,
+      "median": 0.02849182905,
+      "minimum": 5.87998726e-08,
+      "q1": 0.0011166864400000002,
+      "q3": 1.7546191475
+    },
+    "phase_margin_deg": {
+      "count": 299,
+      "iqr": 88.1898931437314,
+      "maximum": 177.07125112674765,
+      "mean": 47.490263745580535,
+      "median": 76.3862699020041,
+      "minimum": -97.91220591341255,
+      "q1": 3.917368662794402,
+      "q3": 92.1072618065258
+    },
+    "positive_slew_v_per_s": {
+      "count": 286,
+      "iqr": 6272071.137515556,
+      "maximum": 38360437.289220415,
+      "mean": 5448338.827279741,
+      "median": 3206240.5889552822,
+      "minimum": 127272.77424955058,
+      "q1": 1219867.172373939,
+      "q3": 7491938.309889495
+    },
+    "ugf_hz": {
+      "count": 299,
+      "iqr": 22327337.02858645,
+      "maximum": 215823501.68483528,
+      "mean": 18031491.358832516,
+      "median": 6222834.135180184,
+      "minimum": 5287.457414997362,
+      "q1": 932221.9423230937,
+      "q3": 23259558.970909543
+    }
+  },
+  "status_counts": {
+    "negative_slew_status": {
+      "insufficient_transition": 243,
+      "measured": 269
+    },
+    "operating_region_valid": {
+      "false": 503,
+      "true": 9
+    },
+    "phase_margin_status": {
+      "measured": 299,
+      "unavailable": 213
+    },
+    "positive_slew_status": {
+      "insufficient_transition": 226,
+      "measured": 286
+    },
+    "ugf_status": {
+      "measured": 299,
+      "no_crossing": 213
+    }
+  }
+}

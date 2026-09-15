@@ -1,0 +1,42 @@
+{
+  "candidate_budget": 50,
+  "cell_count": 40,
+  "component_binding": "All components are bound by the identical benchmark and protocol family hashes present in every candidate and run manifest.",
+  "component_hashes": {
+    "cost_model_hash": "1a48c49e8aeb3b3f9e62a0535d33020b2c3b5600d53111417ad65d2379a89845",
+    "load_testbench_hash": "8bd34b09ff751c15a89dedf0967f1fd73434034fb38336593fb3c5e2384e555c",
+    "model_library_hash": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+    "objective_hash": "6c8bfb8a99b80dfe507c76fa191f03225694b0ff5f43818495dde4c78a5cd6b1",
+    "pdk_hash": "d88fa42b4f42f7b1f6987141aa92161865cfc9ff5fbdce9bbc9f137bde3a2f61",
+    "phase_margin_semantics_hash": "68b5a1ed0cddd1efd884e75c05c01d60cdfc20b640198cd1fc88dfc119031c1b",
+    "role_mapping_hash": "50b2fe35a92fb3e56e804d9cc2ac641b9f7044198dccbd286360ef4378d48e5f",
+    "slew_semantics_hash": "aadac51099130757f0d3774b2926801023ccc3ef00a933c99e7586d83f1b1839",
+    "topology_hash": "75f3ed595af347524d7e1d74290980f7c75ae9f503559ca561da7cd349303e6c",
+    "transient_semantics_hash": "b7aa31978b2e3264373f0f6cafda4305bca1c7b96daa7483668ddb57616a52fb",
+    "ugf_semantics_hash": "5f0bd2d5795ddbba88580c8de2a44788a0b12857b6232be70272881ded8f3852"
+  },
+  "design": "formal",
+  "full_only_cost_identity": "each row 1 candidate, 3 processes, 1 OP, 1 AC, 1 transient",
+  "methods": [
+    "random",
+    "de",
+    "tpe",
+    "bo"
+  ],
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "status": "pass",
+  "task7_benchmark_hash": "144100e168ca5f550c6ca0bd5a29788f669d0e34cd9008c5a7fe2099e8cb8c1c",
+  "task7_protocol_family_hash": "3c8cb79cb7ca41cd064ce52c68630dda40f43dd48b2b5c97a902d3553bc980c9",
+  "task7_search_space_hash": "36e72bd54d2b1850af1ce1c8a69dbe7de22f552d49713edfbb0d3de83cd4f6db"
+}

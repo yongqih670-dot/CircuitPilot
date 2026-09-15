@@ -9,6 +9,7 @@ from math import isfinite, log10
 from typing import Any, Mapping, Sequence
 
 from circuitpilot.sky130_two_stage_ota import (
+    DEVICE_ROLE_MAPPING,
     PhaseMarginStatus,
     SlewStatus,
     UgfStatus,
@@ -50,6 +51,21 @@ TASK5_BENCHMARK_HASH = (
 TASK6_POLICY_FAMILY_HASH = (
     "53b1eb73160b4d069135f406613cd1249fcdd002bfd6cb2b0c8892da1c3b4867"
 )
+TASK7_COMPONENT_HASHES = {
+    "topology_hash": "75f3ed595af347524d7e1d74290980f7c75ae9f503559ca561da7cd349303e6c",
+    "role_mapping_hash": "50b2fe35a92fb3e56e804d9cc2ac641b9f7044198dccbd286360ef4378d48e5f",
+    "pdk_hash": "d88fa42b4f42f7b1f6987141aa92161865cfc9ff5fbdce9bbc9f137bde3a2f61",
+    "model_library_hash": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+    "ugf_semantics_hash": "5f0bd2d5795ddbba88580c8de2a44788a0b12857b6232be70272881ded8f3852",
+    "phase_margin_semantics_hash": (
+        "68b5a1ed0cddd1efd884e75c05c01d60cdfc20b640198cd1fc88dfc119031c1b"
+    ),
+    "transient_semantics_hash": "b7aa31978b2e3264373f0f6cafda4305bca1c7b96daa7483668ddb57616a52fb",
+    "slew_semantics_hash": "aadac51099130757f0d3774b2926801023ccc3ef00a933c99e7586d83f1b1839",
+    "load_testbench_hash": "8bd34b09ff751c15a89dedf0967f1fd73434034fb38336593fb3c5e2384e555c",
+    "cost_model_hash": "1a48c49e8aeb3b3f9e62a0535d33020b2c3b5600d53111417ad65d2379a89845",
+    "objective_hash": "6c8bfb8a99b80dfe507c76fa191f03225694b0ff5f43818495dde4c78a5cd6b1",
+}
 
 # name, low, high, logarithmic
 SEARCH_DIMENSIONS = (
@@ -98,6 +114,91 @@ def protocol_family_hash() -> str:
             "task6_policy_family_hash": TASK6_POLICY_FAMILY_HASH,
         }
     )
+
+
+def task7_component_hashes(config: Any) -> dict[str, str]:
+    """Compute every individually named Task 7 fairness component."""
+    circuit = config.circuit_config
+    if circuit is None:
+        raise ValueError("Task 7 component hashes require a circuit configuration")
+    payload = circuit.to_dict()
+    return {
+        "topology_hash": stable_hash(
+            {
+                "version": circuit.topology_version,
+                "definition": payload["topology_definition"],
+            }
+        ),
+        "role_mapping_hash": stable_hash(
+            {
+                "version": circuit.device_role_mapping_version,
+                "mapping": DEVICE_ROLE_MAPPING,
+            }
+        ),
+        "pdk_hash": circuit.model.model_sha256(),
+        "model_library_hash": circuit.model.library_sha256(),
+        "ugf_semantics_hash": stable_hash(circuit.ugf_semantics_version),
+        "phase_margin_semantics_hash": stable_hash(
+            circuit.phase_margin_semantics_version
+        ),
+        "transient_semantics_hash": stable_hash(
+            {
+                "version": circuit.transient_testbench_version,
+                "low_v": circuit.transient_low_v,
+                "high_v": circuit.transient_high_v,
+                "rising_edge_s": circuit.transient_rising_edge_s,
+                "falling_edge_s": circuit.transient_falling_edge_s,
+                "stop_s": circuit.transient_stop_time_s,
+                "max_step_s": circuit.transient_max_step_s,
+            }
+        ),
+        "slew_semantics_hash": stable_hash(
+            {
+                "version": circuit.slew_semantics_version,
+                "lower_fraction": circuit.slew_lower_fraction,
+                "upper_fraction": circuit.slew_upper_fraction,
+                "edge_exclusion_s": circuit.transient_edge_exclusion_s,
+            }
+        ),
+        "load_testbench_hash": stable_hash(
+            {
+                "supply_v": circuit.supply_voltage_v,
+                "input_common_mode_v": circuit.input_common_mode_v,
+                "tail_bias_v": circuit.tail_bias_v,
+                "load_capacitance_f": circuit.load_capacitance_f,
+                "temperature_c": circuit.temperature_c,
+                "ac_testbench_version": circuit.ac_testbench_version,
+            }
+        ),
+        "cost_model_hash": stable_hash(
+            {
+                "version": circuit.cost_semantics_version,
+                "definition": payload["cost_definition"],
+            }
+        ),
+        "objective_hash": stable_hash(
+            {
+                "version": OBJECTIVE_SEMANTICS_VERSION,
+                "objectives": [
+                    {
+                        "metric": item.metric,
+                        "type": item.objective_type.value,
+                        "weight": item.weight,
+                    }
+                    for item in config.objectives
+                ],
+                "constraints": [
+                    {
+                        "id": item.constraint_id or item.metric,
+                        "metric": item.metric,
+                        "operator": item.operator.value,
+                        "threshold": item.threshold,
+                    }
+                    for item in config.constraints
+                ],
+            }
+        ),
+    }
 
 
 def decode_unit_candidate(coordinates: Sequence[float]) -> dict[str, float]:

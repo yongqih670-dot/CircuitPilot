@@ -1,0 +1,454 @@
+{
+  "bo": {
+    "candidate_count": 500,
+    "constraint_pass_counts": {
+      "gain_min": 209,
+      "negative_slew_min": 196,
+      "operating_region": 3,
+      "output_high": 339,
+      "output_low": 240,
+      "phase_margin_min": 211,
+      "positive_slew_min": 208,
+      "power_max": 497,
+      "ugf_min": 202
+    },
+    "exact_cost_totals": {
+      "ac_calls": 500,
+      "candidate_evaluations": 500,
+      "high_fidelity_analysis_calls": 1500,
+      "ngspice_process_calls": 1500,
+      "op_calls": 500,
+      "screening_calls": 0,
+      "transient_calls": 500
+    },
+    "median_best_constraint_violation": 1.0,
+    "median_best_objective": 2.0,
+    "metric_distributions": {
+      "dc_gain_db": {
+        "count": 500,
+        "iqr": 53.5502051,
+        "maximum": 73.8524349,
+        "mean": -5.363402584524,
+        "median": 4.7951171200000005,
+        "minimum": -166.205963,
+        "q1": -29.04902255,
+        "q3": 24.501182550000003
+      },
+      "dc_power_w": {
+        "count": 500,
+        "iqr": 9.746476866e-05,
+        "maximum": 0.00228549078,
+        "mean": 0.000131152995969156,
+        "median": 5.3357494949999996e-05,
+        "minimum": 1.6709636484e-06,
+        "q1": 1.8999530370000002e-05,
+        "q3": 0.00011646429903000001
+      },
+      "negative_slew_v_per_s": {
+        "count": 246,
+        "iqr": 12271229.107321486,
+        "maximum": 479929237.348625,
+        "mean": 14702602.773965022,
+        "median": 3925657.2207322186,
+        "minimum": 141150.01862393317,
+        "q1": 716780.0073225359,
+        "q3": 12988009.11464402
+      },
+      "output_dc_voltage": {
+        "count": 500,
+        "iqr": 1.76707995021525,
+        "maximum": 1.80002828,
+        "mean": 0.7403444742316286,
+        "median": 0.0808267638,
+        "minimum": 3.41363724e-08,
+        "q1": 0.0009751372847500001,
+        "q3": 1.7680550875
+      },
+      "phase_margin_deg": {
+        "count": 277,
+        "iqr": 53.812539597511986,
+        "maximum": 169.1435390145851,
+        "mean": 62.73120980586817,
+        "median": 86.16997043490423,
+        "minimum": -103.43147336490057,
+        "q1": 41.50350255467461,
+        "q3": 95.3160421521866
+      },
+      "positive_slew_v_per_s": {
+        "count": 267,
+        "iqr": 7239812.222700987,
+        "maximum": 213622985.36675033,
+        "mean": 6753827.665985665,
+        "median": 2758629.190975674,
+        "minimum": 125233.80492442792,
+        "q1": 565517.9956850554,
+        "q3": 7805330.218386043
+      },
+      "ugf_hz": {
+        "count": 277,
+        "iqr": 15454736.69466283,
+        "maximum": 423157775.35462815,
+        "mean": 15025949.38971807,
+        "median": 2453984.592272566,
+        "minimum": 2053.9582776369316,
+        "q1": 456290.2787169158,
+        "q3": 15911026.973379746
+      }
+    },
+    "rates": {
+      "ac_invalid": 0.0,
+      "no_valid_ugf": 0.446,
+      "op_invalid": 0.994,
+      "phase_margin_insufficient": 0.132,
+      "simulation_failed": 0.0,
+      "slew_insufficient_transition": 0.564,
+      "transient_failure": 0.0,
+      "ugf_right_censored": 0.0
+    },
+    "run_count": 10,
+    "stability_status_counts": {
+      "no_valid_unity_crossing": 223,
+      "phase_margin_insufficient": 66,
+      "stable": 211
+    }
+  },
+  "de": {
+    "candidate_count": 500,
+    "constraint_pass_counts": {
+      "gain_min": 313,
+      "negative_slew_min": 296,
+      "operating_region": 7,
+      "output_high": 337,
+      "output_low": 280,
+      "phase_margin_min": 321,
+      "positive_slew_min": 303,
+      "power_max": 495,
+      "ugf_min": 291
+    },
+    "exact_cost_totals": {
+      "ac_calls": 500,
+      "candidate_evaluations": 500,
+      "high_fidelity_analysis_calls": 1500,
+      "ngspice_process_calls": 1500,
+      "op_calls": 500,
+      "screening_calls": 0,
+      "transient_calls": 500
+    },
+    "median_best_constraint_violation": 0.7198162045000001,
+    "median_best_objective": 1.7198162045,
+    "metric_distributions": {
+      "dc_gain_db": {
+        "count": 500,
+        "iqr": 34.6298055075,
+        "maximum": 75.6051204,
+        "mean": 15.660570042074,
+        "median": 20.6898108,
+        "minimum": -155.388533,
+        "q1": 1.1737953925000002,
+        "q3": 35.8036009
+      },
+      "dc_power_w": {
+        "count": 500,
+        "iqr": 0.000130720641885,
+        "maximum": 0.00495734247,
+        "mean": 0.0001568611419294492,
+        "median": 4.9175879310000005e-05,
+        "minimum": 1.7365481262000003e-06,
+        "q1": 2.0276111295e-05,
+        "q3": 0.00015099675318
+      },
+      "negative_slew_v_per_s": {
+        "count": 341,
+        "iqr": 6883550.464411495,
+        "maximum": 91681724.2460225,
+        "mean": 7410821.625998844,
+        "median": 3188718.3448045924,
+        "minimum": 117859.82307047394,
+        "q1": 842168.4671390724,
+        "q3": 7725718.931550568
+      },
+      "output_dc_voltage": {
+        "count": 500,
+        "iqr": 1.7393736502500001,
+        "maximum": 1.8,
+        "mean": 0.7858723269210228,
+        "median": 0.19926100200000002,
+        "minimum": 9.80042318e-08,
+        "q1": 0.01157411225,
+        "q3": 1.7509477625
+      },
+      "phase_margin_deg": {
+        "count": 380,
+        "iqr": 27.151779839440508,
+        "maximum": 170.33706001702825,
+        "mean": 70.58192781474817,
+        "median": 86.26038088680116,
+        "minimum": -103.64501169024027,
+        "q1": 65.29084624619162,
+        "q3": 92.44262608563213
+      },
+      "positive_slew_v_per_s": {
+        "count": 350,
+        "iqr": 4285353.206061959,
+        "maximum": 33380710.91426565,
+        "mean": 3753434.2816969566,
+        "median": 2149955.0630480414,
+        "minimum": 124328.62709633082,
+        "q1": 779254.6456337522,
+        "q3": 5064607.851695712
+      },
+      "ugf_hz": {
+        "count": 380,
+        "iqr": 8673324.63431313,
+        "maximum": 145215203.2509374,
+        "mean": 9289969.123577304,
+        "median": 2127885.995381509,
+        "minimum": 6503.8329342015995,
+        "q1": 548917.7907941802,
+        "q3": 9222242.425107311
+      }
+    },
+    "rates": {
+      "ac_invalid": 0.0,
+      "no_valid_ugf": 0.24,
+      "op_invalid": 0.986,
+      "phase_margin_insufficient": 0.118,
+      "simulation_failed": 0.0,
+      "slew_insufficient_transition": 0.366,
+      "transient_failure": 0.0,
+      "ugf_right_censored": 0.0
+    },
+    "run_count": 10,
+    "stability_status_counts": {
+      "no_valid_unity_crossing": 120,
+      "phase_margin_insufficient": 59,
+      "stable": 321
+    }
+  },
+  "random": {
+    "candidate_count": 500,
+    "constraint_pass_counts": {
+      "gain_min": 227,
+      "negative_slew_min": 262,
+      "operating_region": 8,
+      "output_high": 349,
+      "output_low": 207,
+      "phase_margin_min": 194,
+      "positive_slew_min": 274,
+      "power_max": 500,
+      "ugf_min": 243
+    },
+    "exact_cost_totals": {
+      "ac_calls": 500,
+      "candidate_evaluations": 500,
+      "high_fidelity_analysis_calls": 1500,
+      "ngspice_process_calls": 1500,
+      "op_calls": 500,
+      "screening_calls": 0,
+      "transient_calls": 500
+    },
+    "median_best_constraint_violation": 1.0,
+    "median_best_objective": 2.0,
+    "metric_distributions": {
+      "dc_gain_db": {
+        "count": 500,
+        "iqr": 47.32503215,
+        "maximum": 78.0338752,
+        "mean": -0.2566372819119999,
+        "median": 9.24478873,
+        "minimum": -156.502886,
+        "q1": -22.3865615,
+        "q3": 24.938470650000003
+      },
+      "dc_power_w": {
+        "count": 500,
+        "iqr": 6.862484665349999e-05,
+        "maximum": 0.0006511028364,
+        "mean": 6.493742049466801e-05,
+        "median": 4.186622412e-05,
+        "minimum": 1.821884094e-06,
+        "q1": 1.5001551706500001e-05,
+        "q3": 8.362639835999999e-05
+      },
+      "negative_slew_v_per_s": {
+        "count": 272,
+        "iqr": 16054752.554741632,
+        "maximum": 170432082.9999701,
+        "mean": 17176639.088307306,
+        "median": 7810138.036923405,
+        "minimum": 248794.74581719702,
+        "q1": 2742298.1348203765,
+        "q3": 18797050.689562008
+      },
+      "output_dc_voltage": {
+        "count": 500,
+        "iqr": 1.7615446284440002,
+        "maximum": 1.80000381,
+        "mean": 0.6705968493655534,
+        "median": 0.02754599785,
+        "minimum": 9.80042318e-08,
+        "q1": 0.000694521556,
+        "q3": 1.76223915
+      },
+      "phase_margin_deg": {
+        "count": 288,
+        "iqr": 87.86087332407992,
+        "maximum": 144.1709925660089,
+        "mean": 46.348298165809275,
+        "median": 78.23607382239899,
+        "minimum": -91.84339314313252,
+        "q1": 2.192267859936919,
+        "q3": 90.05314118401684
+      },
+      "positive_slew_v_per_s": {
+        "count": 308,
+        "iqr": 7096169.66288499,
+        "maximum": 92368028.06101505,
+        "mean": 6212142.930141231,
+        "median": 2975421.4990456076,
+        "minimum": 149897.5796985177,
+        "q1": 1152279.2711369959,
+        "q3": 8248448.934021985
+      },
+      "ugf_hz": {
+        "count": 288,
+        "iqr": 23406534.12756002,
+        "maximum": 129458316.49661706,
+        "mean": 16367112.53399079,
+        "median": 5585086.433393483,
+        "minimum": 10789.456248430808,
+        "q1": 1396165.3065942756,
+        "q3": 24802699.434154294
+      }
+    },
+    "rates": {
+      "ac_invalid": 0.0,
+      "no_valid_ugf": 0.424,
+      "op_invalid": 0.984,
+      "phase_margin_insufficient": 0.188,
+      "simulation_failed": 0.0,
+      "slew_insufficient_transition": 0.502,
+      "transient_failure": 0.0,
+      "ugf_right_censored": 0.0
+    },
+    "run_count": 10,
+    "stability_status_counts": {
+      "no_valid_unity_crossing": 212,
+      "phase_margin_insufficient": 94,
+      "stable": 194
+    }
+  },
+  "tpe": {
+    "candidate_count": 500,
+    "constraint_pass_counts": {
+      "gain_min": 354,
+      "negative_slew_min": 358,
+      "operating_region": 6,
+      "output_high": 333,
+      "output_low": 296,
+      "phase_margin_min": 365,
+      "positive_slew_min": 354,
+      "power_max": 499,
+      "ugf_min": 334
+    },
+    "exact_cost_totals": {
+      "ac_calls": 500,
+      "candidate_evaluations": 500,
+      "high_fidelity_analysis_calls": 1500,
+      "ngspice_process_calls": 1500,
+      "op_calls": 500,
+      "screening_calls": 0,
+      "transient_calls": 500
+    },
+    "median_best_constraint_violation": 1.0,
+    "median_best_objective": 2.0,
+    "metric_distributions": {
+      "dc_gain_db": {
+        "count": 500,
+        "iqr": 32.713796342500004,
+        "maximum": 78.1605436,
+        "mean": 22.064974097384,
+        "median": 28.0720734,
+        "minimum": -149.034346,
+        "q1": 8.443244857499998,
+        "q3": 41.1570412
+      },
+      "dc_power_w": {
+        "count": 500,
+        "iqr": 6.3588405555e-05,
+        "maximum": 0.00228734226,
+        "mean": 8.65344346616808e-05,
+        "median": 3.841390341e-05,
+        "minimum": 1.7343007344e-06,
+        "q1": 2.014171038e-05,
+        "q3": 8.3730115935e-05
+      },
+      "negative_slew_v_per_s": {
+        "count": 392,
+        "iqr": 6794980.67108474,
+        "maximum": 87984050.2952366,
+        "mean": 6731497.179790933,
+        "median": 3530689.3762007467,
+        "minimum": 141788.15178205623,
+        "q1": 1258703.3697737483,
+        "q3": 8053684.0408584885
+      },
+      "output_dc_voltage": {
+        "count": 500,
+        "iqr": 1.7192135698749997,
+        "maximum": 1.80001435,
+        "mean": 0.8959826740683019,
+        "median": 1.179560565,
+        "minimum": 2.82235466e-08,
+        "q1": 0.019353490124999997,
+        "q3": 1.7385670599999998
+      },
+      "phase_margin_deg": {
+        "count": 415,
+        "iqr": 26.323625400348064,
+        "maximum": 158.56373308829802,
+        "mean": 71.42566854518782,
+        "median": 81.5378805511991,
+        "minimum": -89.081970735342,
+        "q1": 63.052874501208564,
+        "q3": 89.37649990155663
+      },
+      "positive_slew_v_per_s": {
+        "count": 387,
+        "iqr": 5633997.857623222,
+        "maximum": 78536946.00000274,
+        "mean": 5099672.41765654,
+        "median": 3013641.9394169413,
+        "minimum": 158212.21322983468,
+        "q1": 1168094.4931912879,
+        "q3": 6802092.35081451
+      },
+      "ugf_hz": {
+        "count": 415,
+        "iqr": 7434787.134942665,
+        "maximum": 87688009.4737531,
+        "mean": 7697835.226441462,
+        "median": 2564348.531014434,
+        "minimum": 9963.064513133444,
+        "q1": 790724.0282449189,
+        "q3": 8225511.163187584
+      }
+    },
+    "rates": {
+      "ac_invalid": 0.0,
+      "no_valid_ugf": 0.17,
+      "op_invalid": 0.988,
+      "phase_margin_insufficient": 0.1,
+      "simulation_failed": 0.0,
+      "slew_insufficient_transition": 0.264,
+      "transient_failure": 0.0,
+      "ugf_right_censored": 0.0
+    },
+    "run_count": 10,
+    "stability_status_counts": {
+      "no_valid_unity_crossing": 85,
+      "phase_margin_insufficient": 50,
+      "stable": 365
+    }
+  }
+}

@@ -10,7 +10,7 @@ from statistics import mean, median
 import subprocess
 from typing import Any, Iterable
 
-from circuitpilot.exceptions import ResearchExperimentError
+from circuitpilot.exceptions import FairComparisonError, ResearchExperimentError
 from circuitpilot.experiments.task7_runner import (
     Task7RunDefinition,
     execute_task7_run,
@@ -19,6 +19,7 @@ from circuitpilot.run_directory import generate_run_id
 from circuitpilot.task7_protocol import (
     METHODS,
     TASK7_BENCHMARK_HASH,
+    TASK7_COMPONENT_HASHES,
     TASK7_SEARCH_SPACE_HASH,
     protocol_family_hash,
 )
@@ -109,7 +110,7 @@ def validate_fairness(
     expected = {(method, seed) for method in methods for seed in seeds}
     found = {(row["method"], int(row["seed"])) for row in summaries}
     if found != expected or len(summaries) != len(expected):
-        raise ResearchExperimentError("Task 7 suite cell coverage is incomplete")
+        raise FairComparisonError("Task 7 suite cell coverage is incomplete")
     for row in summaries:
         if (
             not row.get("completed")
@@ -118,6 +119,7 @@ def validate_fairness(
             or row.get("task7_benchmark_hash") != TASK7_BENCHMARK_HASH
             or row.get("task7_search_space_hash") != TASK7_SEARCH_SPACE_HASH
             or row.get("task7_protocol_family_hash") != protocol_family_hash()
+            or row.get("component_hashes") != TASK7_COMPONENT_HASHES
             or int(row.get("candidate_evaluations", -1)) != candidate_budget
             or int(row.get("ngspice_process_calls", -1)) != 3 * candidate_budget
             or int(row.get("op_calls", -1)) != candidate_budget
@@ -127,7 +129,7 @@ def validate_fairness(
             != 3 * candidate_budget
             or int(row.get("screening_calls", -1)) != 0
         ):
-            raise ResearchExperimentError(
+            raise FairComparisonError(
                 f"Task 7 fairness/cost identity failed for {row.get('experiment_id')}"
             )
     return {
@@ -140,6 +142,7 @@ def validate_fairness(
         "task7_benchmark_hash": TASK7_BENCHMARK_HASH,
         "task7_search_space_hash": TASK7_SEARCH_SPACE_HASH,
         "task7_protocol_family_hash": protocol_family_hash(),
+        "component_hashes": dict(TASK7_COMPONENT_HASHES),
         "full_only_cost_identity": "each row 1 candidate, 3 processes, 1 OP, 1 AC, 1 transient",
     }
 
