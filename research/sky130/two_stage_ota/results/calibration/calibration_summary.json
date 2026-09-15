@@ -1,0 +1,148 @@
+{
+  "analysis_error_counts": {},
+  "candidate_count": 512,
+  "completed": true,
+  "completed_candidates": 512,
+  "cost_totals": {
+    "ac_calls": 512,
+    "candidate_evaluations": 512,
+    "high_fidelity_analysis_calls": 1536,
+    "ngspice_process_calls": 1536,
+    "op_calls": 512,
+    "transient_calls": 512
+  },
+  "ladder_results": [
+    {
+      "feasible_count": 2,
+      "feasible_density": 0.00390625,
+      "row": 1,
+      "sample_count": 512,
+      "specification": {
+        "gain_min_db": 12.0,
+        "negative_slew_min_v_per_s": 500000.0,
+        "output_max_v": 1.7,
+        "output_min_v": 0.1,
+        "phase_margin_min_deg": 35.0,
+        "positive_slew_min_v_per_s": 500000.0,
+        "power_max_w": 0.0015,
+        "require_operating_region": true,
+        "ugf_min_hz": 500000.0
+      }
+    },
+    {
+      "feasible_count": 1,
+      "feasible_density": 0.001953125,
+      "row": 2,
+      "sample_count": 512,
+      "specification": {
+        "gain_min_db": 16.0,
+        "negative_slew_min_v_per_s": 1000000.0,
+        "output_max_v": 1.65,
+        "output_min_v": 0.15,
+        "phase_margin_min_deg": 45.0,
+        "positive_slew_min_v_per_s": 1000000.0,
+        "power_max_w": 0.001,
+        "require_operating_region": true,
+        "ugf_min_hz": 1000000.0
+      }
+    },
+    {
+      "feasible_count": 1,
+      "feasible_density": 0.001953125,
+      "row": 3,
+      "sample_count": 512,
+      "specification": {
+        "gain_min_db": 20.0,
+        "negative_slew_min_v_per_s": 2000000.0,
+        "output_max_v": 1.6,
+        "output_min_v": 0.2,
+        "phase_margin_min_deg": 50.0,
+        "positive_slew_min_v_per_s": 2000000.0,
+        "power_max_w": 0.0005,
+        "require_operating_region": true,
+        "ugf_min_hz": 2000000.0
+      }
+    },
+    {
+      "feasible_count": 0,
+      "feasible_density": 0.0,
+      "row": 4,
+      "sample_count": 512,
+      "specification": {
+        "gain_min_db": 25.0,
+        "negative_slew_min_v_per_s": 5000000.0,
+        "output_max_v": 1.55,
+        "output_min_v": 0.25,
+        "phase_margin_min_deg": 55.0,
+        "positive_slew_min_v_per_s": 5000000.0,
+        "power_max_w": 0.0003,
+        "require_operating_region": true,
+        "ugf_min_hz": 5000000.0
+      }
+    },
+    {
+      "feasible_count": 0,
+      "feasible_density": 0.0,
+      "row": 5,
+      "sample_count": 512,
+      "specification": {
+        "gain_min_db": 30.0,
+        "negative_slew_min_v_per_s": 10000000.0,
+        "output_max_v": 1.5,
+        "output_min_v": 0.3,
+        "phase_margin_min_deg": 60.0,
+        "positive_slew_min_v_per_s": 10000000.0,
+        "power_max_w": 0.0002,
+        "require_operating_region": true,
+        "ugf_min_hz": 10000000.0
+      }
+    }
+  ],
+  "new_elapsed_seconds": 0.030999999988125637,
+  "runtime_medians_seconds": {
+    "ac": 0.6099999999860302,
+    "candidate_wall": 1.889999999984866,
+    "op": 0.625,
+    "transient": 0.6559999999881256
+  },
+  "selected": {
+    "feasible_count": 2,
+    "feasible_density": 0.00390625,
+    "row": 1,
+    "sample_count": 512,
+    "specification": {
+      "gain_min_db": 12.0,
+      "negative_slew_min_v_per_s": 500000.0,
+      "output_max_v": 1.7,
+      "output_min_v": 0.1,
+      "phase_margin_min_deg": 35.0,
+      "positive_slew_min_v_per_s": 500000.0,
+      "power_max_w": 0.0015,
+      "require_operating_region": true,
+      "ugf_min_hz": 500000.0
+    }
+  },
+  "selection_reason": "most_stringent_in_target_interval",
+  "status_distributions": {
+    "negative_slew": {
+      "insufficient_transition": 243,
+      "measured": 269
+    },
+    "operating_region_valid": {
+      "false": 503,
+      "true": 9
+    },
+    "phase_margin": {
+      "measured": 299,
+      "unavailable": 213
+    },
+    "positive_slew": {
+      "insufficient_transition": 226,
+      "measured": 286
+    },
+    "ugf": {
+      "measured": 299,
+      "no_crossing": 213
+    }
+  }
+}

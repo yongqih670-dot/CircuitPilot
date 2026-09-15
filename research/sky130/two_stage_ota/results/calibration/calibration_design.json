@@ -1,0 +1,212 @@
+{
+  "candidate_count": 512,
+  "candidate_sequence_sha256": "1026e630a4af3ed673a3991a0a2c62316e7528941bee3c5145c6ac514dec5688",
+  "circuit_config": {
+    "ac_testbench_version": "task7_opposed_half_volt_unit_differential_v1",
+    "cost_definition": {
+      "ac_calls_per_candidate": 1,
+      "candidate_evaluations_per_candidate": 1,
+      "high_fidelity_analysis_calls_per_candidate": 3,
+      "ngspice_process_calls_per_candidate": 3,
+      "op_calls_per_candidate": 1,
+      "screening_calls_per_candidate": 0,
+      "transient_calls_per_candidate": 1
+    },
+    "cost_semantics_version": "task7_full_three_independent_processes_v1",
+    "device_role_mapping": {
+      "input_minus": {
+        "device": "sky130_fd_pr__nfet_01v8",
+        "nodes": [
+          "mirror",
+          "vin_minus",
+          "tail",
+          "gnd"
+        ],
+        "size_role": "input_pair"
+      },
+      "input_plus": {
+        "device": "sky130_fd_pr__nfet_01v8",
+        "nodes": [
+          "stage1_out",
+          "vin_plus",
+          "tail",
+          "gnd"
+        ],
+        "size_role": "input_pair"
+      },
+      "load_first": {
+        "device": "sky130_fd_pr__pfet_01v8",
+        "nodes": [
+          "stage1_out",
+          "mirror",
+          "vdd",
+          "vdd"
+        ],
+        "size_role": "first_stage_load"
+      },
+      "load_mirror": {
+        "device": "sky130_fd_pr__pfet_01v8",
+        "nodes": [
+          "mirror",
+          "mirror",
+          "vdd",
+          "vdd"
+        ],
+        "size_role": "first_stage_load"
+      },
+      "second_load": {
+        "device": "sky130_fd_pr__pfet_01v8",
+        "nodes": [
+          "vout",
+          "second_load_bias",
+          "vdd",
+          "vdd"
+        ],
+        "size_role": "second_load"
+      },
+      "second_stage": {
+        "device": "sky130_fd_pr__nfet_01v8",
+        "nodes": [
+          "vout",
+          "stage1_out",
+          "gnd",
+          "gnd"
+        ],
+        "size_role": "second_stage"
+      },
+      "tail": {
+        "device": "sky130_fd_pr__nfet_01v8",
+        "nodes": [
+          "tail",
+          "tail_bias",
+          "gnd",
+          "gnd"
+        ],
+        "size_role": "tail"
+      }
+    },
+    "device_role_mapping_version": "task7_role_matched_12d_prior_v1",
+    "input_common_mode_v": 0.9,
+    "load_capacitance_f": 1e-12,
+    "nfet_device_name": "sky130_fd_pr__nfet_01v8",
+    "op_rules_version": "task7_explicit_voltage_inequalities_all_seven_devices_v1",
+    "pfet_device_name": "sky130_fd_pr__pfet_01v8",
+    "phase_margin_semantics_version": "task7_unwrapped_phase_at_same_first_ugf_v1",
+    "sky130_model": {
+      "corner": "tt",
+      "device_name": "sky130_fd_pr__nfet_01v8",
+      "library_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+      "model_library": "F:\\\u82af\u7247\u8bbe\u8ba1\\CircuitPilot\uff1aAgentic Circuit Simulation and Optimization Platform\\tools\\sky130\\ciel\\ciel\\sky130\\versions\\026824c7969ce6f4fc9678e6ca04b0a06a596c4b\\sky130A\\libs.tech\\ngspice\\sky130.lib.spice",
+      "model_sha256": "d88fa42b4f42f7b1f6987141aa92161865cfc9ff5fbdce9bbc9f137bde3a2f61",
+      "pdk_commit": "026824c7969ce6f4fc9678e6ca04b0a06a596c4b",
+      "pdk_release": "1.0.606",
+      "pdk_root": "F:\\\u82af\u7247\u8bbe\u8ba1\\CircuitPilot\uff1aAgentic Circuit Simulation and Optimization Platform\\tools\\sky130\\ciel\\ciel\\sky130\\versions\\026824c7969ce6f4fc9678e6ca04b0a06a596c4b\\sky130A",
+      "primitive_commit": "403964dc7f9cca5ec1a8cc7b4f2a6f532b781676",
+      "provenance": "FOSSi Foundation Ciel/Open_PDKs prebuilt SKY130"
+    },
+    "slew_lower_fraction": 0.2,
+    "slew_semantics_version": "task7_fixed_20_80pct_crossing_interpolation_v1",
+    "slew_upper_fraction": 0.8,
+    "supply_voltage_v": 1.8,
+    "tail_bias_v": 0.72,
+    "temperature_c": 27.0,
+    "topology_definition": {
+      "compensation": "Cc between stage1_out and vout",
+      "first_stage": "NMOS differential pair with 1:1 PMOS mirror load",
+      "kind": "seven_transistor_two_stage_single_ended_miller_ota",
+      "load": "CL between vout and ground",
+      "second_stage": "NMOS common source with PMOS voltage-biased load"
+    },
+    "topology_version": "sky130_two_stage_miller_ota_v1",
+    "transient_edge_exclusion_s": 5e-09,
+    "transient_fall_time_s": 1e-09,
+    "transient_falling_edge_s": 2e-06,
+    "transient_high_v": 1.0,
+    "transient_low_v": 0.8,
+    "transient_max_step_s": 2e-09,
+    "transient_rise_time_s": 1e-09,
+    "transient_rising_edge_s": 5e-07,
+    "transient_stop_time_s": 4e-06,
+    "transient_testbench_version": "task7_unity_follower_fixed_0p8_1p0v_step_v1",
+    "ugf_semantics_version": "task7_first_descending_zero_db_log_interpolation_v1"
+  },
+  "dimension": 12,
+  "ladder_sha256": "eb1c13823109dc2154f06ce4a6d5b22e290538cb70cf949167d206f3587e2794",
+  "optimizer_feedback": "forbidden_and_absent",
+  "protocol_version": "task7_sobol512_difficulty_ladder_v1",
+  "scramble": false,
+  "search_dimensions": [
+    [
+      "input_pair_width_m",
+      8.4e-07,
+      3e-05,
+      true
+    ],
+    [
+      "input_pair_length_m",
+      1.5e-07,
+      1e-06,
+      false
+    ],
+    [
+      "first_stage_load_width_m",
+      8.4e-07,
+      4e-05,
+      true
+    ],
+    [
+      "first_stage_load_length_m",
+      1.5e-07,
+      1.2e-06,
+      false
+    ],
+    [
+      "tail_width_m",
+      4.2e-07,
+      3e-05,
+      true
+    ],
+    [
+      "tail_length_m",
+      1.5e-07,
+      1.2e-06,
+      false
+    ],
+    [
+      "second_stage_width_m",
+      8.4e-07,
+      6e-05,
+      true
+    ],
+    [
+      "second_stage_length_m",
+      1.5e-07,
+      1.2e-06,
+      false
+    ],
+    [
+      "second_load_width_m",
+      8.4e-07,
+      6e-05,
+      true
+    ],
+    [
+      "second_load_length_m",
+      1.5e-07,
+      1.2e-06,
+      false
+    ],
+    [
+      "second_load_bias_v",
+      0.25,
+      1.2,
+      false
+    ],
+    [
+      "compensation_capacitance_f",
+      5e-14,
+      5e-12,
+      true
+    ]
+  ]
+}
