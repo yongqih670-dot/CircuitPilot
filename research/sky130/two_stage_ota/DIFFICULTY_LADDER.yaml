@@ -1,0 +1,61 @@
+protocol_version: task7_sobol512_difficulty_ladder_v1
+calibration:
+  design: sobol_base2
+  dimension: 12
+  exponent_m: 9
+  sample_count: 512
+  scramble: false
+  optimizer_feedback: forbidden
+target_feasible_density:
+  minimum: 0.002
+  maximum: 0.020
+  fallback_geometric_midpoint: 0.006325
+selection: most_stringent_in_range_else_nearest_log_midpoint
+common_constraints:
+  operating_region_valid: true
+ladder:
+  - row: 1
+    gain_min_db: 12.0
+    ugf_min_hz: 5.0e5
+    phase_margin_min_deg: 35.0
+    power_max_w: 1.5e-3
+    positive_slew_min_v_per_s: 5.0e5
+    negative_slew_min_v_per_s: 5.0e5
+    output_min_v: 0.10
+    output_max_v: 1.70
+  - row: 2
+    gain_min_db: 16.0
+    ugf_min_hz: 1.0e6
+    phase_margin_min_deg: 45.0
+    power_max_w: 1.0e-3
+    positive_slew_min_v_per_s: 1.0e6
+    negative_slew_min_v_per_s: 1.0e6
+    output_min_v: 0.15
+    output_max_v: 1.65
+  - row: 3
+    gain_min_db: 20.0
+    ugf_min_hz: 2.0e6
+    phase_margin_min_deg: 50.0
+    power_max_w: 5.0e-4
+    positive_slew_min_v_per_s: 2.0e6
+    negative_slew_min_v_per_s: 2.0e6
+    output_min_v: 0.20
+    output_max_v: 1.60
+  - row: 4
+    gain_min_db: 25.0
+    ugf_min_hz: 5.0e6
+    phase_margin_min_deg: 55.0
+    power_max_w: 3.0e-4
+    positive_slew_min_v_per_s: 5.0e6
+    negative_slew_min_v_per_s: 5.0e6
+    output_min_v: 0.25
+    output_max_v: 1.55
+  - row: 5
+    gain_min_db: 30.0
+    ugf_min_hz: 1.0e7
+    phase_margin_min_deg: 60.0
+    power_max_w: 2.0e-4
+    positive_slew_min_v_per_s: 1.0e7
+    negative_slew_min_v_per_s: 1.0e7
+    output_min_v: 0.30
+    output_max_v: 1.50

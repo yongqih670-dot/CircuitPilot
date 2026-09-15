@@ -28,6 +28,11 @@ from circuitpilot.sky130_differential_amplifier import (
     Sky130DifferentialAmplifierCircuitConfig,
     sky130_differential_config_from_mapping,
 )
+from circuitpilot.sky130_two_stage_ota import (
+    TASK7_PARAMETER_NAMES,
+    Sky130TwoStageOtaCircuitConfig,
+    sky130_two_stage_ota_config_from_mapping,
+)
 
 
 ParameterValue = float | int | str | bool
@@ -61,6 +66,20 @@ SKY130_DIFFERENTIAL_METRIC_DEFINITIONS = {
     "output_dc_voltage": "V(out) from the differential-copy real SKY130 operating point",
     "tail_current_a": "absolute current through the differential-copy zero-volt tail sense source",
     "operating_region_valid": "1 iff every critical NMOS/PMOS passes its explicit voltage inequality",
+}
+SKY130_TWO_STAGE_OTA_METRIC_DEFINITIONS = {
+    "dc_gain_db": "low-frequency gain from the unit-differential real SKY130 AC response",
+    "ugf_hz": "first descending 0 dB crossing interpolated on log frequency",
+    "ugf_lower_bound_hz": "f_stop lower bound only for right-censored UGF",
+    "phase_margin_deg": "180 degrees plus unwrapped phase at the same first UGF",
+    "minus_3db_bandwidth_hz": "optional post-peak -3 dB crossing",
+    "dc_power_w": "abs(VDD * I(VDD)) from the independent real SKY130 OP process",
+    "supply_current_a": "absolute VDD source current from the independent OP process",
+    "output_dc_voltage": "V(vout) from the independent OP process",
+    "stage1_dc_voltage": "V(stage1_out) from the independent OP process",
+    "positive_slew_v_per_s": "fixed 20-80 percent rising output crossing slope",
+    "negative_slew_v_per_s": "fixed 80-20 percent falling output crossing magnitude",
+    "operating_region_valid": "1 iff all seven MOS devices satisfy explicit saturation inequalities",
 }
 
 
@@ -407,6 +426,7 @@ class ExperimentConfig:
         CommonSourceCircuitConfig
         | Sky130CommonSourceCircuitConfig
         | Sky130DifferentialAmplifierCircuitConfig
+        | Sky130TwoStageOtaCircuitConfig
         | None
     ) = None
     benchmark_config_hash: str | None = None
@@ -422,6 +442,7 @@ class ExperimentConfig:
             "common_source",
             "sky130_common_source",
             "sky130_differential_amplifier",
+            "sky130_two_stage_ota",
         }:
             raise ValueError(
                 "unsupported research circuit"
@@ -443,6 +464,7 @@ class ExperimentConfig:
             "common_source": COMMON_SOURCE_PARAMETER_NAMES,
             "sky130_common_source": SKY130_COMMON_SOURCE_PARAMETER_NAMES,
             "sky130_differential_amplifier": SKY130_DIFFERENTIAL_PARAMETER_NAMES,
+            "sky130_two_stage_ota": TASK7_PARAMETER_NAMES,
         }[self.circuit_name]
         if set(names) != expected_parameters:
             readable = ", ".join(sorted(expected_parameters))
@@ -453,6 +475,7 @@ class ExperimentConfig:
             "common_source",
             "sky130_common_source",
             "sky130_differential_amplifier",
+            "sky130_two_stage_ota",
         }:
             for parameter in self.search_space:
                 if parameter.unit is None:
@@ -519,6 +542,15 @@ class ExperimentConfig:
                 raise ValueError("Task 5 circuit_config must bind model_sha256")
             if self.circuit_config.model.expected_library_sha256 is None:
                 raise ValueError("Task 5 circuit_config must bind library_sha256")
+        elif self.circuit_name == "sky130_two_stage_ota":
+            if not isinstance(self.circuit_config, Sky130TwoStageOtaCircuitConfig):
+                raise ValueError(
+                    "sky130_two_stage_ota requires a typed SKY130 circuit_config"
+                )
+            if self.circuit_config.model.expected_model_sha256 is None:
+                raise ValueError("Task 7 circuit_config must bind model_sha256")
+            if self.circuit_config.model.expected_library_sha256 is None:
+                raise ValueError("Task 7 circuit_config must bind library_sha256")
         elif self.circuit_config is not None:
             raise ValueError("rc_lowpass cannot define circuit_config")
         if self.benchmark_config_hash is not None:
@@ -569,6 +601,7 @@ class ExperimentConfig:
             "common_source": COMMON_SOURCE_METRIC_DEFINITIONS,
             "sky130_common_source": SKY130_COMMON_SOURCE_METRIC_DEFINITIONS,
             "sky130_differential_amplifier": SKY130_DIFFERENTIAL_METRIC_DEFINITIONS,
+            "sky130_two_stage_ota": SKY130_TWO_STAGE_OTA_METRIC_DEFINITIONS,
         }[self.circuit_name]
         result = {
             "experiment": {
@@ -628,6 +661,7 @@ class ExperimentConfig:
             "common_source": COMMON_SOURCE_METRIC_DEFINITIONS,
             "sky130_common_source": SKY130_COMMON_SOURCE_METRIC_DEFINITIONS,
             "sky130_differential_amplifier": SKY130_DIFFERENTIAL_METRIC_DEFINITIONS,
+            "sky130_two_stage_ota": SKY130_TWO_STAGE_OTA_METRIC_DEFINITIONS,
         }[self.circuit_name]
         payload: dict[str, Any] = {
             "circuit": self.circuit_name,
@@ -683,6 +717,15 @@ class ExperimentConfig:
         elif isinstance(
             self.circuit_config, Sky130DifferentialAmplifierCircuitConfig
         ):
+            circuit_payload = self.circuit_config.to_dict()
+            model_payload = dict(circuit_payload["sky130_model"])
+            model_payload["pdk_root"] = "<content-addressed-sky130-pdk>"
+            model_payload["model_library"] = "<content-addressed-model>"
+            circuit_payload["sky130_model"] = model_payload
+            payload["circuit_config"] = circuit_payload
+            payload["model_sha256"] = self.circuit_config.model.model_sha256()
+            payload["model_library_sha256"] = self.circuit_config.model.library_sha256()
+        elif isinstance(self.circuit_config, Sky130TwoStageOtaCircuitConfig):
             circuit_payload = self.circuit_config.to_dict()
             model_payload = dict(circuit_payload["sky130_model"])
             model_payload["pdk_root"] = "<content-addressed-sky130-pdk>"
@@ -910,6 +953,7 @@ def experiment_config_from_mapping(
             "common_source": COMMON_SOURCE_METRIC_DEFINITIONS,
             "sky130_common_source": SKY130_COMMON_SOURCE_METRIC_DEFINITIONS,
             "sky130_differential_amplifier": SKY130_DIFFERENTIAL_METRIC_DEFINITIONS,
+            "sky130_two_stage_ota": SKY130_TWO_STAGE_OTA_METRIC_DEFINITIONS,
         }[circuit_name]
     except KeyError:
         raise ConfigError(
@@ -951,7 +995,14 @@ def experiment_config_from_mapping(
                             root.get("circuit_config"), base_directory=base_directory
                         )
                         if circuit_name == "sky130_differential_amplifier"
-                        else None
+                        else (
+                            sky130_two_stage_ota_config_from_mapping(
+                                root.get("circuit_config"),
+                                base_directory=base_directory,
+                            )
+                            if circuit_name == "sky130_two_stage_ota"
+                            else None
+                        )
                     )
                 )
             ),
