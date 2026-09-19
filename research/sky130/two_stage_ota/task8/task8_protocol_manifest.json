@@ -1,0 +1,80 @@
+{
+  "cost_accounting_hash": "857dd2d286c6f2dcaed584b7da02fc33342bf5fb01b52c383f76cdc27a816d0e",
+  "cost_profile_median_accumulated_ngspice_seconds": {
+    "full": 1.733499999914784,
+    "op_ac": 1.1400000000721775,
+    "op_only": 0.617000000027474
+  },
+  "evaluation_stage_semantics_hash": "c32c752c254f4d5aac457b4be6e4eab019885ea6789a8e329b21f758025305b7",
+  "formal_candidate_budget": 50,
+  "formal_simulation_time_budget_seconds": 90.0,
+  "formal_simulation_time_candidate_cap": 300,
+  "frozen_at_source_commit": "67607dac935e61c53b106580bc769845581195ae",
+  "frozen_file_hashes": {
+    "research/sky130/two_stage_ota/task8/ANALYSIS_COST_PROFILE.md": "5afeae2a11d8341c11983967a7b347deb436f3833ac241c70cea7e08b278ca11",
+    "research/sky130/two_stage_ota/task8/COST_MODEL.md": "814f125c0e87337a8d11695bcee15e98326568a1350a26e85630cd3c2a60e364",
+    "research/sky130/two_stage_ota/task8/EVALUATION_POLICY.md": "947104cb1d53dc455a211ff0cb848bac34bd9ad3ae7e26125bc198cf2e89ff6e",
+    "research/sky130/two_stage_ota/task8/PARTIAL_FEEDBACK_SEMANTICS.md": "a35c798ac5c14d97630bad03d5d9d74b2e988930eaca971f3cd9c4c5f2db0271",
+    "research/sky130/two_stage_ota/task8/REPLAY_EQUIVALENCE_REPORT.md": "27de8982c0a7614b8b619355b20cf249ee3022a474b0666d59ef4c028d6bd05a",
+    "research/sky130/two_stage_ota/task8/RESEARCH_HYPOTHESES.md": "4004a7e8421215630e254c717f04e7386a717660d51079cfae831f517a18ef5a",
+    "research/sky130/two_stage_ota/task8/STATISTICAL_ANALYSIS_PLAN.md": "f0ce23bf496b429ca95347b06ccbb524f058f84471ad0b1bcd4429a105bdbfca",
+    "research/sky130/two_stage_ota/task8/TASK7_FREEZE_AUDIT.md": "094d8a5c5f455f02b1e06c8f42b30df67bd66e8493f2822eb3772a9bdcffd57c",
+    "research/sky130/two_stage_ota/task8/results/cost_profile/cost_profile.csv": "40164057b7aabf468169d2170b61c4504a3845d667a9395a5981dfdf74ecf672",
+    "research/sky130/two_stage_ota/task8/results/cost_profile/summary.json": "4c455a8268638e92008f11cdf68bb8661feeaa29d67b15e825db12c73c28caf8",
+    "research/sky130/two_stage_ota/task8/results/replay/staged_replay.csv": "d5247667b061735701175ac321cf15e63ea44b90c2b9b778b45f1cbd4db7d371",
+    "research/sky130/two_stage_ota/task8/results/replay/summary.json": "4462f6ced8c755f10cb739d9645a4ecd9cfdac47480bb75769d585aab07bbc93",
+    "src/circuitpilot/task8_protocol.py": "863a11fbae6178d0c3b48be981ea12a7890a0dbe81ce7d4604c3644a6535d98a"
+  },
+  "full_policy_hash": "d9c51eed6c92a8c2b5ea849d9ef237bda0357c320bdcd2480eb0030624b5f532",
+  "hierarchical_policy_hash": "ff9f9e0301143bdb6b82974911e6dae1e35490ef209e326c8f1453d8558c757d",
+  "methods": [
+    "random",
+    "de",
+    "tpe",
+    "bo"
+  ],
+  "partial_feedback_semantics_hash": "c8b3589596b37acdac1cba753b25a1e494f922c4f0794a435a12ec2ab53e919d",
+  "policies": [
+    "full",
+    "hierarchical"
+  ],
+  "protocol_version": "task8_frozen_hierarchical_ota_v1",
+  "replay_false_rejection_count": 0,
+  "schema_version": 1,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "simulation_time_budget_hash": "b4e01972b75320835ca94e7b465a8f5a5c3a6ad08053dbd2fb685b5423b148ea",
+  "smoke_candidate_budget": 25,
+  "smoke_seeds": [
+    0,
+    1,
+    2
+  ],
+  "task7_benchmark_hash": "144100e168ca5f550c6ca0bd5a29788f669d0e34cd9008c5a7fe2099e8cb8c1c",
+  "task7_component_hashes": {
+    "cost_model_hash": "1a48c49e8aeb3b3f9e62a0535d33020b2c3b5600d53111417ad65d2379a89845",
+    "load_testbench_hash": "8bd34b09ff751c15a89dedf0967f1fd73434034fb38336593fb3c5e2384e555c",
+    "model_library_hash": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+    "objective_hash": "6c8bfb8a99b80dfe507c76fa191f03225694b0ff5f43818495dde4c78a5cd6b1",
+    "pdk_hash": "d88fa42b4f42f7b1f6987141aa92161865cfc9ff5fbdce9bbc9f137bde3a2f61",
+    "phase_margin_semantics_hash": "68b5a1ed0cddd1efd884e75c05c01d60cdfc20b640198cd1fc88dfc119031c1b",
+    "role_mapping_hash": "50b2fe35a92fb3e56e804d9cc2ac641b9f7044198dccbd286360ef4378d48e5f",
+    "slew_semantics_hash": "aadac51099130757f0d3774b2926801023ccc3ef00a933c99e7586d83f1b1839",
+    "topology_hash": "75f3ed595af347524d7e1d74290980f7c75ae9f503559ca561da7cd349303e6c",
+    "transient_semantics_hash": "b7aa31978b2e3264373f0f6cafda4305bca1c7b96daa7483668ddb57616a52fb",
+    "ugf_semantics_hash": "5f0bd2d5795ddbba88580c8de2a44788a0b12857b6232be70272881ded8f3852"
+  },
+  "task7_frozen_yaml_byte_hash": "077a42c053dfa59b6deb6e19dbca6cd74bec8122ebcb17998b906a4aa590df28",
+  "task7_search_space_hash": "36e72bd54d2b1850af1ce1c8a69dbe7de22f552d49713edfbb0d3de83cd4f6db",
+  "task8_protocol_hash": "d60ad33791a59bf418b0378e653e4e3bc10aa032dc98cde583d649260844dc2d"
+}
