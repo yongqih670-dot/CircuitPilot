@@ -212,13 +212,26 @@ def run_task8_suite(
         raise ValueError(f"unknown Task 8 design '{design}'")
     if workers <= 0:
         raise ValueError("Task 8 workers must be positive")
+    suite = Path(output_root).resolve()
     protocol = DESIGNS[design]
     selected_methods = tuple(methods)
     selected_seeds = tuple(protocol["seeds"] if seeds is None else seeds)
     provenance = _git_provenance(Path.cwd().resolve())
     if design != "smoke" and provenance["dirty"]:
-        raise ResearchExperimentError("formal Task 8 requires a clean committed worktree")
-    suite = Path(output_root).resolve()
+        try:
+            allowed = suite.relative_to(Path.cwd().resolve()).as_posix().rstrip("/") + "/"
+        except ValueError:
+            allowed = ""
+        unexpected = [
+            line
+            for line in provenance["status_porcelain"].splitlines()
+            if not line[3:].replace("\\", "/").startswith(allowed)
+        ]
+        if unexpected:
+            raise ResearchExperimentError(
+                "formal Task 8 requires committed source; unexpected changes: "
+                + "; ".join(unexpected)
+            )
     suite.mkdir(parents=True, exist_ok=True)
     state_path = suite / "suite_state.json"
     identity = {
@@ -231,16 +244,23 @@ def run_task8_suite(
         "simulation_time_budget_seconds": protocol["simulation_time_budget_seconds"],
         "candidate_cap": protocol["candidate_cap"],
         "task8_protocol_hash": TASK8_PROTOCOL_HASH,
-        "git_commit": provenance["commit"],
     }
     if state_path.is_file():
         state = json.loads(state_path.read_text(encoding="utf-8"))
         for key, value in identity.items():
             if state.get(key) != value:
                 raise ResearchExperimentError(f"resumed Task 8 suite changed at {key}")
+        commits = list(state.get("git_commits", []))
+        if not commits and state.get("git_commit"):
+            commits = [state["git_commit"]]
+        if provenance["commit"] not in commits:
+            commits.append(provenance["commit"])
+        state["git_commits"] = commits
+        _atomic_json(state_path, state)
     else:
         state = {
             **identity,
+            "git_commits": [provenance["commit"]],
             "created_at_utc": datetime.now(timezone.utc).isoformat(
                 timespec="microseconds"
             ),
@@ -268,6 +288,41 @@ def run_task8_suite(
                     candidate_cap=protocol["candidate_cap"],
                     shadow_audit=design == "smoke" and policy == "hierarchical",
                 )
+
+    # A process may fail after other worker futures completed but before the
+    # main thread recorded them. Recover only fully completed, identity-exact
+    # run directories; incomplete runs are never promoted.
+    for run_directory in (suite / "runs").glob("*"):
+        definition_path = run_directory / "task8_run_definition.json"
+        summary_path = run_directory / "summary" / "experiment_summary.json"
+        if not definition_path.is_file() or not summary_path.is_file():
+            continue
+        try:
+            recovered_definition = json.loads(
+                definition_path.read_text(encoding="utf-8")
+            )
+            recovered_summary = json.loads(summary_path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError):
+            continue
+        key = (
+            f"{recovered_definition.get('policy')}/"
+            f"{recovered_definition.get('method')}/"
+            f"seed_{recovered_definition.get('seed')}"
+        )
+        expected_definition = definitions.get(key)
+        if (
+            expected_definition is None
+            or recovered_definition != expected_definition.semantic_dict()
+            or not recovered_summary.get("completed")
+        ):
+            continue
+        if state["cells"].get(key, {}).get("status") != "success":
+            state["cells"][key] = {
+                "status": "success",
+                "run_directory": str(run_directory),
+                "run_id": recovered_summary["run_id"],
+            }
+    _atomic_json(state_path, state)
 
     pending = {
         key: definition
@@ -314,6 +369,7 @@ def run_task8_suite(
         methods=selected_methods,
         seeds=selected_seeds,
     )
+    fairness["execution_commits"] = state["git_commits"]
     _atomic_json(suite / "cell_summaries.json", summaries)
     _atomic_json(suite / "fairness_validation.json", fairness)
     _consolidate_evaluations(summaries, suite / "evaluations.csv")

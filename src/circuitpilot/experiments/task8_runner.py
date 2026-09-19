@@ -7,7 +7,7 @@ from dataclasses import dataclass, replace
 from hashlib import sha256
 import json
 from pathlib import Path
-from time import monotonic
+from time import monotonic, sleep
 from typing import Any, Mapping
 
 from circuitpilot.exceptions import ResearchExperimentError
@@ -266,6 +266,21 @@ def _optimizer_feedback(record: Mapping[str, Any]) -> tuple[dict[str, float], fl
     return metrics, float(record["objective_value"]), status
 
 
+def _save_optimizer_state(optimizer: Optimizer, path: Path) -> None:
+    """Tolerate transient Windows scanner/indexer locks on atomic replace."""
+    last_error: ResearchExperimentError | None = None
+    for delay in (0.0, 0.01, 0.05, 0.1, 0.25, 0.5):
+        if delay:
+            sleep(delay)
+        try:
+            optimizer.save_state(path)
+            return
+        except ResearchExperimentError as exc:
+            last_error = exc
+    assert last_error is not None
+    raise last_error
+
+
 def _shadow_validate(
     primary: Task8Evaluation,
     *,
@@ -475,7 +490,7 @@ def execute_task8_run(
                 selected_optimizer.tell(
                     record["parameters"], metrics, objective, status
                 )
-                selected_optimizer.save_state(state_path)
+                _save_optimizer_state(selected_optimizer, state_path)
             inflight_path.unlink()
 
     elapsed_offset = 0.0 if not records else float(records[-1]["total_elapsed_time"])
@@ -513,7 +528,7 @@ def execute_task8_run(
             # Save the post-tell/pre-ask state. TPE intentionally forbids
             # serializing a pending trial, so resume deterministically replays
             # ask and verifies the candidate against inflight.json.
-            selected_optimizer.save_state(state_path)
+            _save_optimizer_state(selected_optimizer, state_path)
             parameters = selected_optimizer.ask()
             config.validate_parameters(parameters)
             optimizer_phase = selected_optimizer.get_last_ask_metadata().get(
@@ -645,7 +660,7 @@ def execute_task8_run(
         _save_records(run.path, records)
         metrics, objective, status = _optimizer_feedback(record)
         selected_optimizer.tell(parameters, metrics, objective, status)
-        selected_optimizer.save_state(state_path)
+        _save_optimizer_state(selected_optimizer, state_path)
         inflight_path.unlink()
         new_count += 1
 
