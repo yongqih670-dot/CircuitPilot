@@ -362,8 +362,9 @@ def _fake_evaluation(policy):
     )
 
 
+@pytest.mark.parametrize("method", ("random", "tpe", "bo"))
 def test_equal_candidate_and_equal_time_budget_and_overshoot(
-    tmp_path, monkeypatch
+    tmp_path, monkeypatch, method
 ):
     import circuitpilot.experiments.task8_runner as module
 
@@ -373,16 +374,18 @@ def test_equal_candidate_and_equal_time_budget_and_overshoot(
         lambda *args, **kwargs: _fake_evaluation(kwargs["policy"]),
     )
     equal_candidate = Task8RunDefinition(
-        FROZEN, "random", "hierarchical", 0, "equal_candidate",
-        tmp_path / "candidate", candidate_budget=3,
+        FROZEN, method, "hierarchical", 0, "equal_candidate",
+        tmp_path / method / "candidate", candidate_budget=3,
     )
     _, candidate_summary = execute_task8_run(equal_candidate)
     assert candidate_summary["candidate_count"] == 3
     assert candidate_summary["ngspice_process_calls"] == 3
 
     equal_time = Task8RunDefinition(
-        FROZEN, "random", "hierarchical", 0, "equal_simulation_time",
-        tmp_path / "time", simulation_time_budget_seconds=0.25, candidate_cap=10,
+        FROZEN, method, "hierarchical", 0, "equal_simulation_time",
+        tmp_path / method / "time",
+        simulation_time_budget_seconds=0.25,
+        candidate_cap=10,
     )
     _, time_summary = execute_task8_run(equal_time)
     assert time_summary["candidate_count"] == 3

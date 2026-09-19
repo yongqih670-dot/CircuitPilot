@@ -467,6 +467,11 @@ def execute_task8_run(
             record = records[-1]
             metrics, objective, status = _optimizer_feedback(record)
             if len(selected_optimizer.get_history()) < len(records):
+                replayed = selected_optimizer.ask()
+                if replayed != record["parameters"]:
+                    raise ResearchExperimentError(
+                        "Task 8 optimizer candidate drifted during crash reconciliation"
+                    )
                 selected_optimizer.tell(
                     record["parameters"], metrics, objective, status
                 )
@@ -499,7 +504,16 @@ def execute_task8_run(
             parameters = inflight["parameters"]
             iteration = int(inflight["iteration"])
             optimizer_phase = inflight["optimizer_phase"]
+            replayed = selected_optimizer.ask()
+            if replayed != parameters:
+                raise ResearchExperimentError(
+                    "Task 8 optimizer candidate drifted during stage resume"
+                )
         else:
+            # Save the post-tell/pre-ask state. TPE intentionally forbids
+            # serializing a pending trial, so resume deterministically replays
+            # ask and verifies the candidate against inflight.json.
+            selected_optimizer.save_state(state_path)
             parameters = selected_optimizer.ask()
             config.validate_parameters(parameters)
             optimizer_phase = selected_optimizer.get_last_ask_metadata().get(
@@ -512,7 +526,6 @@ def execute_task8_run(
                 "parameters": parameters,
                 "optimizer_phase": optimizer_phase,
             }
-            selected_optimizer.save_state(state_path)
             _atomic_json(inflight_path, inflight)
 
         evaluation_directory = run.path / "runs" / f"evaluation_{iteration:04d}"

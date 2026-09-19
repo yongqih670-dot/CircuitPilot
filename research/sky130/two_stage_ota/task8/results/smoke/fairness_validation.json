@@ -1,0 +1,85 @@
+{
+  "cell_count": 24,
+  "design": "smoke",
+  "methods": [
+    "random",
+    "de",
+    "tpe",
+    "bo"
+  ],
+  "paired_identity_checks": [
+    {
+      "method": "random",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 0
+    },
+    {
+      "method": "random",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 1
+    },
+    {
+      "method": "random",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 2
+    },
+    {
+      "method": "de",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 0
+    },
+    {
+      "method": "de",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 1
+    },
+    {
+      "method": "de",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 2
+    },
+    {
+      "method": "tpe",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 0
+    },
+    {
+      "method": "tpe",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 1
+    },
+    {
+      "method": "tpe",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 2
+    },
+    {
+      "method": "bo",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 0
+    },
+    {
+      "method": "bo",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 1
+    },
+    {
+      "method": "bo",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 2
+    }
+  ],
+  "policies": [
+    "full",
+    "hierarchical"
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "smoke_shadow_false_rejection_count": 0,
+  "status": "pass",
+  "task7_benchmark_hash": "144100e168ca5f550c6ca0bd5a29788f669d0e34cd9008c5a7fe2099e8cb8c1c",
+  "task8_protocol_hash": "d60ad33791a59bf418b0378e653e4e3bc10aa032dc98cde583d649260844dc2d"
+}
