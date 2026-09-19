@@ -1,0 +1,37 @@
+Note: Starting dynamic gmin stepping
+Note: Dynamic gmin stepping completed
+
+Note: No compatibility mode selected!
+
+
+Circuit: * circuitpilot research task 7 real sky130 two-stage miller ota
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+Initial Transient Solution
+--------------------------
+
+Node                                   Voltage
+----                                   -------
+vdd                                        1.8
+tail_bias                                 0.72
+command                                    0.8
+vin_minus                             0.796336
+vout                                  0.796336
+vin_plus                                   0.8
+second_load_bias                       1.05588
+mirror                                 0.47338
+tail                                  0.118401
+stage1_out                            0.286396
+ecmd#branch                                  0
+vloadbias#branch                             0
+vfb#branch                         1.05879e-22
+vinp#branch                                  0
+vtail#branch                                 0
+vdd#branch                        -4.04264e-05
+
+
+No. of Data Rows : 2024
+ngspice-46 done

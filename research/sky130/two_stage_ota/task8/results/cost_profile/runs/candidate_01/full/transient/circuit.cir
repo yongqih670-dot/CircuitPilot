@@ -1,0 +1,30 @@
+* CircuitPilot Research Task 7 real SKY130 two-stage Miller OTA
+.option scale=1u
+.param mc_mm_switch=0 mc_pr_switch=0
+.include "C:/Users/Eterna1/AppData/Local/Temp/circuitpilot-sky130-model-cache/d88fa42b4f42f7b1f698/invariant.spice"
+.include "C:/Users/Eterna1/AppData/Local/Temp/circuitpilot-sky130-model-cache/d88fa42b4f42f7b1f698/sky130_fd_pr__nfet_01v8__tt.corner.spice"
+.include "C:/Users/Eterna1/AppData/Local/Temp/circuitpilot-sky130-model-cache/d88fa42b4f42f7b1f698/sky130_fd_pr__pfet_01v8__tt.corner.spice"
+.temp 27
+VDD vdd 0 DC 1.8
+VTAIL tail_bias 0 DC 0.72
+VINP command 0 PULSE(0.8 1 5e-07 1e-09 1e-09 1.499e-06 8e-06)
+VFB vin_minus vout 0
+ECMD vin_plus 0 command 0 1
+VLOADBIAS second_load_bias 0 DC 1.02506087642
+XM1 mirror vin_minus tail 0 sky130_fd_pr__nfet_01v8 W=8.19181482489 L=0.379318706699
+XM2 stage1_out vin_plus tail 0 sky130_fd_pr__nfet_01v8 W=8.19181482489 L=0.379318706699
+XM3 mirror mirror vdd vdd sky130_fd_pr__pfet_01v8 W=0.984065200108 L=0.167354017305
+XM4 stage1_out mirror vdd vdd sky130_fd_pr__pfet_01v8 W=0.984065200108 L=0.167354017305
+XM5 tail tail_bias 0 0 sky130_fd_pr__nfet_01v8 W=13.5191126309 L=1.10839335614
+XM6 vout stage1_out 0 0 sky130_fd_pr__nfet_01v8 W=11.1919134584 L=0.915971389033
+XM7 vout second_load_bias vdd vdd sky130_fd_pr__pfet_01v8 W=8.55244749875 L=1.13182604498
+CC stage1_out vout 5.06345558308e-14
+CL vout 0 1e-12
+.control
+set wr_singlescale
+set wr_vecnames
+tran 2e-09 4e-06 0 2e-09
+wrdata C:/Users/Eterna1/AppData/Local/Temp/circuitpilot-sky130-rak4p2dv/ac.dat v(command) v(vout)
+quit
+.endc
+.end

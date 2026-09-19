@@ -1,0 +1,30 @@
+* CircuitPilot Research Task 7 real SKY130 two-stage Miller OTA
+.option scale=1u
+.param mc_mm_switch=0 mc_pr_switch=0
+.include "C:/Users/Eterna1/AppData/Local/Temp/circuitpilot-sky130-model-cache/d88fa42b4f42f7b1f698/invariant.spice"
+.include "C:/Users/Eterna1/AppData/Local/Temp/circuitpilot-sky130-model-cache/d88fa42b4f42f7b1f698/sky130_fd_pr__nfet_01v8__tt.corner.spice"
+.include "C:/Users/Eterna1/AppData/Local/Temp/circuitpilot-sky130-model-cache/d88fa42b4f42f7b1f698/sky130_fd_pr__pfet_01v8__tt.corner.spice"
+.temp 27
+VDD vdd 0 DC 1.8
+VTAIL tail_bias 0 DC 0.72
+VINP vin_plus 0 DC 0.9
+VINN vin_minus 0 DC 0.9
+VLOADBIAS second_load_bias 0 DC 0.887093193959
+XM1 mirror vin_minus tail 0 sky130_fd_pr__nfet_01v8 W=18.0174211803 L=0.17854773901
+XM2 stage1_out vin_plus tail 0 sky130_fd_pr__nfet_01v8 W=18.0174211803 L=0.17854773901
+XM3 mirror mirror vdd vdd sky130_fd_pr__pfet_01v8 W=14.076060201 L=0.334438401633
+XM4 stage1_out mirror vdd vdd sky130_fd_pr__pfet_01v8 W=14.076060201 L=0.334438401633
+XM5 tail tail_bias 0 0 sky130_fd_pr__nfet_01v8 W=16.729096823 L=0.718534281262
+XM6 vout stage1_out 0 0 sky130_fd_pr__nfet_01v8 W=3.01930340865 L=0.593821582258
+XM7 vout second_load_bias vdd vdd sky130_fd_pr__pfet_01v8 W=0.947938867089 L=0.280497440325
+CC stage1_out vout 9.84802239382e-13
+CL vout 0 1e-12
+.control
+set wr_singlescale
+set wr_vecnames
+op
+wrdata C:/Users/Eterna1/AppData/Local/Temp/circuitpilot-sky130-i86hhbv9/op.dat v(vdd) v(vin_plus) v(vin_minus) v(stage1_out) v(vout) v(tail) v(tail_bias) v(second_load_bias) i(VDD)
+wrdata C:/Users/Eterna1/AppData/Local/Temp/circuitpilot-sky130-i86hhbv9/device_op.dat @m.xm1.msky130_fd_pr__nfet_01v8[vgs] @m.xm1.msky130_fd_pr__nfet_01v8[vds] @m.xm1.msky130_fd_pr__nfet_01v8[gm] @m.xm1.msky130_fd_pr__nfet_01v8[gds] @m.xm1.msky130_fd_pr__nfet_01v8[vth] @m.xm1.msky130_fd_pr__nfet_01v8[vdsat] @m.xm2.msky130_fd_pr__nfet_01v8[vgs] @m.xm2.msky130_fd_pr__nfet_01v8[vds] @m.xm2.msky130_fd_pr__nfet_01v8[gm] @m.xm2.msky130_fd_pr__nfet_01v8[gds] @m.xm2.msky130_fd_pr__nfet_01v8[vth] @m.xm2.msky130_fd_pr__nfet_01v8[vdsat] @m.xm3.msky130_fd_pr__pfet_01v8[vgs] @m.xm3.msky130_fd_pr__pfet_01v8[vds] @m.xm3.msky130_fd_pr__pfet_01v8[gm] @m.xm3.msky130_fd_pr__pfet_01v8[gds] @m.xm3.msky130_fd_pr__pfet_01v8[vth] @m.xm3.msky130_fd_pr__pfet_01v8[vdsat] @m.xm4.msky130_fd_pr__pfet_01v8[vgs] @m.xm4.msky130_fd_pr__pfet_01v8[vds] @m.xm4.msky130_fd_pr__pfet_01v8[gm] @m.xm4.msky130_fd_pr__pfet_01v8[gds] @m.xm4.msky130_fd_pr__pfet_01v8[vth] @m.xm4.msky130_fd_pr__pfet_01v8[vdsat] @m.xm5.msky130_fd_pr__nfet_01v8[vgs] @m.xm5.msky130_fd_pr__nfet_01v8[vds] @m.xm5.msky130_fd_pr__nfet_01v8[gm] @m.xm5.msky130_fd_pr__nfet_01v8[gds] @m.xm5.msky130_fd_pr__nfet_01v8[vth] @m.xm5.msky130_fd_pr__nfet_01v8[vdsat] @m.xm6.msky130_fd_pr__nfet_01v8[vgs] @m.xm6.msky130_fd_pr__nfet_01v8[vds] @m.xm6.msky130_fd_pr__nfet_01v8[gm] @m.xm6.msky130_fd_pr__nfet_01v8[gds] @m.xm6.msky130_fd_pr__nfet_01v8[vth] @m.xm6.msky130_fd_pr__nfet_01v8[vdsat] @m.xm7.msky130_fd_pr__pfet_01v8[vgs] @m.xm7.msky130_fd_pr__pfet_01v8[vds] @m.xm7.msky130_fd_pr__pfet_01v8[gm] @m.xm7.msky130_fd_pr__pfet_01v8[gds] @m.xm7.msky130_fd_pr__pfet_01v8[vth] @m.xm7.msky130_fd_pr__pfet_01v8[vdsat]
+quit
+.endc
+.end
