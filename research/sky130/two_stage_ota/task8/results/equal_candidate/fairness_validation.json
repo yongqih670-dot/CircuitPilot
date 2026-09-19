@@ -1,0 +1,236 @@
+{
+  "cell_count": 80,
+  "design": "equal_candidate",
+  "execution_commits": [
+    "527ab3fac8d4bbaed016b55ba928dc3f7ad7b9bb",
+    "951dc49fd0bc576c8737593533f3e818d1359bfc"
+  ],
+  "methods": [
+    "random",
+    "de",
+    "tpe",
+    "bo"
+  ],
+  "paired_identity_checks": [
+    {
+      "method": "random",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 0
+    },
+    {
+      "method": "random",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 1
+    },
+    {
+      "method": "random",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 2
+    },
+    {
+      "method": "random",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 3
+    },
+    {
+      "method": "random",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 4
+    },
+    {
+      "method": "random",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 5
+    },
+    {
+      "method": "random",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 6
+    },
+    {
+      "method": "random",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 7
+    },
+    {
+      "method": "random",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 8
+    },
+    {
+      "method": "random",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 9
+    },
+    {
+      "method": "de",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 0
+    },
+    {
+      "method": "de",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 1
+    },
+    {
+      "method": "de",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 2
+    },
+    {
+      "method": "de",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 3
+    },
+    {
+      "method": "de",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 4
+    },
+    {
+      "method": "de",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 5
+    },
+    {
+      "method": "de",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 6
+    },
+    {
+      "method": "de",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 7
+    },
+    {
+      "method": "de",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 8
+    },
+    {
+      "method": "de",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 9
+    },
+    {
+      "method": "tpe",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 0
+    },
+    {
+      "method": "tpe",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 1
+    },
+    {
+      "method": "tpe",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 2
+    },
+    {
+      "method": "tpe",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 3
+    },
+    {
+      "method": "tpe",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 4
+    },
+    {
+      "method": "tpe",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 5
+    },
+    {
+      "method": "tpe",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 6
+    },
+    {
+      "method": "tpe",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 7
+    },
+    {
+      "method": "tpe",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 8
+    },
+    {
+      "method": "tpe",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 9
+    },
+    {
+      "method": "bo",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 0
+    },
+    {
+      "method": "bo",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 1
+    },
+    {
+      "method": "bo",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 2
+    },
+    {
+      "method": "bo",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 3
+    },
+    {
+      "method": "bo",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 4
+    },
+    {
+      "method": "bo",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 5
+    },
+    {
+      "method": "bo",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 6
+    },
+    {
+      "method": "bo",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 7
+    },
+    {
+      "method": "bo",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 8
+    },
+    {
+      "method": "bo",
+      "only_allowed_difference": "evaluation_policy_hash",
+      "seed": 9
+    }
+  ],
+  "policies": [
+    "full",
+    "hierarchical"
+  ],
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "smoke_shadow_false_rejection_count": 0,
+  "status": "pass",
+  "task7_benchmark_hash": "144100e168ca5f550c6ca0bd5a29788f669d0e34cd9008c5a7fe2099e8cb8c1c",
+  "task8_protocol_hash": "d60ad33791a59bf418b0378e653e4e3bc10aa032dc98cde583d649260844dc2d"
+}
