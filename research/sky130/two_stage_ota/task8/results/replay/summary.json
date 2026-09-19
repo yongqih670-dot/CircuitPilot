@@ -1,0 +1,29 @@
+{
+  "ac_rejected": 5,
+  "candidate_count": 2000,
+  "evaluation_stage_semantics_hash": "c32c752c254f4d5aac457b4be6e4eab019885ea6789a8e329b21f758025305b7",
+  "false_rejection_count": 0,
+  "first_blocking_constraint_counts": {
+    "negative_slew": 1,
+    "operating_region": 1976,
+    "output_bias": 12,
+    "phase_margin": 5,
+    "positive_slew": 1
+  },
+  "full_feasible_count": 5,
+  "hierarchical_policy_hash": "ff9f9e0301143bdb6b82974911e6dae1e35490ef209e326c8f1453d8558c757d",
+  "input_csv": "research/sky130/two_stage_ota/results/formal/evaluations.csv",
+  "input_csv_sha256": "bd0670dafc8f86dee1a650ddf5a1d376a236e2285c02d022668a93f1c4163036",
+  "mode": "offline_replay_no_ngspice",
+  "new_ngspice_process_calls": 0,
+  "op_rejected": 1988,
+  "schema_version": 1,
+  "stage_counts": {
+    "ac_rejected": 5,
+    "fully_feasible": 5,
+    "op_rejected": 1988,
+    "transient_rejected": 2
+  },
+  "task7_benchmark_hash": "144100e168ca5f550c6ca0bd5a29788f669d0e34cd9008c5a7fe2099e8cb8c1c",
+  "transient_required": 7
+}
