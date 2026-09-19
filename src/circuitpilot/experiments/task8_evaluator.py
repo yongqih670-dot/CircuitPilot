@@ -6,7 +6,7 @@ from dataclasses import asdict, dataclass
 import json
 import os
 from pathlib import Path
-from time import monotonic
+from time import monotonic, sleep
 from typing import Any, Callable, Mapping
 
 from circuitpilot.parser import parse_ac_output
@@ -92,7 +92,19 @@ def _atomic_json(path: Path, payload: Any) -> None:
         json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n",
         encoding="utf-8",
     )
-    temporary.replace(path)
+    # Windows scanners and indexers can briefly retain the destination after
+    # opening the preceding checkpoint. Retry only the atomic replacement.
+    last_error: PermissionError | None = None
+    for delay in (0.0, 0.01, 0.05, 0.1, 0.25, 0.5):
+        if delay:
+            sleep(delay)
+        try:
+            temporary.replace(path)
+            return
+        except PermissionError as exc:
+            last_error = exc
+    assert last_error is not None
+    raise last_error
 
 
 def _empty_state(policy: str, parameters: Mapping[str, float | int]) -> dict[str, Any]:

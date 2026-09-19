@@ -1,0 +1,136 @@
+{
+  "analysis_errors": {
+    "ac": null,
+    "op": null,
+    "transient": null
+  },
+  "completed_analyses": [
+    "op",
+    "ac",
+    "transient"
+  ],
+  "evidence": {
+    "device_quantities": {
+      "input_minus": {
+        "gds": 1.17376845e-07,
+        "gm": 1.27321088e-05,
+        "vds": 0.531972954,
+        "vdsat": 0.0816647934,
+        "vgs": 0.681683948,
+        "vth": 0.668646735
+      },
+      "input_plus": {
+        "gds": 1.17376845e-07,
+        "gm": 1.27321088e-05,
+        "vds": 0.531972954,
+        "vdsat": 0.0816647934,
+        "vgs": 0.681683948,
+        "vth": 0.668646735
+      },
+      "load_first": {
+        "gds": 1.68357291e-08,
+        "gm": 1.06032502e-05,
+        "vds": 1.04971099,
+        "vdsat": 0.0980899404,
+        "vgs": 1.04971099,
+        "vth": 1.00647457
+      },
+      "load_mirror": {
+        "gds": 1.68357291e-08,
+        "gm": 1.06032502e-05,
+        "vds": 1.04971099,
+        "vdsat": 0.0980899404,
+        "vgs": 1.04971099,
+        "vth": 1.00647457
+      },
+      "second_load": {
+        "gds": 3.28667169e-06,
+        "gm": 0.000614325998,
+        "vds": 1.49608526,
+        "vdsat": 0.451209369,
+        "vgs": 1.53084139,
+        "vth": 1.03455868
+      },
+      "second_stage": {
+        "gds": 0.000126681048,
+        "gm": 0.00283640706,
+        "vds": 0.303914741,
+        "vdsat": 0.0853222977,
+        "vgs": 0.750289006,
+        "vth": 0.655554398
+      },
+      "tail": {
+        "gds": 7.68741197e-07,
+        "gm": 2.17984439e-05,
+        "vds": 0.218316052,
+        "vdsat": 0.093750173,
+        "vgs": 0.72,
+        "vth": 0.664562368
+      }
+    },
+    "device_status": {
+      "input_minus": "saturation",
+      "input_plus": "saturation",
+      "load_first": "saturation",
+      "load_mirror": "saturation",
+      "second_load": "saturation",
+      "second_stage": "saturation",
+      "tail": "saturation"
+    },
+    "operating_region_mask": 0,
+    "operating_region_types": [],
+    "operating_region_valid": true
+  },
+  "metrics": {
+    "dc_gain_db": 66.312611,
+    "dc_power_w": 0.0003011485356,
+    "minus_3db_bandwidth_hz": 7988.888910871848,
+    "negative_slew_v_per_s": 8468818.040399255,
+    "operating_region_valid": 1.0,
+    "output_dc_voltage": 0.303914741,
+    "phase_margin_deg": 77.59937938506177,
+    "positive_slew_v_per_s": 8658820.968708344,
+    "stage1_dc_voltage": 0.750289006,
+    "supply_current_a": 0.000167304742,
+    "ugf_hz": 16077535.568142094,
+    "ugf_lower_bound_hz": null
+  },
+  "outer_elapsed_seconds": {
+    "ac": 0.6559999999590218,
+    "op": 3.734000000054948,
+    "transient": 0.8440000000409782
+  },
+  "parameters": {
+    "compensation_capacitance_f": 1.0748505670800386e-13,
+    "first_stage_load_length_m": 1.169786986564407e-06,
+    "first_stage_load_width_m": 3.008522081228949e-06,
+    "input_pair_length_m": 8.2827179410166e-07,
+    "input_pair_width_m": 1.0936654568474061e-06,
+    "second_load_bias_v": 0.26915861065171914,
+    "second_load_length_m": 1.0505137939048892e-06,
+    "second_load_width_m": 1.8961860317083537e-05,
+    "second_stage_length_m": 2.1740434718324453e-07,
+    "second_stage_width_m": 2.8430896982593633e-05,
+    "tail_length_m": 3.095266232552618e-07,
+    "tail_width_m": 4.6584669936102407e-07
+  },
+  "policy": "hierarchical",
+  "process_elapsed_estimated": {
+    "ac": false,
+    "op": false,
+    "transient": false
+  },
+  "process_elapsed_seconds": {
+    "ac": 0.6099999999860302,
+    "op": 0.6099999999860302,
+    "transient": 0.6709999999729916
+  },
+  "schema_version": 1,
+  "statuses": {
+    "negative_slew_status": "measured",
+    "phase_margin_status": "measured",
+    "positive_slew_status": "measured",
+    "ugf_crossing_count": 1,
+    "ugf_status": "measured"
+  }
+}
