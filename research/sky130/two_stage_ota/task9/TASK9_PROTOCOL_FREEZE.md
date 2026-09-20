@@ -1,0 +1,16 @@
+# Task 9 Protocol Freeze
+
+- pvt_benchmark_hash: `ec2d4de0e0c5694598cc7444b4fa9b63a8d8b533fa68bdd504e5262ebd5e2d61`
+- corner_suite_hash: `a97a333a89b5d709714e21e0a5497656fdbcc9168065f1113820a7513e013096`
+- corner_order_hash: `e07c17b9041c271e15d49d3362253db3a21fcd6eede169158dd18c7bb975fc56`
+- pvt_evaluation_policy_hash: `6d63ca8809ec9afdfaad2e681c70ea4a189cfd5b48ff749757dfe883ef8b55a4`
+- full_policy_hash: `7e3f976e361d459ec4fcff719a60a5ebd5dabed0f9d5b341cd67002791259b54`
+- hierarchical_policy_hash: `6fc4c35c2bf17534cfeca62456cacc9c065524c55c9411a91e26e8f74b002629`
+- partial_feedback_hash: `dd0063c0cc3c8e44c73a5607f3e8361162521f26c5d6ff40032ea81471f61fda`
+- cost_accounting_hash: `5978efd20ec05d4f1d827286fee0e0453e43fe141b8d8c24e1540f2e1ecafbf3`
+- simulation_time_budget_hash: `9f2d7634c58cd161ac43d57485e3b5a89712153d1f9144035cb260c6dd863adf`
+- task9_protocol_hash: `feae5ad0f0b234814d36b567be9b5952934617a3ff3745983a0249fe38c7963b`
+- frozen YAML byte SHA-256: `8ee1342527589a1896bc829b08b4e97cfc1605940254d2552e168b61becca6d8`
+- freeze parent commit: `742e13a9fd7712788ebf71d8719066845d9ace51`
+
+All protocol documents were hashed before evaluator implementation. The manifest records their byte identities.

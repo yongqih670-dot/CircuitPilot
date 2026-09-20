@@ -1,0 +1,410 @@
+schema_version: task9_pvt_ota_frozen_v1
+freeze_parent_commit: 742e13a9fd7712788ebf71d8719066845d9ace51
+hashes:
+  pvt_benchmark_hash: ec2d4de0e0c5694598cc7444b4fa9b63a8d8b533fa68bdd504e5262ebd5e2d61
+  corner_suite_hash: a97a333a89b5d709714e21e0a5497656fdbcc9168065f1113820a7513e013096
+  corner_order_hash: e07c17b9041c271e15d49d3362253db3a21fcd6eede169158dd18c7bb975fc56
+  pvt_evaluation_policy_hash: 6d63ca8809ec9afdfaad2e681c70ea4a189cfd5b48ff749757dfe883ef8b55a4
+  full_policy_hash: 7e3f976e361d459ec4fcff719a60a5ebd5dabed0f9d5b341cd67002791259b54
+  hierarchical_policy_hash: 6fc4c35c2bf17534cfeca62456cacc9c065524c55c9411a91e26e8f74b002629
+  partial_feedback_hash: dd0063c0cc3c8e44c73a5607f3e8361162521f26c5d6ff40032ea81471f61fda
+  cost_accounting_hash: 5978efd20ec05d4f1d827286fee0e0453e43fe141b8d8c24e1540f2e1ecafbf3
+  simulation_time_budget_hash: 9f2d7634c58cd161ac43d57485e3b5a89712153d1f9144035cb260c6dd863adf
+  task9_protocol_hash: feae5ad0f0b234814d36b567be9b5952934617a3ff3745983a0249fe38c7963b
+benchmark:
+  version: task9_pvt_ota_benchmark_v1
+  task7:
+    benchmark_hash: 144100e168ca5f550c6ca0bd5a29788f669d0e34cd9008c5a7fe2099e8cb8c1c
+    frozen_yaml_sha256: 077a42c053dfa59b6deb6e19dbca6cd74bec8122ebcb17998b906a4aa590df28
+    search_space_hash: 36e72bd54d2b1850af1ce1c8a69dbe7de22f552d49713edfbb0d3de83cd4f6db
+    component_hashes:
+      topology_hash: 75f3ed595af347524d7e1d74290980f7c75ae9f503559ca561da7cd349303e6c
+      role_mapping_hash: 50b2fe35a92fb3e56e804d9cc2ac641b9f7044198dccbd286360ef4378d48e5f
+      pdk_hash: d88fa42b4f42f7b1f6987141aa92161865cfc9ff5fbdce9bbc9f137bde3a2f61
+      model_library_hash: 17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64
+      ugf_semantics_hash: 5f0bd2d5795ddbba88580c8de2a44788a0b12857b6232be70272881ded8f3852
+      phase_margin_semantics_hash: 68b5a1ed0cddd1efd884e75c05c01d60cdfc20b640198cd1fc88dfc119031c1b
+      transient_semantics_hash: b7aa31978b2e3264373f0f6cafda4305bca1c7b96daa7483668ddb57616a52fb
+      slew_semantics_hash: aadac51099130757f0d3774b2926801023ccc3ef00a933c99e7586d83f1b1839
+      load_testbench_hash: 8bd34b09ff751c15a89dedf0967f1fd73434034fb38336593fb3c5e2384e555c
+      cost_model_hash: 1a48c49e8aeb3b3f9e62a0535d33020b2c3b5600d53111417ad65d2379a89845
+      objective_hash: 6c8bfb8a99b80dfe507c76fa191f03225694b0ff5f43818495dde4c78a5cd6b1
+    search_space:
+      input_pair_width_m:
+        type: float
+        low: 8.4e-07
+        high: 3.0e-05
+        log: true
+        unit: m
+        technology_limits:
+          low: 4.2e-07
+          high: 0.0001
+      input_pair_length_m:
+        type: float
+        low: 1.5e-07
+        high: 1.0e-06
+        log: false
+        unit: m
+        technology_limits:
+          low: 1.5e-07
+          high: 2.0e-06
+      first_stage_load_width_m:
+        type: float
+        low: 8.4e-07
+        high: 4.0e-05
+        log: true
+        unit: m
+        technology_limits:
+          low: 4.2e-07
+          high: 0.0001
+      first_stage_load_length_m:
+        type: float
+        low: 1.5e-07
+        high: 1.2e-06
+        log: false
+        unit: m
+        technology_limits:
+          low: 1.5e-07
+          high: 2.0e-06
+      tail_width_m:
+        type: float
+        low: 4.2e-07
+        high: 3.0e-05
+        log: true
+        unit: m
+        technology_limits:
+          low: 4.2e-07
+          high: 0.0001
+      tail_length_m:
+        type: float
+        low: 1.5e-07
+        high: 1.2e-06
+        log: false
+        unit: m
+        technology_limits:
+          low: 1.5e-07
+          high: 2.0e-06
+      second_stage_width_m:
+        type: float
+        low: 8.4e-07
+        high: 6.0e-05
+        log: true
+        unit: m
+        technology_limits:
+          low: 4.2e-07
+          high: 0.0001
+      second_stage_length_m:
+        type: float
+        low: 1.5e-07
+        high: 1.2e-06
+        log: false
+        unit: m
+        technology_limits:
+          low: 1.5e-07
+          high: 2.0e-06
+      second_load_width_m:
+        type: float
+        low: 8.4e-07
+        high: 6.0e-05
+        log: true
+        unit: m
+        technology_limits:
+          low: 4.2e-07
+          high: 0.0001
+      second_load_length_m:
+        type: float
+        low: 1.5e-07
+        high: 1.2e-06
+        log: false
+        unit: m
+        technology_limits:
+          low: 1.5e-07
+          high: 2.0e-06
+      second_load_bias_v:
+        type: float
+        low: 0.25
+        high: 1.2
+        log: false
+        unit: V
+        technology_limits:
+          low: 0.0
+          high: 1.8
+      compensation_capacitance_f:
+        type: float
+        low: 5.0e-14
+        high: 5.0e-12
+        log: true
+        unit: F
+        technology_limits:
+          low: 1.0e-14
+          high: 1.0e-11
+    topology_version: sky130_two_stage_miller_ota_v1
+    device_role_mapping_version: task7_role_matched_12d_prior_v1
+    model:
+      pdk_root: ../../../tools/sky130/ciel/ciel/sky130/versions/026824c7969ce6f4fc9678e6ca04b0a06a596c4b/sky130A
+      model_library: ../../../tools/sky130/ciel/ciel/sky130/versions/026824c7969ce6f4fc9678e6ca04b0a06a596c4b/sky130A/libs.tech/ngspice/sky130.lib.spice
+      device_name: sky130_fd_pr__nfet_01v8
+      corner: tt
+      provenance: FOSSi Foundation Ciel/Open_PDKs prebuilt SKY130
+      pdk_release: 1.0.606
+      pdk_commit: 026824c7969ce6f4fc9678e6ca04b0a06a596c4b
+      primitive_commit: 403964dc7f9cca5ec1a8cc7b4f2a6f532b781676
+      model_sha256: d88fa42b4f42f7b1f6987141aa92161865cfc9ff5fbdce9bbc9f137bde3a2f61
+      library_sha256: 17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64
+    measurement_semantics:
+      ac_testbench_version: task7_opposed_half_volt_unit_differential_v1
+      ugf_semantics_version: task7_first_descending_zero_db_log_interpolation_v1
+      phase_margin_semantics_version: task7_unwrapped_phase_at_same_first_ugf_v1
+      transient_testbench_version: task7_unity_follower_fixed_0p8_1p0v_step_v1
+      slew_semantics_version: task7_fixed_20_80pct_crossing_interpolation_v1
+      op_rules_version: task7_explicit_voltage_inequalities_all_seven_devices_v1
+      cost_semantics_version: task7_full_three_independent_processes_v1
+    fixed_testbench:
+      input_common_mode_v: 0.9
+      tail_bias_v: 0.72
+      load_capacitance_f: 1.0e-12
+      transient_low_v: 0.8
+      transient_high_v: 1.0
+      transient_rise_time_s: 1.0e-09
+      transient_fall_time_s: 1.0e-09
+      transient_rising_edge_s: 5.0e-07
+      transient_falling_edge_s: 2.0e-06
+      transient_stop_time_s: 4.0e-06
+      transient_max_step_s: 2.0e-09
+      transient_edge_exclusion_s: 5.0e-09
+      slew_lower_fraction: 0.2
+      slew_upper_fraction: 0.8
+    ngspice_config:
+      executable: ngspice
+      start_frequency_hz: 10.0
+      stop_frequency_hz: 1.0e10
+      points_per_decade: 30
+  task8_protocol_hash: d60ad33791a59bf418b0378e653e4e3bc10aa032dc98cde583d649260844dc2d
+  corner_suite:
+  - corner_id: tt__nominal
+    process_corner: tt
+    condition: nominal
+    vdd_v: 1.8
+    temperature_c: 27.0
+  - corner_id: tt__low_v_high_t
+    process_corner: tt
+    condition: low_v_high_t
+    vdd_v: 1.62
+    temperature_c: 125.0
+  - corner_id: tt__high_v_low_t
+    process_corner: tt
+    condition: high_v_low_t
+    vdd_v: 1.98
+    temperature_c: -40.0
+  - corner_id: ss__nominal
+    process_corner: ss
+    condition: nominal
+    vdd_v: 1.8
+    temperature_c: 27.0
+  - corner_id: ss__low_v_high_t
+    process_corner: ss
+    condition: low_v_high_t
+    vdd_v: 1.62
+    temperature_c: 125.0
+  - corner_id: ss__high_v_low_t
+    process_corner: ss
+    condition: high_v_low_t
+    vdd_v: 1.98
+    temperature_c: -40.0
+  - corner_id: ff__nominal
+    process_corner: ff
+    condition: nominal
+    vdd_v: 1.8
+    temperature_c: 27.0
+  - corner_id: ff__low_v_high_t
+    process_corner: ff
+    condition: low_v_high_t
+    vdd_v: 1.62
+    temperature_c: 125.0
+  - corner_id: ff__high_v_low_t
+    process_corner: ff
+    condition: high_v_low_t
+    vdd_v: 1.98
+    temperature_c: -40.0
+  - corner_id: fs__nominal
+    process_corner: fs
+    condition: nominal
+    vdd_v: 1.8
+    temperature_c: 27.0
+  - corner_id: fs__low_v_high_t
+    process_corner: fs
+    condition: low_v_high_t
+    vdd_v: 1.62
+    temperature_c: 125.0
+  - corner_id: fs__high_v_low_t
+    process_corner: fs
+    condition: high_v_low_t
+    vdd_v: 1.98
+    temperature_c: -40.0
+  - corner_id: sf__nominal
+    process_corner: sf
+    condition: nominal
+    vdd_v: 1.8
+    temperature_c: 27.0
+  - corner_id: sf__low_v_high_t
+    process_corner: sf
+    condition: low_v_high_t
+    vdd_v: 1.62
+    temperature_c: 125.0
+  - corner_id: sf__high_v_low_t
+    process_corner: sf
+    condition: high_v_low_t
+    vdd_v: 1.98
+    temperature_c: -40.0
+  corner_suite_hash: a97a333a89b5d709714e21e0a5497656fdbcc9168065f1113820a7513e013096
+  selected_specification_row: 0
+  selected_specification:
+    gain_min_db: 12.0
+    negative_slew_min_v_per_s: 500000.0
+    operating_region_valid_min: 1.0
+    output_high_v: 1.7
+    output_low_v: 0.1
+    phase_margin_min_deg: 35.0
+    positive_slew_min_v_per_s: 500000.0
+    power_max_w: 0.0015
+    ugf_min_hz: 500000.0
+  selected_specification_hash: 05b5c71863b852dc758cfed7643ace6aa9f6a7636856bf1eb09addef77681748
+  corner_order: &id001
+  - sf__nominal
+  - ss__low_v_high_t
+  - tt__low_v_high_t
+  - ff__low_v_high_t
+  - ss__nominal
+  - tt__nominal
+  - ff__nominal
+  - ss__high_v_low_t
+  - fs__low_v_high_t
+  - tt__high_v_low_t
+  - fs__nominal
+  - fs__high_v_low_t
+  - sf__low_v_high_t
+  - sf__high_v_low_t
+  - ff__high_v_low_t
+  corner_order_hash: e07c17b9041c271e15d49d3362253db3a21fcd6eede169158dd18c7bb975fc56
+  objective:
+    feasibility: logical_and_all_constraints_all_corners_valid_statuses
+    robust_violation: sum_constraints_of_max_corner_normalized_violation
+    feasible_secondary: minimize_max_corner_dc_power_w
+    universal_worst_corner: false
+  methods:
+  - random
+  - de
+  - tpe
+  - bo
+  formal_seeds:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  smoke_seeds:
+  - 0
+  - 1
+  - 2
+  calibration_candidate_set_hash: 8243cf5a1c9ee19df284976b7e0d9d985f0fe6d7a851ed8446cad6c398983902
+  protocol_document_hashes:
+    PVT_MODEL_CAPABILITY_REPORT.md: 1f63beb9d301486efc797d0072bc2dc2737c0bf0c0d234fae47f28bf29de17c5
+    PVT_CORNER_PROTOCOL.md: 326d03158f61848e03e474708c6617b41ac2a21689948fe39952b2ef957a7713
+    PVT_SPECIFICATION_LADDER.yaml: bfd20ed210a71394f7727824825fddd6adbe08b08f1c8f95e4ea37c674270b10
+    PVT_SPECIFICATION_LADDER_ERRATUM.md: 684aee9aca37cd77f00147be36623febf260e932cb863dfc208c08506b868235
+    RESEARCH_HYPOTHESES.md: 2d65116fc8580dcb31620dd7b8f2acfe00d1df495f897ea239911ee0ab493e20
+    STATISTICAL_ANALYSIS_PLAN.md: a65e57c9329b8fd5a0cf695b187ef83e2899547bde9c0bd763dd4f72618e9132
+    NOMINAL_TO_PVT_GAP_REPORT.md: 1029c904739c25fcb2aa24e43f0d77880732bc569899c139c0b2f5307fd8d08b
+    PVT_CALIBRATION_PROTOCOL.md: 7c493af3771411afa1cbd116f3752b13ad86953392490ba937d6332b817cf6ca
+    CALIBRATION_SPECIFICATION_SELECTION.md: 329fcbd6c3d738dceb62a7f75bb8c3e14b750a12eb2472c9ffbba0a527438f06
+    STATIC_CORNER_ORDER.md: 74568899c8c664f47b130f43d0c0e9d88e59170876dc1c74adb4e2f55d2f9b35
+    REPLAY_EQUIVALENCE_REPORT.md: 17211f49309c33f7f1998f0deef288bc0674dc0dbcdadb761e3ada16837b0a5b
+    PVT_OTA_BENCHMARK.md: 54d57c5c2c11d8a1bdbfa52c2bb53edbbb4a314606d7f206b482685f2be02ebd
+    PVT_EVALUATION_POLICY.md: 7305128b5e53c4df81e17d0f5a212df921c050b22cc36c97edbf37799ed36695
+    PVT_FEEDBACK_SEMANTICS.md: c84386b16be5c8fd870981f5aecb3281d7f5f14398b0dde27040206c3415a9f5
+policies:
+  full:
+    name: PVTFullEvaluationPolicy
+    version: task9_full_all_corners_all_stages_v1
+    benchmark_hash: ec2d4de0e0c5694598cc7444b4fa9b63a8d8b533fa68bdd504e5262ebd5e2d61
+    corner_order:
+    - tt__nominal
+    - tt__low_v_high_t
+    - tt__high_v_low_t
+    - ss__nominal
+    - ss__low_v_high_t
+    - ss__high_v_low_t
+    - ff__nominal
+    - ff__low_v_high_t
+    - ff__high_v_low_t
+    - fs__nominal
+    - fs__low_v_high_t
+    - fs__high_v_low_t
+    - sf__nominal
+    - sf__low_v_high_t
+    - sf__high_v_low_t
+    always_attempt_all_corners: true
+    always_attempt_stages:
+    - op
+    - ac
+    - transient
+    isolated_failures: true
+  hierarchical:
+    name: PVTHierarchicalEvaluationPolicy
+    version: task9_safe_stage_and_corner_hierarchy_v1
+    benchmark_hash: ec2d4de0e0c5694598cc7444b4fa9b63a8d8b533fa68bdd504e5262ebd5e2d61
+    corner_order: *id001
+    corner_order_hash: e07c17b9041c271e15d49d3362253db3a21fcd6eede169158dd18c7bb975fc56
+    stage_order:
+    - op
+    - ac
+    - transient
+    first_blocker_priority:
+      op:
+      - operating_region
+      - power_max
+      - output_low
+      - output_high
+      ac:
+      - gain_min
+      - ugf_min
+      - phase_margin_min
+      transient:
+      - positive_slew_min
+      - negative_slew_min
+    across_corner_stop: first_measured_hard_failure_or_invalid_required_measurement
+    unknown_physical_metric: null
+    prediction: false
+    adaptive_order: false
+feedback:
+  version: task9_measured_progress_lexicographic_feedback_v1
+  benchmark_hash: ec2d4de0e0c5694598cc7444b4fa9b63a8d8b533fa68bdd504e5262ebd5e2d61
+  tiers: pvt_feasible_then_progress_units_then_partial_violation
+  progress_units_max: 45
+  infeasible_scalar: 1+(45-progress)+V/(1+V)
+  feasible_scalar: worst_power/(power_limit+worst_power)
+  unrun_metric: null
+cost_accounting:
+  version: task9_real_subprocess_elapsed_sum_v1
+  primary: sum_ngspice_subprocess_elapsed_seconds
+  counts:
+  - candidate_count
+  - corners_started
+  - corners_completed
+  - op_calls
+  - ac_calls
+  - transient_calls
+  - process_calls
+  shadow_excluded: true
+budgets:
+  version: task9_terminal_analysis_budget_check_v1
+  equal_candidate_budget: 20
+  equal_time_budget_seconds: 375.41500000166707
+  equal_time_candidate_cap: 100
+  smoke_candidate_budget: 10
+  budget_check: after_completed_analysis_never_kill_process
