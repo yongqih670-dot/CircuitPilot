@@ -454,7 +454,9 @@ def _terminal_evaluation(
         corners_map, order
     )
     progress = _progress(corners_map, order)
-    if policy == "full":
+    terminal = state.get("terminal") or {}
+    budget_exhausted = bool(terminal.get("budget_exhausted"))
+    if policy == "full" and not budget_exhausted:
         if not completed_all:
             raise RuntimeError("Full-PVT terminal result is incomplete")
         objective = robust_objective(corners)
@@ -472,7 +474,11 @@ def _terminal_evaluation(
         components = dict(feedback.partial_constraint_components)
         feedback_tier = feedback.lexicographic_tier
         evaluation_stage = "pvt_feasible" if is_feasible else (rejection_stage or "analysis_failed")
-    if errors:
+    if budget_exhausted:
+        simulation_status = "budget_exhausted"
+        evaluation_stage = "budget_exhausted"
+        is_feasible = False
+    elif errors:
         simulation_status = "analysis_failed"
         if policy == "hierarchical":
             evaluation_stage = "analysis_failed"
@@ -540,6 +546,7 @@ def evaluate_task9_candidate(
     stop_frequency_hz: float,
     points_per_decade: int,
     interrupt_after_stage: int | None = None,
+    stop_after_accumulated_ngspice_seconds: float | None = None,
 ) -> Task9Evaluation:
     if policy not in {"full", "hierarchical"}:
         raise ValueError("Task 9 policy must be full or hierarchical")
@@ -553,7 +560,9 @@ def evaluate_task9_candidate(
         len(corner["completed_analyses"])
         for corner in state["corner_results"].values()
     )
-    if policy == "hierarchical" and state.get("terminal") is not None:
+    if stop_after_accumulated_ngspice_seconds is not None and stop_after_accumulated_ngspice_seconds <= 0.0:
+        raise ValueError("Task 9 analysis-level budget must be positive")
+    if state.get("terminal") is not None:
         return _terminal_evaluation(state, policy=policy, started_at=started_at)
     for corner_id in order:
         corner = state["corner_results"][corner_id]
@@ -614,6 +623,16 @@ def evaluate_task9_candidate(
                         "stage": kind,
                         "constraint": decision.first_blocking_constraint,
                     }
+                    _atomic_json(checkpoint, state)
+                    return _terminal_evaluation(state, policy=policy, started_at=started_at)
+            if stop_after_accumulated_ngspice_seconds is not None:
+                candidate_seconds = sum(
+                    float(item["process_elapsed_seconds"][stage])
+                    for item in state["corner_results"].values()
+                    for stage in item["completed_analyses"]
+                )
+                if candidate_seconds >= stop_after_accumulated_ngspice_seconds:
+                    state["terminal"] = {"budget_exhausted": True}
                     _atomic_json(checkpoint, state)
                     return _terminal_evaluation(state, policy=policy, started_at=started_at)
     state["terminal"] = {"complete": True}

@@ -254,6 +254,30 @@ def test_resume_between_corner_stages(monkeypatch, tmp_path, ota_config) -> None
     assert len(calls) == 45
 
 
+def test_equal_time_budget_stops_after_completed_analysis(monkeypatch, tmp_path, ota_config) -> None:
+    calls = []
+
+    def fake(kind, *, corner_id, **kwargs):
+        calls.append((corner_id, kind))
+        return _measurement(kind, corner_id)
+
+    monkeypatch.setattr(task9_evaluator, "execute_real_pvt_stage", fake)
+    result = _evaluate(
+        tmp_path,
+        "full",
+        ota_config,
+        stop_after_accumulated_ngspice_seconds=0.05,
+    )
+    assert result.simulation_status == "budget_exhausted"
+    assert result.evaluation_stage == "budget_exhausted"
+    assert result.process_calls == result.op_calls == 1
+    assert result.ac_calls == result.transient_calls == 0
+    assert calls == [(CANONICAL_CORNER_ORDER[0], "op")]
+    resumed = _evaluate(tmp_path, "full", ota_config)
+    assert resumed.simulation_status == "budget_exhausted"
+    assert calls == [(CANONICAL_CORNER_ORDER[0], "op")]
+
+
 def test_corner_order_deterministic_and_hash_bound() -> None:
     assert len(STATIC_WORST_FIRST_ORDER) == len(set(STATIC_WORST_FIRST_ORDER)) == 15
     assert set(STATIC_WORST_FIRST_ORDER) == set(CANONICAL_CORNER_ORDER)

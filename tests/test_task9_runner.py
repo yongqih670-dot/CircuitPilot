@@ -41,28 +41,30 @@ def _definition(tmp_path: Path, *, design: str = "equal_candidate", policy: str 
 
 def _fake_evaluation(*, policy: str, **kwargs) -> Task9Evaluation:
     full = policy == "full"
+    remaining = kwargs.get("stop_after_accumulated_ngspice_seconds")
+    budget_terminal = remaining is not None and float(remaining) < 200.0
     return Task9Evaluation(
         policy=policy,
-        evaluation_stage="complete",
+        evaluation_stage="budget_exhausted" if budget_terminal else "complete",
         first_failing_corner=None,
         first_failing_stage=None,
         first_failing_constraint=None,
-        simulation_status="success",
+        simulation_status="budget_exhausted" if budget_terminal else "success",
         corner_results=(),
         worst_metrics={"dc_gain_db": 20.0},
         objective_value=0.01,
         robust_constraint_violation=0.0,
         constraint_components={},
-        is_feasible=True,
+        is_feasible=not budget_terminal,
         progress_units=45 if full else 3,
         feedback_tier=(1, 45 if full else 3, 0.0),
-        corners_started=15 if full else 1,
-        corners_completed=15 if full else 1,
-        op_calls=15 if full else 1,
-        ac_calls=15 if full else 1,
-        transient_calls=15 if full else 1,
-        process_calls=45 if full else 3,
-        accumulated_ngspice_seconds=200.0,
+        corners_started=1 if budget_terminal else (15 if full else 1),
+        corners_completed=0 if budget_terminal else (15 if full else 1),
+        op_calls=1 if budget_terminal else (15 if full else 1),
+        ac_calls=0 if budget_terminal else (15 if full else 1),
+        transient_calls=0 if budget_terminal else (15 if full else 1),
+        process_calls=1 if budget_terminal else (45 if full else 3),
+        accumulated_ngspice_seconds=180.0 if budget_terminal else 200.0,
         outer_wall_seconds=0.01,
         orchestration_seconds=0.0,
         process_elapsed_estimate_count=0,
@@ -110,8 +112,10 @@ def test_equal_time_stops_after_boundary_crossing(monkeypatch, tmp_path) -> None
     _, summary = execute_task9_run(definition)
     assert summary["completed"]
     assert summary["candidate_count"] == 2
-    assert summary["accumulated_ngspice_seconds"] == pytest.approx(400.0)
-    assert summary["budget_overshoot_seconds"] == pytest.approx(25.0)
+    assert summary["completed_candidate_count"] == 1
+    assert summary["budget_terminal_candidate_count"] == 1
+    assert summary["accumulated_ngspice_seconds"] == pytest.approx(380.0)
+    assert summary["budget_overshoot_seconds"] == pytest.approx(5.0)
 
 
 def test_paired_fairness_accepts_only_policy_hash_difference(tmp_path) -> None:

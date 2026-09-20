@@ -333,6 +333,10 @@ def _summary(
         ),
         "fairness_identity": fairness_identity(definition, config),
         "candidate_count": len(records),
+        "completed_candidate_count": sum(bool(row["candidate_completed"]) for row in records),
+        "budget_terminal_candidate_count": sum(
+            bool(row["budget_terminal_candidate"]) for row in records
+        ),
         "corners_started": sum(int(row["corners_started"]) for row in records),
         "corners_completed": sum(int(row["corners_completed"]) for row in records),
         "op_calls": sum(int(row["op_calls"]) for row in records),
@@ -448,6 +452,11 @@ def execute_task9_run(
             start_frequency_hz=config.ngspice_config.start_frequency_hz,
             stop_frequency_hz=config.ngspice_config.stop_frequency_hz,
             points_per_decade=config.ngspice_config.points_per_decade,
+            stop_after_accumulated_ngspice_seconds=(
+                None
+                if definition.simulation_time_budget_seconds is None
+                else definition.simulation_time_budget_seconds - accumulated
+            ),
         )
         shadow = _empty_shadow()
         if definition.shadow_audit and not evaluation.is_feasible:
@@ -476,6 +485,8 @@ def execute_task9_run(
             "parameters": dict(parameters),
             "simulation_status": evaluation.simulation_status,
             "evaluation_stage": evaluation.evaluation_stage,
+            "candidate_completed": evaluation.simulation_status != "budget_exhausted",
+            "budget_terminal_candidate": evaluation.simulation_status == "budget_exhausted",
             "first_failing_corner": evaluation.first_failing_corner,
             "first_failing_stage": evaluation.first_failing_stage,
             "first_failing_constraint": evaluation.first_failing_constraint,

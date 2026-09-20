@@ -130,7 +130,11 @@ def validate_fairness(
         ):
             raise FairComparisonError(f"Task 9 cost/identity check failed for {row['experiment_id']}")
         candidates = int(row["candidate_count"])
-        if row["policy"] == "full" and (
+        budget_terminal = int(row.get("budget_terminal_candidate_count", 0))
+        completed_candidates = int(row.get("completed_candidate_count", candidates))
+        if budget_terminal not in {0, 1} or completed_candidates + budget_terminal != candidates:
+            raise FairComparisonError("Task 9 terminal-candidate accounting is invalid")
+        if row["policy"] == "full" and design != "equal_simulation_time" and (
             int(row["corners_started"]) != 15 * candidates
             or int(row["corners_completed"]) != 15 * candidates
             or int(row["op_calls"]) != 15 * candidates
@@ -139,6 +143,15 @@ def validate_fairness(
             or int(row["process_calls"]) != 45 * candidates
         ):
             raise FairComparisonError("Full-PVT did not execute every stage/corner")
+        if row["policy"] == "full" and design == "equal_simulation_time" and not (
+            int(row["corners_started"]) <= 15 * candidates
+            and int(row["corners_completed"]) <= 15 * candidates
+            and int(row["op_calls"]) <= 15 * candidates
+            and int(row["ac_calls"]) <= 15 * candidates
+            and int(row["transient_calls"]) <= 15 * candidates
+            and int(row["process_calls"]) <= 45 * candidates
+        ):
+            raise FairComparisonError("Full-PVT analysis-level terminal counters are invalid")
         if row["policy"] == "hierarchical" and not (
             int(row["transient_calls"]) <= int(row["ac_calls"]) <= int(row["op_calls"])
             and int(row["corners_completed"]) == int(row["transient_calls"])
