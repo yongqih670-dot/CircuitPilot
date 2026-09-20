@@ -1,0 +1,1050 @@
+{
+  "calibration_candidate_count": 64,
+  "calibration_median_full_pvt_ngspice_seconds": 37.54150000016671,
+  "formal_equal_candidate_budget": 20,
+  "formal_equal_time_budget_seconds": 375.41500000166707,
+  "formal_equal_time_candidate_cap": 100,
+  "ladder_results": [
+    {
+      "candidate_count": 64,
+      "distance_to_target_band": 0.001,
+      "feasible_candidates": 0,
+      "inside_target_band": false,
+      "label": "exact_task7_thresholds",
+      "robust_feasible_density": 0.0,
+      "row": 0
+    },
+    {
+      "candidate_count": 64,
+      "distance_to_target_band": 0.001,
+      "feasible_candidates": 0,
+      "inside_target_band": false,
+      "label": "mechanical_relaxation_1",
+      "robust_feasible_density": 0.0,
+      "row": 1
+    },
+    {
+      "candidate_count": 64,
+      "distance_to_target_band": 0.001,
+      "feasible_candidates": 0,
+      "inside_target_band": false,
+      "label": "mechanical_relaxation_2",
+      "robust_feasible_density": 0.0,
+      "row": 2
+    },
+    {
+      "candidate_count": 64,
+      "distance_to_target_band": 0.001,
+      "feasible_candidates": 0,
+      "inside_target_band": false,
+      "label": "mechanical_relaxation_3",
+      "robust_feasible_density": 0.0,
+      "row": 3
+    },
+    {
+      "candidate_count": 64,
+      "distance_to_target_band": 0.001,
+      "feasible_candidates": 0,
+      "inside_target_band": false,
+      "label": "mechanical_relaxation_4",
+      "robust_feasible_density": 0.0,
+      "row": 4
+    }
+  ],
+  "schema_version": "task9_selected_pvt_specification_v1",
+  "selected_constraints": {
+    "gain_min_db": 12.0,
+    "negative_slew_min_v_per_s": 500000.0,
+    "operating_region_valid_min": 1.0,
+    "output_high_v": 1.7,
+    "output_low_v": 0.1,
+    "phase_margin_min_deg": 35.0,
+    "positive_slew_min_v_per_s": 500000.0,
+    "power_max_w": 0.0015,
+    "ugf_min_hz": 500000.0
+  },
+  "selected_density": 0.0,
+  "selected_label": "exact_task7_thresholds",
+  "selected_row": 0,
+  "selected_row_design_evaluations": {
+    "sobol_000": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 1.5120244566666667,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.9707550094,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 7.482779466066667
+    },
+    "sobol_001": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 2.878270825,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.16236898235294114,
+        "output_low": 0.0,
+        "phase_margin_min": 2.520917360085299,
+        "positive_slew_min": 0.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 8.56155716743824
+    },
+    "sobol_002": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 4.879787983333333,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.9998218861300001,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 10.879609869463334
+    },
+    "sobol_003": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 9.165507708333333,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.16456564117647066,
+        "output_low": 0.0,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 14.330073349509803
+    },
+    "sobol_004": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 6.3797300083333335,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.99999415326198,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 12.379724161595313
+    },
+    "sobol_005": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.4481226733333334,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.555729487,
+        "phase_margin_min": 0.4594295654215273,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 4.463281725754861
+    },
+    "sobol_006": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 4.283259216666667,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.16462957647058832,
+        "output_low": 0.0,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 9.447888793137256
+    },
+    "sobol_007": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 2.093146975,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.9846714171000001,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 8.0778183921
+    },
+    "sobol_008": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 4.737750624999999,
+        "negative_slew_min": 0.0,
+        "operating_region": 1.0,
+        "output_high": 0.057902623529411765,
+        "output_low": 0.8943206170000001,
+        "phase_margin_min": 3.5655989792476217,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 12.255572844777033
+    },
+    "sobol_009": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.0,
+        "negative_slew_min": 0.0,
+        "operating_region": 1.0,
+        "output_high": 0.013077147058823582,
+        "output_low": 0.0,
+        "phase_margin_min": 0.0,
+        "positive_slew_min": 0.0,
+        "power_max": 0.0,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 1.0130771470588236
+    },
+    "sobol_010": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 1.1574353041666667,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.9840756877000001,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 0.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 6.141510991866667
+    },
+    "sobol_011": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 4.4529551750000005,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.999633371553,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 10.452588546553
+    },
+    "sobol_012": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 1.0722864457499999,
+        "negative_slew_min": 0.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.9890986016,
+        "phase_margin_min": 2.014084736045361,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 7.075469783395361
+    },
+    "sobol_013": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.01669358333333326,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.9099467946,
+        "phase_margin_min": 0.8783011861125325,
+        "positive_slew_min": 0.0,
+        "power_max": 0.0,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 3.804941564045866
+    },
+    "sobol_014": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.6548411408333333,
+        "negative_slew_min": 0.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.9599537253000001,
+        "phase_margin_min": 0.0,
+        "positive_slew_min": 0.0,
+        "power_max": 0.0,
+        "ugf_min": 0.8868704566612022
+      },
+      "robust_constraint_violation": 3.5016653227945356
+    },
+    "sobol_015": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 5.541412975,
+        "negative_slew_min": 0.0,
+        "operating_region": 1.0,
+        "output_high": 0.16233803529411775,
+        "output_low": 0.0,
+        "phase_margin_min": 3.46073065807394,
+        "positive_slew_min": 0.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 11.164481668368058
+    },
+    "sobol_016": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.0,
+        "negative_slew_min": 0.0,
+        "operating_region": 1.0,
+        "output_high": 0.11446431764705886,
+        "output_low": 0.0,
+        "phase_margin_min": 0.02770948445164062,
+        "positive_slew_min": 0.0,
+        "power_max": 0.0,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 1.1421738020986996
+    },
+    "sobol_017": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.6607445991666666,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.04484180000000001,
+        "output_low": 0.9809479502999999,
+        "phase_margin_min": 1.1812603832695052,
+        "positive_slew_min": 0.0,
+        "power_max": 0.0,
+        "ugf_min": 0.25762660461532827
+      },
+      "robust_constraint_violation": 5.1254213373515
+    },
+    "sobol_018": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.0,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.9734158789,
+        "phase_margin_min": 3.571082846094159,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 7.544498724994159
+    },
+    "sobol_019": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 1.7340325333333333,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.879598629,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 7.613631162333333
+    },
+    "sobol_020": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 4.7759861,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.999862409566,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 10.775848509566
+    },
+    "sobol_021": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 5.695112133333333,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.1645356588235295,
+        "output_low": 0.0,
+        "phase_margin_min": 2.978626672636319,
+        "positive_slew_min": 0.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 11.838274464793182
+    },
+    "sobol_022": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.2214658116666667,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.14071040588235292,
+        "output_low": 0.0,
+        "phase_margin_min": 0.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 3.3621762175490195
+    },
+    "sobol_023": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 3.755981966666667,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.9995954307730001,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 9.755577397439668
+    },
+    "sobol_024": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 2.0762062333333335,
+        "negative_slew_min": 0.0,
+        "operating_region": 1.0,
+        "output_high": 0.15935580000000008,
+        "output_low": 0.0,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 0.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 5.235562033333333
+    },
+    "sobol_025": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.5423709133333333,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.794167541,
+        "phase_margin_min": 0.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 4.336538454333334
+    },
+    "sobol_026": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.0,
+        "negative_slew_min": 0.0,
+        "operating_region": 1.0,
+        "output_high": 0.022099670588235268,
+        "output_low": 0.534242315,
+        "phase_margin_min": 0.9279903012110415,
+        "positive_slew_min": 0.0,
+        "power_max": 0.0,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 2.484332286799277
+    },
+    "sobol_027": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 6.414128174999999,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.99999567740379,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 12.414123852403788
+    },
+    "sobol_028": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.0,
+        "negative_slew_min": 0.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.46811163100000003,
+        "phase_margin_min": 3.539822272913287,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 6.007933903913287
+    },
+    "sobol_029": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 4.470237216666667,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.999819765471,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 10.470056982137667
+    },
+    "sobol_030": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.4520698383333333,
+        "negative_slew_min": 0.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.808672413,
+        "phase_margin_min": 0.0,
+        "positive_slew_min": 0.0,
+        "power_max": 0.0,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 2.2607422513333333
+    },
+    "sobol_031": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 5.355050908333333,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.15696286470588242,
+        "output_low": 0.40614737500000003,
+        "phase_margin_min": 2.232469534946648,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 12.150630682985863
+    },
+    "sobol_032": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.0,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.15970454117647057,
+        "output_low": 0.0,
+        "phase_margin_min": 0.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 0.3797006381438253
+      },
+      "robust_constraint_violation": 3.539405179320296
+    },
+    "sobol_033": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 8.54971525,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.999999446437817,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 14.549714696437817
+    },
+    "sobol_034": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 8.499278133333332,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.16470169411764707,
+        "output_low": 0.0,
+        "phase_margin_min": 3.5343050657522195,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 16.198284893203198
+    },
+    "sobol_035": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.0,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.0,
+        "phase_margin_min": 0.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.8179774447999999,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 3.8179774448
+    },
+    "sobol_036": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 5.271637616666667,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.999456832335,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 11.271094449001668
+    },
+    "sobol_037": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 2.9065992416666666,
+        "negative_slew_min": 0.0,
+        "operating_region": 1.0,
+        "output_high": 0.1617244764705883,
+        "output_low": 0.0,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 7.068323718137255
+    },
+    "sobol_038": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 1.7185670425000001,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.1634366588235294,
+        "output_low": 0.0,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 6.882003701323529
+    },
+    "sobol_039": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 3.8977824250000004,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.9997222826569999,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 9.897504707657001
+    },
+    "sobol_040": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 3.2123727416666665,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.05407090000000007,
+        "output_low": 0.9591973792,
+        "phase_margin_min": 3.442860378470857,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 11.668501399337524
+    },
+    "sobol_041": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 1.8164185666666668,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.9454022738000001,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 7.761820840466667
+    },
+    "sobol_042": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.0,
+        "negative_slew_min": 0.7393443077486679,
+        "operating_region": 1.0,
+        "output_high": 0.12714387647058828,
+        "output_low": 0.0,
+        "phase_margin_min": 0.0,
+        "positive_slew_min": 0.7132583712017146,
+        "power_max": 0.0,
+        "ugf_min": 0.7605619202116827
+      },
+      "robust_constraint_violation": 3.3403084756326535
+    },
+    "sobol_043": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.0,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.896190042,
+        "phase_margin_min": 2.501306795304175,
+        "positive_slew_min": 0.0,
+        "power_max": 0.0,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 5.397496837304175
+    },
+    "sobol_044": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 1.973122133333333,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.1624987470588235,
+        "output_low": 0.0,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 7.135620880392157
+    },
+    "sobol_045": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 1.6704044833333331,
+        "negative_slew_min": 0.23680820154671603,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.99353332494,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 0.20353869220031215,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 6.104284702020362
+    },
+    "sobol_046": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 6.440134583333333,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.9999915278671601,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 12.440126111200493
+    },
+    "sobol_047": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.0,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.013667582352941247,
+        "output_low": 0.747365304,
+        "phase_margin_min": 1.5303370520577542,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 5.291369938410695
+    },
+    "sobol_048": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 6.169084033333334,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.15931948235294124,
+        "output_low": 0.42755384100000005,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 11.755957356686276
+    },
+    "sobol_049": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 3.339142516666667,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.999504326131,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 9.338646842797667
+    },
+    "sobol_050": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 5.6542252,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.999844282174,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 11.654069482174
+    },
+    "sobol_051": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.0,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.14556135882352939,
+        "output_low": 0.0,
+        "phase_margin_min": 0.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 3.1455613588235294
+    },
+    "sobol_052": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 1.483343695,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.99158080921,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 7.47492450421
+    },
+    "sobol_053": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 1.0900638066666668,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.1559231411764707,
+        "output_low": 0.0,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 6.245986947843138
+    },
+    "sobol_054": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.0,
+        "negative_slew_min": 0.0,
+        "operating_region": 1.0,
+        "output_high": 0.021118005882353005,
+        "output_low": 0.0,
+        "phase_margin_min": 0.0,
+        "positive_slew_min": 0.0,
+        "power_max": 0.0,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 1.021118005882353
+    },
+    "sobol_055": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 4.542609275,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.9996238533659999,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 10.542233128366
+    },
+    "sobol_056": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 2.8880611083333334,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.99808719593,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 8.886148304263333
+    },
+    "sobol_057": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.0,
+        "negative_slew_min": 0.5290361846343113,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.6890138809999999,
+        "phase_margin_min": 0.0,
+        "positive_slew_min": 0.5127265158624983,
+        "power_max": 0.0,
+        "ugf_min": 0.738090071251122
+      },
+      "robust_constraint_violation": 3.4688666527479315
+    },
+    "sobol_058": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.0,
+        "negative_slew_min": 0.43076688914013317,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.346089512,
+        "phase_margin_min": 0.0,
+        "positive_slew_min": 0.4130609625083633,
+        "power_max": 0.0,
+        "ugf_min": 0.21282852809480043
+      },
+      "robust_constraint_violation": 2.402745891743297
+    },
+    "sobol_059": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 11.699192583333334,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.1647038352941177,
+        "output_low": 0.0,
+        "phase_margin_min": 3.2714187549525655,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 19.135315173580018
+    },
+    "sobol_060": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 8.3321427,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.16469525294117643,
+        "output_low": 0.0,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 13.496837952941176
+    },
+    "sobol_061": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 2.181901675,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.9694894083000001,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 8.1513910833
+    },
+    "sobol_062": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 7.014699616666667,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0,
+        "output_low": 0.9999982506510999,
+        "phase_margin_min": 1.0,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 1.0
+      },
+      "robust_constraint_violation": 13.014697867317768
+    },
+    "sobol_063": {
+      "pvt_feasible": false,
+      "robust_constraint_components": {
+        "gain_min": 0.0,
+        "negative_slew_min": 1.0,
+        "operating_region": 1.0,
+        "output_high": 0.0558576588235294,
+        "output_low": 0.0,
+        "phase_margin_min": 1.3456561002064753,
+        "positive_slew_min": 1.0,
+        "power_max": 0.0,
+        "ugf_min": 0.0
+      },
+      "robust_constraint_violation": 4.401513759030005
+    }
+  },
+  "selected_specification_hash": "05b5c71863b852dc758cfed7643ace6aa9f6a7636856bf1eb09addef77681748",
+  "selection_rule": {
+    "if_no_row_is_in_band": "select_row_with_minimum_distance_to_closed_target_band",
+    "invariant_requirements": [
+      "all_required_measurements_and_statuses_valid_at_every_corner",
+      "operating_region_valid_at_every_corner",
+      "every_corner_logical_conjunction",
+      "no_averaged_metric_feasibility"
+    ],
+    "note": "The same completed Full-PVT Sobol matrix is evaluated against every row.",
+    "primary": "select_lowest_row_index_with_density_in_target_band",
+    "tie_break": "lower_row_index_stricter_specification"
+  },
+  "smoke_candidate_budget": 10,
+  "target_band_achieved": false,
+  "target_density_band": {
+    "lower": 0.001,
+    "upper": 0.02
+  }
+}
