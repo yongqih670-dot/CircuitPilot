@@ -1,0 +1,77 @@
+{
+  "corner_order_hash": "e07c17b9041c271e15d49d3362253db3a21fcd6eede169158dd18c7bb975fc56",
+  "gate_passed": true,
+  "schema_version": "task9_safe_short_circuit_replay_v1",
+  "summaries": {
+    "nominal_first": {
+      "candidate_count": 64,
+      "false_pvt_acceptance_count": 0,
+      "false_pvt_rejection_count": 0,
+      "feasibility_identity_count": 64,
+      "feasibility_identity_fraction": 1.0,
+      "full_totals": {
+        "ac_calls": 960,
+        "accumulated_ngspice_seconds": 2405.8340000022436,
+        "corners_completed": 960,
+        "corners_started": 960,
+        "op_calls": 960,
+        "process_calls": 2880,
+        "transient_calls": 960
+      },
+      "replay_totals": {
+        "ac_calls": 0.0,
+        "accumulated_ngspice_seconds": 52.640000000130385,
+        "corners_completed": 0.0,
+        "corners_started": 64.0,
+        "op_calls": 64.0,
+        "process_calls": 64.0,
+        "transient_calls": 0.0
+      },
+      "savings": {
+        "ac_calls": 960.0,
+        "accumulated_ngspice_seconds": 2353.194000002113,
+        "corners_completed": 960.0,
+        "corners_started": 896.0,
+        "op_calls": 896.0,
+        "process_calls": 2816.0,
+        "transient_calls": 960.0
+      },
+      "simulator_time_savings_fraction": 0.9781198536557048
+    },
+    "static_worst_first": {
+      "candidate_count": 64,
+      "false_pvt_acceptance_count": 0,
+      "false_pvt_rejection_count": 0,
+      "feasibility_identity_count": 64,
+      "feasibility_identity_fraction": 1.0,
+      "full_totals": {
+        "ac_calls": 960,
+        "accumulated_ngspice_seconds": 2405.8340000022436,
+        "corners_completed": 960,
+        "corners_started": 960,
+        "op_calls": 960,
+        "process_calls": 2880,
+        "transient_calls": 960
+      },
+      "replay_totals": {
+        "ac_calls": 1.0,
+        "accumulated_ngspice_seconds": 54.657999999821186,
+        "corners_completed": 0.0,
+        "corners_started": 64.0,
+        "op_calls": 64.0,
+        "process_calls": 65.0,
+        "transient_calls": 0.0
+      },
+      "savings": {
+        "ac_calls": 959.0,
+        "accumulated_ngspice_seconds": 2351.1760000024224,
+        "corners_completed": 960.0,
+        "corners_started": 896.0,
+        "op_calls": 896.0,
+        "process_calls": 2815.0,
+        "transient_calls": 960.0
+      },
+      "simulator_time_savings_fraction": 0.9772810592918006
+    }
+  }
+}
