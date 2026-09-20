@@ -1,0 +1,77 @@
+schema_version: task9_pvt_specification_ladder_v1
+status: preregistered_before_nominal_gap_and_calibration
+calibration_density_target:
+  lower_fraction_inclusive: 0.001
+  upper_fraction_inclusive: 0.020
+selection_rule:
+  primary: select_lowest_row_index_with_density_in_target_band
+  if_no_row_is_in_band: select_row_with_minimum_distance_to_closed_target_band
+  tie_break: lower_row_index_stricter_specification
+  invariant_requirements:
+    - all_required_measurements_and_statuses_valid_at_every_corner
+    - operating_region_valid_at_every_corner
+    - every_corner_logical_conjunction
+    - no_averaged_metric_feasibility
+  note: The same completed Full-PVT Sobol matrix is evaluated against every row.
+rows:
+  - row: 0
+    label: exact_task7_thresholds
+    constraints:
+      gain_min_db: 12.0
+      ugf_min_hz: 5.0e5
+      phase_margin_min_deg: 35.0
+      power_max_w: 1.5e-3
+      positive_slew_min_v_per_s: 5.0e5
+      negative_slew_min_v_per_s: 5.0e5
+      output_low_v: 0.10
+      output_high_v: 1.70
+      operating_region_valid_min: 1.0
+  - row: 1
+    label: mechanical_relaxation_1
+    constraints:
+      gain_min_db: 11.0
+      ugf_min_hz: 4.0e5
+      phase_margin_min_deg: 32.5
+      power_max_w: 1.75e-3
+      positive_slew_min_v_per_s: 4.0e5
+      negative_slew_min_v_per_s: 4.0e5
+      output_low_v: 0.08
+      output_high_v: 1.72
+      operating_region_valid_min: 1.0
+  - row: 2
+    label: mechanical_relaxation_2
+    constraints:
+      gain_min_db: 10.0
+      ugf_min_hz: 3.0e5
+      phase_margin_min_deg: 30.0
+      power_max_w: 2.0e-3
+      positive_slew_min_v_per_s: 3.0e5
+      negative_slew_min_v_per_s: 3.0e5
+      output_low_v: 0.06
+      output_high_v: 1.74
+      operating_region_valid_min: 1.0
+  - row: 3
+    label: mechanical_relaxation_3
+    constraints:
+      gain_min_db: 9.0
+      ugf_min_hz: 2.0e5
+      phase_margin_min_deg: 27.5
+      power_max_w: 2.25e-3
+      positive_slew_min_v_per_s: 2.0e5
+      negative_slew_min_v_per_s: 2.0e5
+      output_low_v: 0.04
+      output_high_v: 1.76
+      operating_region_valid_min: 1.0
+  - row: 4
+    label: mechanical_relaxation_4
+    constraints:
+      gain_min_db: 8.0
+      ugf_min_hz: 1.0e5
+      phase_margin_min_deg: 25.0
+      power_max_w: 2.5e-3
+      positive_slew_min_v_per_s: 1.0e5
+      negative_slew_min_v_per_s: 1.0e5
+      output_low_v: 0.02
+      output_high_v: 1.78
+      operating_region_valid_min: 1.0
+
