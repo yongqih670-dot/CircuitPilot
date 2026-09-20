@@ -53,6 +53,19 @@ def _atomic_json(path: Path, payload: Any) -> None:
     temporary.replace(path)
 
 
+def _stored_run_directory(suite: Path, run_directory: Path) -> str:
+    """Store suite-relative run paths so committed evidence remains portable."""
+    try:
+        return run_directory.resolve().relative_to(suite.resolve()).as_posix()
+    except ValueError:
+        return str(run_directory.resolve())
+
+
+def _resolved_run_directory(suite: Path, stored: str) -> Path:
+    path = Path(stored)
+    return path.resolve() if path.is_absolute() else (suite / path).resolve()
+
+
 def _git_provenance(workspace: Path) -> dict[str, Any]:
     try:
         commit = subprocess.run(
@@ -272,7 +285,7 @@ def run_task9_suite(
         if expected_definition and recovered_definition == expected_definition.semantic_dict() and recovered_summary.get("completed"):
             state["cells"][key] = {
                 "status": "success",
-                "run_directory": str(run_directory),
+                "run_directory": _stored_run_directory(suite, run_directory),
                 "run_id": recovered_summary["run_id"],
             }
     _atomic_json(state_path, state)
@@ -286,7 +299,12 @@ def run_task9_suite(
         cell = state["cells"].get(key)
         print(f"starting {key}", flush=True)
         return execute_task9_run(
-            definition, resume_directory=None if cell is None else cell["run_directory"]
+            definition,
+            resume_directory=(
+                None
+                if cell is None
+                else _resolved_run_directory(suite, cell["run_directory"])
+            ),
         )
 
     with ThreadPoolExecutor(max_workers=workers) as pool:
@@ -296,7 +314,7 @@ def run_task9_suite(
             run_directory, summary = future.result()
             state["cells"][key] = {
                 "status": "success" if summary["completed"] else "incomplete",
-                "run_directory": str(run_directory),
+                "run_directory": _stored_run_directory(suite, run_directory),
                 "run_id": summary["run_id"],
             }
             _atomic_json(state_path, state)
@@ -305,17 +323,22 @@ def run_task9_suite(
                 raise ResearchExperimentError(f"Task 9 cell {key} stopped early")
     summaries = []
     for cell in state["cells"].values():
+        run_directory = _resolved_run_directory(suite, cell["run_directory"])
         summary = json.loads(
-            (Path(cell["run_directory"]) / "summary" / "experiment_summary.json").read_text(encoding="utf-8")
+            (run_directory / "summary" / "experiment_summary.json").read_text(encoding="utf-8")
         )
-        summary["_run_directory"] = cell["run_directory"]
+        summary["_run_directory"] = str(run_directory)
         summaries.append(summary)
     summaries.sort(key=lambda row: (row["policy"], row["method"], int(row["seed"])))
     fairness = validate_fairness(
         summaries, design=design, methods=selected_methods, seeds=selected_seeds
     )
     fairness["execution_commits"] = state["git_commits"]
-    _atomic_json(suite / "cell_summaries.json", summaries)
+    public_summaries = [
+        {name: value for name, value in summary.items() if name != "_run_directory"}
+        for summary in summaries
+    ]
+    _atomic_json(suite / "cell_summaries.json", public_summaries)
     _atomic_json(suite / "fairness_validation.json", fairness)
     _consolidate_evaluations(summaries, suite / "evaluations.csv")
     state["status"] = "success"
