@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+import csv
+import gzip
 from pathlib import Path
 
 import pytest
 
 from circuitpilot.experiments.config import load_experiment_config
+from circuitpilot.experiments import task9_batch
 from circuitpilot.experiments import task9_runner
-from circuitpilot.experiments.task9_batch import validate_fairness
+from circuitpilot.experiments.task9_batch import _consolidate_evaluations, validate_fairness
 from circuitpilot.experiments.task9_evaluator import Task9Evaluation
 from circuitpilot.experiments.task9_runner import (
     Task9RunDefinition,
@@ -154,3 +157,20 @@ def test_paired_fairness_accepts_only_policy_hash_difference(tmp_path) -> None:
     assert report["status"] == "pass"
     assert summaries[0]["fairness_identity"]["policy_hash"] == policy_hash("full")
     assert summaries[1]["fairness_identity"]["policy_hash"] == policy_hash("hierarchical")
+
+
+def test_large_consolidated_evidence_is_losslessly_gzipped(monkeypatch, tmp_path) -> None:
+    run = tmp_path / "run"
+    run.mkdir()
+    with (run / "evaluations.csv").open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=["candidate", "status"])
+        writer.writeheader()
+        writer.writerow({"candidate": 1, "status": "success"})
+    monkeypatch.setattr(task9_batch, "CONSOLIDATED_CSV_GZIP_THRESHOLD_BYTES", 1)
+    destination = tmp_path / "evaluations.csv"
+    _consolidate_evaluations([{"_run_directory": str(run)}], destination)
+    compressed = tmp_path / "evaluations.csv.gz"
+    assert compressed.is_file()
+    assert not destination.exists()
+    with gzip.open(compressed, "rt", encoding="utf-8", newline="") as handle:
+        assert list(csv.DictReader(handle)) == [{"candidate": "1", "status": "success"}]

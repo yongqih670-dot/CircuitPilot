@@ -5,8 +5,10 @@ from __future__ import annotations
 import csv
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
+import gzip
 import json
 from pathlib import Path
+import shutil
 import subprocess
 from typing import Any, Iterable
 
@@ -44,6 +46,7 @@ DESIGNS = {
     },
 }
 POLICIES = ("full", "hierarchical")
+CONSOLIDATED_CSV_GZIP_THRESHOLD_BYTES = 90_000_000
 
 
 def _atomic_json(path: Path, payload: Any) -> None:
@@ -187,6 +190,22 @@ def _consolidate_evaluations(summaries: list[dict[str, Any]], destination: Path)
         writer.writeheader()
         writer.writerows(rows)
     temporary.replace(destination)
+    compressed = destination.with_suffix(destination.suffix + ".gz")
+    if destination.stat().st_size < CONSOLIDATED_CSV_GZIP_THRESHOLD_BYTES:
+        compressed.unlink(missing_ok=True)
+        return
+    compressed_temporary = compressed.with_name(f".{compressed.name}.tmp")
+    with destination.open("rb") as source, compressed_temporary.open("wb") as raw_target:
+        with gzip.GzipFile(
+            filename="",
+            mode="wb",
+            compresslevel=9,
+            fileobj=raw_target,
+            mtime=0,
+        ) as target:
+            shutil.copyfileobj(source, target)
+    compressed_temporary.replace(compressed)
+    destination.unlink()
 
 
 def run_task9_suite(
