@@ -76,7 +76,7 @@ def _git_provenance(workspace: Path) -> dict[str, Any]:
         ).stdout.strip()
         status = subprocess.run(
             ["git", "status", "--porcelain"], cwd=workspace, check=True, text=True, capture_output=True
-        ).stdout.strip()
+        ).stdout.rstrip()
     except (OSError, subprocess.CalledProcessError) as exc:
         raise ResearchExperimentError(f"cannot collect Task 9 git provenance: {exc}") from exc
     return {"commit": commit, "dirty": bool(status), "status_porcelain": status}
