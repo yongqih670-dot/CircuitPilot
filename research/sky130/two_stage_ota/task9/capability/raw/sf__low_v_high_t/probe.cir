@@ -1,0 +1,20 @@
+* CircuitPilot Task 9 PVT capability probe
+.option scale=1u
+.param mc_mm_switch=0 mc_pr_switch=0
+.include "invariant.spice"
+.include "sky130_fd_pr__nfet_01v8__sf.corner.spice"
+.include "sky130_fd_pr__pfet_01v8__sf.corner.spice"
+.temp 125
+VDD vdd 0 DC 1.62
+VGN gn 0 DC 0.9
+VGP gp 0 DC 0.9
+XMN vdd gn 0 0 sky130_fd_pr__nfet_01v8 W=1 L=0.15
+XMP 0 gp vdd vdd sky130_fd_pr__pfet_01v8 W=1 L=0.15
+.control
+set wr_singlescale
+set wr_vecnames
+op
+wrdata probe.dat v(vdd) i(VDD) @m.xmn.msky130_fd_pr__nfet_01v8[vth] @m.xmn.msky130_fd_pr__nfet_01v8[gm] @m.xmp.msky130_fd_pr__pfet_01v8[vth] @m.xmp.msky130_fd_pr__pfet_01v8[gm]
+quit
+.endc
+.end
