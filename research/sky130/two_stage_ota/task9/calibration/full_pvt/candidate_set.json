@@ -1,0 +1,1541 @@
+{
+  "designs": [
+    {
+      "design_id": "sobol_000",
+      "parameters": {
+        "compensation_capacitance_f": 1.672762815079795e-12,
+        "first_stage_load_length_m": 4.806227213703095e-07,
+        "first_stage_load_width_m": 2.7821071271823675e-05,
+        "input_pair_length_m": 6.50368187855929e-07,
+        "input_pair_width_m": 1.8389510445113257e-05,
+        "second_load_bias_v": 0.38249941952526567,
+        "second_load_length_m": 4.7679934180341655e-07,
+        "second_load_width_m": 1.1356710062942612e-06,
+        "second_stage_length_m": 6.35507742734626e-07,
+        "second_stage_width_m": 3.644973810528381e-05,
+        "tail_length_m": 2.465994026977569e-07,
+        "tail_width_m": 7.162600817079124e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 0,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_001",
+      "parameters": {
+        "compensation_capacitance_f": 3.235157567720833e-13,
+        "first_stage_load_length_m": 7.575070163235069e-07,
+        "first_stage_load_width_m": 4.648975245637245e-06,
+        "input_pair_length_m": 1.5313013745471835e-07,
+        "input_pair_width_m": 1.95929180678445e-06,
+        "second_load_bias_v": 0.7942860576324164,
+        "second_load_length_m": 1.0097729220986364e-06,
+        "second_load_width_m": 3.902953128201822e-05,
+        "second_stage_length_m": 1.0452937063761055e-06,
+        "second_stage_width_m": 3.700701189661613e-06,
+        "tail_length_m": 7.609783745370804e-07,
+        "tail_width_m": 1.1165766253762478e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 1,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_002",
+      "parameters": {
+        "compensation_capacitance_f": 1.1859715870362002e-13,
+        "first_stage_load_length_m": 3.0112584703601893e-07,
+        "first_stage_load_width_m": 8.018733963640077e-06,
+        "input_pair_length_m": 8.383320439141243e-07,
+        "input_pair_width_m": 4.029973876866137e-06,
+        "second_load_bias_v": 0.9843989960849284,
+        "second_load_length_m": 8.078270039521158e-07,
+        "second_load_width_m": 1.4396386977889744e-05,
+        "second_stage_length_m": 7.463196224067359e-07,
+        "second_stage_width_m": 1.6295699410030697e-05,
+        "tail_length_m": 1.1695352826733142e-06,
+        "tail_width_m": 5.521400689403186e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 2,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_003",
+      "parameters": {
+        "compensation_capacitance_f": 7.286236935072966e-13,
+        "first_stage_load_length_m": 1.0702697436790913e-06,
+        "first_stage_load_width_m": 8.797740547085794e-07,
+        "input_pair_length_m": 4.456712726037949e-07,
+        "input_pair_width_m": 6.2835965852282255e-06,
+        "second_load_bias_v": 0.6840856431983411,
+        "second_load_length_m": 4.056067383382469e-07,
+        "second_load_width_m": 4.045529114221499e-06,
+        "second_stage_length_m": 4.021741817705333e-07,
+        "second_stage_width_m": 1.01164564311641e-06,
+        "tail_length_m": 6.582344873808323e-07,
+        "tail_width_m": 3.4781613228246265e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 3,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_004",
+      "parameters": {
+        "compensation_capacitance_f": 9.713317581850053e-13,
+        "first_stage_load_length_m": 9.91621646331623e-07,
+        "first_stage_load_width_m": 2.212062454731619e-06,
+        "input_pair_length_m": 9.306066645774989e-07,
+        "input_pair_width_m": 8.421587246923618e-06,
+        "second_load_bias_v": 1.1478614760562778,
+        "second_load_length_m": 1.0801065989769994e-06,
+        "second_load_width_m": 7.3658300142277965e-06,
+        "second_stage_length_m": 9.195954103488475e-07,
+        "second_stage_width_m": 9.662511764577518e-06,
+        "tail_length_m": 4.0427396404556925e-07,
+        "tail_width_m": 1.9498854837643063e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 4,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_005",
+      "parameters": {
+        "compensation_capacitance_f": 5.002795320426577e-14,
+        "first_stage_load_length_m": 1.898034410085529e-07,
+        "first_stage_load_width_m": 2.1454104418392672e-05,
+        "input_pair_length_m": 5.662079154048114e-07,
+        "input_pair_width_m": 2.213102594247542e-06,
+        "second_load_bias_v": 0.49092123107984664,
+        "second_load_length_m": 6.625591014046221e-07,
+        "second_load_width_m": 6.017616208135855e-06,
+        "second_stage_length_m": 2.4732546256855126e-07,
+        "second_stage_width_m": 1.651901475981314e-06,
+        "tail_length_m": 9.314365189522503e-07,
+        "tail_width_m": 9.132193405719622e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 5,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_006",
+      "parameters": {
+        "compensation_capacitance_f": 2.425441257706068e-13,
+        "first_stage_load_length_m": 9.106060833670198e-07,
+        "first_stage_load_width_m": 1.7956926629133868e-06,
+        "input_pair_length_m": 7.439791208133101e-07,
+        "input_pair_width_m": 9.62263022014638e-07,
+        "second_load_bias_v": 0.3376854756847024,
+        "second_load_length_m": 2.035123727750033e-07,
+        "second_load_width_m": 2.219577980654865e-06,
+        "second_stage_length_m": 5.298752857837825e-07,
+        "second_stage_width_m": 2.1233585464347265e-05,
+        "tail_length_m": 1.0149389076512307e-06,
+        "tail_width_m": 1.958752230390961e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 6,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_007",
+      "parameters": {
+        "compensation_capacitance_f": 3.9677445086156115e-12,
+        "first_stage_load_length_m": 6.666564501821994e-07,
+        "first_stage_load_width_m": 1.00988581700262e-05,
+        "input_pair_length_m": 2.7170790936797856e-07,
+        "input_pair_width_m": 2.2039753509162682e-05,
+        "second_load_bias_v": 0.8687729560770094,
+        "second_load_length_m": 7.538319384679198e-07,
+        "second_load_width_m": 2.6239652315053773e-05,
+        "second_stage_length_m": 1.1365367579273879e-06,
+        "second_stage_width_m": 6.561292296324466e-06,
+        "tail_length_m": 4.846981722861529e-07,
+        "tail_width_m": 4.40344714457638e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 7,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_008",
+      "parameters": {
+        "compensation_capacitance_f": 2.127322928300316e-12,
+        "first_stage_load_length_m": 2.682307379320264e-07,
+        "first_stage_load_width_m": 1.659157037788997e-06,
+        "input_pair_length_m": 8.544091886375099e-07,
+        "input_pair_width_m": 2.8789010454103293e-05,
+        "second_load_bias_v": 0.9378708799835295,
+        "second_load_length_m": 2.827762867324054e-07,
+        "second_load_width_m": 9.997407894045943e-06,
+        "second_stage_length_m": 8.17214688565582e-07,
+        "second_stage_width_m": 7.3805261542740335e-06,
+        "tail_length_m": 5.829767477698623e-07,
+        "tail_width_m": 1.471983005469594e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 8,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_009",
+      "parameters": {
+        "compensation_capacitance_f": 4.0711482356374044e-13,
+        "first_stage_load_length_m": 1.0373025367967784e-06,
+        "first_stage_load_width_m": 1.4236657109752296e-05,
+        "input_pair_length_m": 3.7045593471266326e-07,
+        "input_pair_width_m": 1.265677388767724e-06,
+        "second_load_bias_v": 0.2806697238702327,
+        "second_load_length_m": 9.310422273818404e-07,
+        "second_load_width_m": 4.208508012470661e-06,
+        "second_stage_length_m": 2.103168959263712e-07,
+        "second_stage_width_m": 2.160330019306611e-06,
+        "tail_length_m": 1.1135349097196012e-06,
+        "tail_width_m": 9.661607954699372e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 9,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_010",
+      "parameters": {
+        "compensation_capacitance_f": 9.445513089495157e-14,
+        "first_stage_load_length_m": 5.788704610895364e-07,
+        "first_stage_load_width_m": 3.545227417965019e-06,
+        "input_pair_length_m": 6.210050402209163e-07,
+        "input_pair_width_m": 2.6307372445825084e-06,
+        "second_load_bias_v": 0.602752905478701,
+        "second_load_length_m": 1.001337363710627e-06,
+        "second_load_width_m": 1.7779476931757433e-06,
+        "second_stage_length_m": 4.3531742328777905e-07,
+        "second_stage_width_m": 2.7684030990578347e-05,
+        "tail_length_m": 7.019099344499408e-07,
+        "tail_width_m": 2.6820704509137413e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 10,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_011",
+      "parameters": {
+        "compensation_capacitance_f": 5.742182379435574e-13,
+        "first_stage_load_length_m": 8.55826853821054e-07,
+        "first_stage_load_width_m": 1.770170683506784e-05,
+        "input_pair_length_m": 2.41628254763782e-07,
+        "input_pair_width_m": 1.0080431072187726e-05,
+        "second_load_bias_v": 1.1334635362494736,
+        "second_load_length_m": 4.848501283675432e-07,
+        "second_load_width_m": 3.1224103714143506e-05,
+        "second_stage_length_m": 1.107855735020712e-06,
+        "second_stage_width_m": 5.038235154221184e-06,
+        "tail_length_m": 1.744259397033602e-07,
+        "tail_width_m": 4.302321341265062e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 11,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_012",
+      "parameters": {
+        "compensation_capacitance_f": 1.3620169145452547e-12,
+        "first_stage_load_length_m": 6.810642858501522e-07,
+        "first_stage_load_width_m": 6.818970743766684e-06,
+        "input_pair_length_m": 7.1296877739951e-07,
+        "input_pair_width_m": 5.379455256038007e-06,
+        "second_load_bias_v": 0.6474653288256377,
+        "second_load_length_m": 7.291986550670116e-07,
+        "second_load_width_m": 9.07603640566107e-07,
+        "second_stage_length_m": 6.065743795596063e-07,
+        "second_stage_width_m": 4.767211338049397e-05,
+        "tail_length_m": 4.2845059689134356e-07,
+        "tail_width_m": 7.075109556096299e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 12,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_013",
+      "parameters": {
+        "compensation_capacitance_f": 7.081366344325141e-14,
+        "first_stage_load_length_m": 4.3705857661552724e-07,
+        "first_stage_load_width_m": 1.2879360096442768e-06,
+        "input_pair_length_m": 3.6185320345684886e-07,
+        "input_pair_width_m": 3.4259074035954696e-06,
+        "second_load_bias_v": 1.0590490675065665,
+        "second_load_length_m": 2.2801773268729448e-07,
+        "second_load_width_m": 4.6357467221490755e-05,
+        "second_stage_length_m": 9.509881841484457e-07,
+        "second_stage_width_m": 2.8268570634553435e-06,
+        "tail_length_m": 9.399446581955999e-07,
+        "tail_width_m": 1.5392924457381037e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 13,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_014",
+      "parameters": {
+        "compensation_capacitance_f": 1.7173212804972258e-13,
+        "first_stage_load_length_m": 1.1558108132332563e-06,
+        "first_stage_load_width_m": 3.5825018390709396e-05,
+        "input_pair_length_m": 9.483309860806912e-07,
+        "input_pair_width_m": 1.4740783794702672e-06,
+        "second_load_bias_v": 0.7743069927673787,
+        "second_load_length_m": 5.55958402622491e-07,
+        "second_load_width_m": 1.957611646218364e-05,
+        "second_stage_length_m": 7.095633999444543e-07,
+        "second_stage_width_m": 1.2512011524917105e-05,
+        "tail_length_m": 8.595102740451693e-07,
+        "tail_width_m": 5.77791583280641e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 14,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_015",
+      "parameters": {
+        "compensation_capacitance_f": 2.8359195407170836e-12,
+        "first_stage_load_length_m": 3.5404868395999073e-07,
+        "first_stage_load_width_m": 4.427112794620914e-06,
+        "input_pair_length_m": 4.893453817348927e-07,
+        "input_pair_width_m": 1.3738363802388723e-05,
+        "second_load_bias_v": 0.4739066789392382,
+        "second_load_length_m": 1.1868352212477476e-06,
+        "second_load_width_m": 2.8358425652964007e-06,
+        "second_stage_length_m": 2.995411158073693e-07,
+        "second_stage_width_m": 1.318902677162719e-06,
+        "tail_length_m": 3.4494204944930967e-07,
+        "tail_width_m": 2.6079633425925985e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 15,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_016",
+      "parameters": {
+        "compensation_capacitance_f": 1.1171977431740715e-12,
+        "first_stage_load_length_m": 8.828063044231385e-07,
+        "first_stage_load_width_m": 1.2412519701647128e-05,
+        "input_pair_length_m": 9.988209296017884e-07,
+        "input_pair_width_m": 1.2638561355514937e-05,
+        "second_load_bias_v": 0.45084781139157715,
+        "second_load_length_m": 6.340751856565474e-07,
+        "second_load_width_m": 5.307174881176035e-06,
+        "second_stage_length_m": 6.935960127040743e-07,
+        "second_stage_width_m": 3.3507287418495274e-06,
+        "tail_length_m": 1.0024838267359881e-06,
+        "tail_width_m": 2.9997063536171418e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 16,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_017",
+      "parameters": {
+        "compensation_capacitance_f": 5.811569468706946e-14,
+        "first_stage_load_length_m": 6.346905211452393e-07,
+        "first_stage_load_width_m": 1.4658000237802027e-06,
+        "input_pair_length_m": 5.016252342611551e-07,
+        "input_pair_width_m": 1.356272319602436e-06,
+        "second_load_bias_v": 0.7509872317779809,
+        "second_load_length_m": 1.1024281573947519e-06,
+        "second_load_width_m": 1.1077462589692305e-05,
+        "second_stage_length_m": 3.1637364509515463e-07,
+        "second_stage_width_m": 4.0239743176003626e-05,
+        "tail_length_m": 4.6448857868090266e-07,
+        "tail_width_m": 4.74212649278662e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 17,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_018",
+      "parameters": {
+        "compensation_capacitance_f": 2.790358689023292e-13,
+        "first_stage_load_length_m": 9.65845234505832e-07,
+        "first_stage_load_width_m": 1.5231142127881132e-05,
+        "input_pair_length_m": 7.023243602830916e-07,
+        "input_pair_width_m": 3.940863843633128e-06,
+        "second_load_bias_v": 1.023001975333318,
+        "second_load_length_m": 7.807837686035781e-07,
+        "second_load_width_m": 3.0280701912756574e-05,
+        "second_stage_length_m": 5.589519917964935e-07,
+        "second_stage_width_m": 8.568130394843399e-07,
+        "tail_length_m": 2.844576558563858e-07,
+        "tail_width_m": 1.3385530630951186e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 18,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_019",
+      "parameters": {
+        "compensation_capacitance_f": 4.610645448519985e-12,
+        "first_stage_load_length_m": 1.599890529178083e-07,
+        "first_stage_load_width_m": 3.102667115969475e-06,
+        "input_pair_length_m": 3.097310733515769e-07,
+        "input_pair_width_m": 6.188961726509825e-06,
+        "second_load_bias_v": 0.6111573432106525,
+        "second_load_length_m": 1.8270287280902267e-07,
+        "second_load_width_m": 1.5024400363116776e-06,
+        "second_stage_length_m": 1.0017828428652138e-06,
+        "second_stage_width_m": 1.9229810144063348e-05,
+        "tail_length_m": 8.214255125261842e-07,
+        "tail_width_m": 8.62257745931673e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 19,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_020",
+      "parameters": {
+        "compensation_capacitance_f": 1.943820224009304e-12,
+        "first_stage_load_length_m": 3.4283157885074614e-07,
+        "first_stage_load_width_m": 1.1649871212234223e-06,
+        "input_pair_length_m": 5.818270327057689e-07,
+        "input_pair_width_m": 1.1587886619261732e-05,
+        "second_load_bias_v": 1.097372906981036,
+        "second_load_length_m": 1.0499761689919978e-06,
+        "second_load_width_m": 5.8695559988959595e-05,
+        "second_stage_length_m": 4.5130083616822957e-07,
+        "second_stage_width_m": 1.4955792102949262e-06,
+        "tail_length_m": 1.0918881678488105e-06,
+        "tail_width_m": 4.958879418892861e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 20,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_021",
+      "parameters": {
+        "compensation_capacitance_f": 3.7219318218566706e-13,
+        "first_stage_load_length_m": 1.116013451758772e-06,
+        "first_stage_load_width_m": 6.087121447855417e-06,
+        "input_pair_length_m": 2.174171374645084e-07,
+        "input_pair_width_m": 3.023351145200487e-06,
+        "second_load_bias_v": 0.5664593661669641,
+        "second_load_length_m": 4.34539305511862e-07,
+        "second_load_width_m": 1.001610340345977e-06,
+        "second_stage_length_m": 1.0910071800928562e-06,
+        "second_stage_width_m": 1.066656015007155e-05,
+        "tail_length_m": 5.719356352463364e-07,
+        "tail_width_m": 2.1966894367093195e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 21,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_022",
+      "parameters": {
+        "compensation_capacitance_f": 1.3777127768137558e-13,
+        "first_stage_load_length_m": 5.242802271153777e-07,
+        "first_stage_load_width_m": 4.027217776972209e-06,
+        "input_pair_length_m": 8.803076022304594e-07,
+        "input_pair_width_m": 1.1635795760282324e-06,
+        "second_load_bias_v": 0.2575674324762076,
+        "second_load_length_m": 3.6589416470378635e-07,
+        "second_load_width_m": 2.738385663784846e-06,
+        "second_stage_length_m": 8.64853086322546e-07,
+        "second_stage_width_m": 5.557468504094246e-06,
+        "tail_length_m": 1.9402591749094425e-07,
+        "tail_width_m": 8.384176689436092e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 22,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_023",
+      "parameters": {
+        "compensation_capacitance_f": 8.380490803023533e-13,
+        "first_stage_load_length_m": 8.053306721616535e-07,
+        "first_stage_load_width_m": 3.2040463302241066e-05,
+        "input_pair_length_m": 4.0794985676184293e-07,
+        "input_pair_width_m": 2.6459752919071733e-05,
+        "second_load_bias_v": 0.9145656785462052,
+        "second_load_length_m": 8.495843506883829e-07,
+        "second_load_width_m": 1.6613769072225786e-05,
+        "second_stage_length_m": 1.59506227215752e-07,
+        "second_stage_width_m": 2.5058309148201985e-05,
+        "tail_length_m": 7.150058375671506e-07,
+        "tail_width_m": 1.7976708415572672e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 23,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_024",
+      "parameters": {
+        "compensation_capacitance_f": 1.5791937273178756e-12,
+        "first_stage_load_length_m": 1.1954300923738629e-06,
+        "first_stage_load_width_m": 5.18586108705825e-06,
+        "input_pair_length_m": 7.781766453292219e-07,
+        "input_pair_width_m": 2.025766499929315e-05,
+        "second_load_bias_v": 0.8918762065470218,
+        "second_load_length_m": 2.565070854965597e-07,
+        "second_load_width_m": 4.02873869682777e-05,
+        "second_stage_length_m": 4.801100348588078e-07,
+        "second_stage_width_m": 1.955954039429774e-06,
+        "tail_length_m": 8.792273285798728e-07,
+        "tail_width_m": 3.5887788436325636e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 24,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_025",
+      "parameters": {
+        "compensation_capacitance_f": 8.128702270384469e-14,
+        "first_stage_load_length_m": 3.8950181300751863e-07,
+        "first_stage_load_width_m": 3.0511624975729527e-05,
+        "input_pair_length_m": 2.9425885616801674e-07,
+        "input_pair_width_m": 8.845921378869351e-07,
+        "second_load_bias_v": 0.3609916432760656,
+        "second_load_length_m": 7.068516324274241e-07,
+        "second_load_width_m": 1.3453379582529212e-06,
+        "second_stage_length_m": 1.1851805191487073e-06,
+        "second_stage_width_m": 8.147731511270062e-06,
+        "tail_length_m": 3.5792997409589587e-07,
+        "tail_width_m": 2.2279860715253435e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 25,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_026",
+      "parameters": {
+        "compensation_capacitance_f": 1.9905226867301815e-13,
+        "first_stage_load_length_m": 7.186061206273733e-07,
+        "first_stage_load_width_m": 9.90674405691335e-07,
+        "input_pair_length_m": 9.096887023188173e-07,
+        "input_pair_width_m": 2.5435264835197817e-06,
+        "second_load_bias_v": 0.5270127061754465,
+        "second_load_length_m": 1.159889954701066e-06,
+        "second_load_width_m": 3.2114200619064846e-06,
+        "second_stage_length_m": 9.017334810923785e-07,
+        "second_stage_width_m": 4.267018284925148e-06,
+        "tail_length_m": 5.389621610753238e-07,
+        "tail_width_m": 1.120249843643191e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 26,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_027",
+      "parameters": {
+        "compensation_capacitance_f": 3.254552247610426e-12,
+        "first_stage_load_length_m": 4.705624351277947e-07,
+        "first_stage_load_width_m": 8.911111811946766e-06,
+        "input_pair_length_m": 5.303741321898996e-07,
+        "input_pair_width_m": 9.680444535270298e-06,
+        "second_load_bias_v": 1.1841558682732285,
+        "second_load_length_m": 5.767413118388504e-07,
+        "second_load_width_m": 1.3006257655405433e-05,
+        "second_stage_length_m": 2.622714685276151e-07,
+        "second_stage_width_m": 3.266738962750953e-05,
+        "tail_length_m": 1.0592361256945878e-06,
+        "tail_width_m": 1.7138940937372788e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 27,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_028",
+      "parameters": {
+        "compensation_capacitance_f": 2.4413319642407333e-12,
+        "first_stage_load_length_m": 5.572584469802677e-07,
+        "first_stage_load_width_m": 2.4410461408191882e-05,
+        "input_pair_length_m": 7.895022582262753e-07,
+        "input_pair_width_m": 7.229555270967293e-06,
+        "second_load_bias_v": 0.7201336944475769,
+        "second_load_length_m": 8.908163951709866e-07,
+        "second_load_width_m": 6.238365034242702e-06,
+        "second_stage_length_m": 7.961009067948907e-07,
+        "second_stage_width_m": 2.559268149588463e-06,
+        "tail_length_m": 7.887093365192413e-07,
+        "tail_width_m": 2.8406034394430994e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 28,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_029",
+      "parameters": {
+        "compensation_capacitance_f": 4.718767391272472e-13,
+        "first_stage_load_length_m": 8.382528159767388e-07,
+        "first_stage_load_width_m": 2.5599810232821703e-06,
+        "input_pair_length_m": 4.3837189041078086e-07,
+        "input_pair_width_m": 4.635477056834172e-06,
+        "second_load_bias_v": 1.0207079478539525,
+        "second_load_length_m": 3.2504689204506577e-07,
+        "second_load_width_m": 8.688204129332051e-06,
+        "second_stage_length_m": 3.535143870860338e-07,
+        "second_stage_width_m": 5.2623975322022006e-05,
+        "tail_length_m": 2.515482216607779e-07,
+        "tail_width_m": 6.26722452517349e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 29,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_030",
+      "parameters": {
+        "compensation_capacitance_f": 1.0842408908052918e-13,
+        "first_stage_load_length_m": 2.4446868491359053e-07,
+        "first_stage_load_width_m": 1.1468817598948506e-05,
+        "input_pair_length_m": 6.593524534720927e-07,
+        "input_pair_width_m": 1.8028069697705979e-06,
+        "second_load_bias_v": 0.8173457710072398,
+        "second_load_length_m": 5.245412432122975e-07,
+        "second_load_width_m": 2.0745431819410337e-05,
+        "second_stage_length_m": 6.533856898080557e-07,
+        "second_stage_width_m": 1.117082948248812e-06,
+        "tail_length_m": 6.28456737846136e-07,
+        "tail_width_m": 1.3668515338561039e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 30,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_031",
+      "parameters": {
+        "compensation_capacitance_f": 6.657726724467935e-13,
+        "first_stage_load_length_m": 1.0177066338714212e-06,
+        "first_stage_load_width_m": 2.066396606093326e-06,
+        "input_pair_length_m": 2.0027180355973542e-07,
+        "input_pair_width_m": 1.6916448747972736e-05,
+        "second_load_bias_v": 0.40582003341987727,
+        "second_load_length_m": 9.595894594676792e-07,
+        "second_load_width_m": 2.0133840832823216e-06,
+        "second_stage_length_m": 1.030331682600081e-06,
+        "second_stage_width_m": 1.4765303563303728e-05,
+        "tail_length_m": 1.1666412464808673e-06,
+        "tail_width_m": 6.308884881313608e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 31,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_032",
+      "parameters": {
+        "compensation_capacitance_f": 7.2359679380954e-14,
+        "first_stage_load_length_m": 7.821958819404244e-07,
+        "first_stage_load_width_m": 3.3540270235778136e-06,
+        "input_pair_length_m": 8.215342187788336e-07,
+        "input_pair_width_m": 1.5426902255124516e-05,
+        "second_load_bias_v": 0.5077516096644104,
+        "second_load_length_m": 4.228069547563791e-07,
+        "second_load_width_m": 1.1884992758070615e-05,
+        "second_stage_length_m": 1.1829968633595853e-06,
+        "second_stage_width_m": 9.264324136561444e-07,
+        "tail_length_m": 1.037009062618017e-06,
+        "tail_width_m": 4.643037995854327e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 32,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_033",
+      "parameters": {
+        "compensation_capacitance_f": 1.1938698507656931e-12,
+        "first_stage_load_length_m": 5.381902548484505e-07,
+        "first_stage_load_width_m": 1.857892590378767e-05,
+        "input_pair_length_m": 4.5551716177724295e-07,
+        "input_pair_width_m": 1.6472093792268588e-06,
+        "second_load_bias_v": 1.1570074830204247,
+        "second_load_length_m": 1.0551777878310531e-06,
+        "second_load_width_m": 4.9827797619106635e-06,
+        "second_stage_length_m": 5.099493063054978e-07,
+        "second_stage_width_m": 2.0357776321359463e-05,
+        "tail_length_m": 5.24171184701845e-07,
+        "tail_width_m": 1.841397016264955e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 33,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_034",
+      "parameters": {
+        "compensation_capacitance_f": 3.228463721189012e-12,
+        "first_stage_load_length_m": 1.1277381896506993e-06,
+        "first_stage_load_width_m": 1.5786782082790914e-06,
+        "input_pair_length_m": 6.405482069589197e-07,
+        "input_pair_width_m": 4.801865959789997e-06,
+        "second_load_bias_v": 0.8554502262733876,
+        "second_load_length_m": 8.607939886394888e-07,
+        "second_load_width_m": 1.5985704385153903e-06,
+        "second_stage_length_m": 2.685410425532609e-07,
+        "second_stage_width_m": 3.529527414652898e-06,
+        "tail_length_m": 3.7707883715629574e-07,
+        "tail_width_m": 9.733235719100766e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 34,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_035",
+      "parameters": {
+        "compensation_capacitance_f": 1.676709647265697e-13,
+        "first_stage_load_length_m": 3.259761346969753e-07,
+        "first_stage_load_width_m": 1.5082856609337952e-05,
+        "input_pair_length_m": 1.6990199098363517e-07,
+        "input_pair_width_m": 7.477256183024341e-06,
+        "second_load_bias_v": 0.31760970428586005,
+        "second_load_length_m": 3.612272749654948e-07,
+        "second_load_width_m": 2.8193931861125007e-05,
+        "second_stage_length_m": 8.75947079155594e-07,
+        "second_stage_width_m": 4.3631421484879004e-05,
+        "tail_length_m": 8.888933330308645e-07,
+        "tail_width_m": 1.8456491307802508e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 35,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_036",
+      "parameters": {
+        "compensation_capacitance_f": 3.9773644002670966e-13,
+        "first_stage_load_length_m": 1.8094288534484804e-07,
+        "first_stage_load_width_m": 3.788741474433557e-05,
+        "input_pair_length_m": 7.606698360294103e-07,
+        "input_pair_width_m": 8.977590928696843e-06,
+        "second_load_bias_v": 0.811085653770715,
+        "second_load_length_m": 1.134036459820345e-06,
+        "second_load_width_m": 1.0745813699813473e-06,
+        "second_stage_length_m": 3.7212230362929404e-07,
+        "second_stage_width_m": 5.983648659897906e-06,
+        "tail_length_m": 1.1433665986172855e-06,
+        "tail_width_m": 3.215520011772444e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 36,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_037",
+      "parameters": {
+        "compensation_capacitance_f": 2.420244369517172e-12,
+        "first_stage_load_length_m": 9.500146020669489e-07,
+        "first_stage_load_width_m": 4.219818139648149e-06,
+        "input_pair_length_m": 2.6176159791648383e-07,
+        "input_pair_width_m": 2.3540995258875333e-06,
+        "second_load_bias_v": 0.39167622309178113,
+        "second_load_length_m": 6.169604142196477e-07,
+        "second_load_width_m": 5.511004700835336e-05,
+        "second_stage_length_m": 7.826538487337529e-07,
+        "second_stage_width_m": 2.663724769887293e-05,
+        "tail_length_m": 6.146649525035172e-07,
+        "tail_width_m": 5.919372274506649e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 37,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_038",
+      "parameters": {
+        "compensation_capacitance_f": 5.035787020371103e-13,
+        "first_stage_load_length_m": 6.248863879591226e-07,
+        "first_stage_load_width_m": 7.169560154483715e-06,
+        "input_pair_length_m": 9.40527055086568e-07,
+        "input_pair_width_m": 9.030494898919444e-07,
+        "second_load_bias_v": 0.6707357265986502,
+        "second_load_length_m": 1.506079064682126e-07,
+        "second_load_width_m": 1.7676351669112367e-05,
+        "second_stage_length_m": 1.007669895188883e-06,
+        "second_stage_width_m": 1.5953139061722637e-06,
+        "tail_length_m": 2.696979406289756e-07,
+        "tail_width_m": 1.0394692094262545e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 38,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_039",
+      "parameters": {
+        "compensation_capacitance_f": 9.647011889175593e-14,
+        "first_stage_load_length_m": 9.018427063710986e-07,
+        "first_stage_load_width_m": 1.2163218734993684e-06,
+        "input_pair_length_m": 5.495431591290979e-07,
+        "input_pair_width_m": 2.071094112027443e-05,
+        "second_load_bias_v": 0.9643504256382585,
+        "second_load_length_m": 7.984052311163394e-07,
+        "second_load_width_m": 2.549736906461226e-06,
+        "second_stage_length_m": 6.627478309907019e-07,
+        "second_stage_width_m": 1.1422612934652416e-05,
+        "tail_length_m": 7.99422972695902e-07,
+        "tail_width_m": 7.76281657205472e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 39,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_040",
+      "parameters": {
+        "compensation_capacitance_f": 5.755731078853915e-14,
+        "first_stage_load_length_m": 1.0294353752396999e-06,
+        "first_stage_load_width_m": 7.529254207440014e-06,
+        "input_pair_length_m": 6.043143186718224e-07,
+        "input_pair_width_m": 2.4533488864053375e-05,
+        "second_load_bias_v": 1.0798206750769168,
+        "second_load_length_m": 3.363857051823288e-07,
+        "second_load_width_m": 1.2631469301087506e-06,
+        "second_stage_length_m": 3.434457887895405e-07,
+        "second_stage_width_m": 4.570733619950137e-06,
+        "tail_length_m": 8.323974208440631e-07,
+        "tail_width_m": 2.4274001479235207e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 40,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_041",
+      "parameters": {
+        "compensation_capacitance_f": 9.42596975430688e-13,
+        "first_stage_load_length_m": 2.2761724423617124e-07,
+        "first_stage_load_width_m": 9.445103964068017e-07,
+        "input_pair_length_m": 2.5157455988228317e-07,
+        "input_pair_width_m": 1.0771600963652924e-06,
+        "second_load_bias_v": 0.6600923215504735,
+        "second_load_length_m": 8.852512872777879e-07,
+        "second_load_width_m": 4.322286402595238e-05,
+        "second_stage_length_m": 6.880914781708269e-07,
+        "second_stage_width_m": 3.483849125830054e-05,
+        "tail_length_m": 3.023489462211728e-07,
+        "tail_width_m": 6.262480951815399e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 41,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_042",
+      "parameters": {
+        "compensation_capacitance_f": 4.09826088827729e-12,
+        "first_stage_load_length_m": 8.151140222791582e-07,
+        "first_stage_load_width_m": 2.5879092061208927e-05,
+        "input_pair_length_m": 8.444887917954474e-07,
+        "input_pair_width_m": 3.085753792437162e-06,
+        "second_load_bias_v": 0.4645286888349801,
+        "second_load_length_m": 9.487533241510391e-07,
+        "second_load_width_m": 1.2110334317123894e-05,
+        "second_stage_length_m": 9.706578257493674e-07,
+        "second_stage_width_m": 2.0798426927569487e-06,
+        "tail_length_m": 4.5044249533675605e-07,
+        "tail_width_m": 1.4233307740186225e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 42,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_043",
+      "parameters": {
+        "compensation_capacitance_f": 2.1126460904529644e-13,
+        "first_stage_load_length_m": 5.711644712369889e-07,
+        "first_stage_load_width_m": 4.9626073424245036e-06,
+        "input_pair_length_m": 3.871206846553832e-07,
+        "input_pair_width_m": 1.1849648947438297e-05,
+        "second_load_bias_v": 0.7577084699179977,
+        "second_load_length_m": 5.296156895812601e-07,
+        "second_load_width_m": 3.416785122345947e-06,
+        "second_stage_length_m": 5.603706120047718e-07,
+        "second_stage_width_m": 8.770403909845727e-06,
+        "tail_length_m": 9.794635707512497e-07,
+        "tail_width_m": 7.5846042955834865e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 43,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_044",
+      "parameters": {
+        "compensation_capacitance_f": 2.8165607020275775e-13,
+        "first_stage_load_length_m": 4.607542984653264e-07,
+        "first_stage_load_width_m": 1.913450629786287e-06,
+        "input_pair_length_m": 9.651288048829882e-07,
+        "input_pair_width_m": 5.6452107745946045e-06,
+        "second_load_bias_v": 0.30141417295672,
+        "second_load_length_m": 6.753985365852713e-07,
+        "second_load_width_m": 8.157206211320724e-06,
+        "second_stage_length_m": 1.0803592932410538e-06,
+        "second_stage_width_m": 1.2115733094662027e-06,
+        "tail_length_m": 7.24926265189424e-07,
+        "tail_width_m": 4.586360532144649e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 44,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_045",
+      "parameters": {
+        "compensation_capacitance_f": 1.728646359386182e-12,
+        "first_stage_load_length_m": 7.376385190989822e-07,
+        "first_stage_load_width_m": 9.410547403182078e-06,
+        "input_pair_length_m": 4.794994862284511e-07,
+        "input_pair_width_m": 3.599907361273602e-06,
+        "second_load_bias_v": 0.9505250453483313,
+        "second_load_length_m": 2.7374302516691385e-07,
+        "second_load_width_m": 6.693070355366818e-06,
+        "second_stage_length_m": 4.731975879985839e-07,
+        "second_stage_width_m": 1.5549900796893518e-05,
+        "tail_length_m": 2.1292051384225487e-07,
+        "tail_width_m": 2.5385375242600693e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 45,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_046",
+      "parameters": {
+        "compensation_capacitance_f": 7.066193649067287e-13,
+        "first_stage_load_length_m": 4.1045964891090985e-07,
+        "first_stage_load_width_m": 2.379043615876956e-06,
+        "input_pair_length_m": 7.227887519635259e-07,
+        "input_pair_width_m": 1.4052783770353993e-06,
+        "second_load_bias_v": 1.124054735386744,
+        "second_load_length_m": 6.087331343907862e-07,
+        "second_load_width_m": 1.8746196814326536e-06,
+        "second_stage_length_m": 1.7423902703449128e-07,
+        "second_stage_width_m": 2.7102266499609838e-06,
+        "tail_length_m": 5.568862615618854e-07,
+        "tail_width_m": 1.0185342904086321e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 46,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_047",
+      "parameters": {
+        "compensation_capacitance_f": 1.365319204042183e-13,
+        "first_stage_load_length_m": 1.1796034634113311e-06,
+        "first_stage_load_width_m": 2.010884460562568e-05,
+        "input_pair_length_m": 3.450813435949385e-07,
+        "input_pair_width_m": 1.306879875001661e-05,
+        "second_load_bias_v": 0.5861852075438947,
+        "second_load_length_m": 1.1421353154815733e-06,
+        "second_load_width_m": 2.207298927865163e-05,
+        "second_stage_length_m": 8.470102092716843e-07,
+        "second_stage_width_m": 5.6885994886853214e-05,
+        "tail_length_m": 1.0699194082058966e-06,
+        "tail_width_m": 1.3838765729592949e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 47,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_048",
+      "parameters": {
+        "compensation_capacitance_f": 4.579152393770933e-13,
+        "first_stage_load_length_m": 6.424925944302231e-07,
+        "first_stage_load_width_m": 1.0412404014062489e-06,
+        "input_pair_length_m": 6.92352013895288e-07,
+        "input_pair_width_m": 1.5039540531547125e-05,
+        "second_load_bias_v": 0.55009465967305,
+        "second_load_length_m": 6.551915490534156e-07,
+        "second_load_width_m": 3.6682257413975584e-05,
+        "second_stage_length_m": 1.8712275959551334e-07,
+        "second_stage_width_m": 1.724650752040666e-05,
+        "tail_length_m": 1.5039032232016325e-07,
+        "tail_width_m": 1.7015654554596101e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 48,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_049",
+      "parameters": {
+        "compensation_capacitance_f": 2.808747367507227e-12,
+        "first_stage_load_length_m": 9.234868891071527e-07,
+        "first_stage_load_width_m": 8.410660976754337e-06,
+        "input_pair_length_m": 3.2624031663872295e-07,
+        "input_pair_width_m": 1.616060673810266e-06,
+        "second_load_bias_v": 1.0877612137701362,
+        "second_load_length_m": 1.0896429676562547e-06,
+        "second_load_width_m": 1.2197349903446059e-06,
+        "second_stage_length_m": 8.271089283283799e-07,
+        "second_stage_width_m": 1.0929558081134513e-06,
+        "tail_length_m": 6.888952655252068e-07,
+        "tail_width_m": 8.935883051898236e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 49,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_050",
+      "parameters": {
+        "compensation_capacitance_f": 5.799143833075053e-13,
+        "first_stage_load_length_m": 2.0050661964341997e-07,
+        "first_stage_load_width_m": 5.4811717131194676e-06,
+        "input_pair_length_m": 9.822857780382037e-07,
+        "input_pair_width_m": 3.3131275253537285e-06,
+        "second_load_bias_v": 0.9274227221030742,
+        "second_load_length_m": 7.606928075663745e-07,
+        "second_load_width_m": 3.770677188093164e-06,
+        "second_stage_length_m": 1.1269647041335702e-06,
+        "second_stage_width_m": 3.9515523892541426e-05,
+        "tail_length_m": 1.130394816957414e-06,
+        "tail_width_m": 2.0650881051283753e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 50,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_051",
+      "parameters": {
+        "compensation_capacitance_f": 1.1199112382654844e-13,
+        "first_stage_load_length_m": 9.737444864585994e-07,
+        "first_stage_load_width_m": 2.9072668238350666e-05,
+        "input_pair_length_m": 5.116235522553324e-07,
+        "input_pair_width_m": 5.191865045564098e-06,
+        "second_load_bias_v": 0.27810887596569955,
+        "second_load_length_m": 1.9446266018785536e-07,
+        "second_load_width_m": 1.5333544817356638e-05,
+        "second_stage_length_m": 4.2136906231753524e-07,
+        "second_stage_width_m": 3.895508671583244e-06,
+        "tail_length_m": 5.949640487786383e-07,
+        "tail_width_m": 5.228757810827698e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 51,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_052",
+      "parameters": {
+        "compensation_capacitance_f": 8.400228716701894e-14,
+        "first_stage_load_length_m": 1.092252641636878e-06,
+        "first_stage_load_width_m": 1.0906082277336267e-05,
+        "input_pair_length_m": 8.903868558816612e-07,
+        "input_pair_width_m": 1.0889159928922431e-05,
+        "second_load_bias_v": 0.7346496979240328,
+        "second_load_length_m": 1.0287952844984827e-06,
+        "second_load_width_m": 5.655935422042145e-06,
+        "second_stage_length_m": 9.577580597251652e-07,
+        "second_stage_width_m": 2.2567845021086686e-05,
+        "tail_length_m": 3.2398865120485424e-07,
+        "tail_width_m": 9.345180052549266e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 52,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_053",
+      "parameters": {
+        "compensation_capacitance_f": 1.3748559557126536e-12,
+        "first_stage_load_length_m": 2.863244365900755e-07,
+        "first_stage_load_width_m": 2.188445013495414e-06,
+        "input_pair_length_m": 3.915412384085357e-07,
+        "input_pair_width_m": 2.837287755341269e-06,
+        "second_load_bias_v": 0.4412089596968144,
+        "second_load_length_m": 4.4713266869075595e-07,
+        "second_load_width_m": 7.910729134569755e-06,
+        "second_stage_length_m": 5.802879264112561e-07,
+        "second_stage_width_m": 7.0596200476973255e-06,
+        "tail_length_m": 8.434294859413058e-07,
+        "tail_width_m": 1.2461324862248128e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 53,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_054",
+      "parameters": {
+        "compensation_capacitance_f": 3.746735700592389e-12,
+        "first_stage_load_length_m": 7.487244423944502e-07,
+        "first_stage_load_width_m": 2.3085796001917456e-05,
+        "input_pair_length_m": 5.982615720015018e-07,
+        "input_pair_width_m": 1.2377197587578172e-06,
+        "second_load_bias_v": 0.624045211682096,
+        "second_load_length_m": 3.8604965466074643e-07,
+        "second_load_width_m": 2.4457561186820206e-05,
+        "second_stage_length_m": 2.968243600800633e-07,
+        "second_stage_width_m": 1.0344367109803376e-05,
+        "tail_length_m": 9.598706376738846e-07,
+        "tail_width_m": 5.0839113932515915e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 54,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_055",
+      "parameters": {
+        "compensation_capacitance_f": 1.9304175890076783e-13,
+        "first_stage_load_length_m": 5.006808390375227e-07,
+        "first_stage_load_width_m": 2.685259014425273e-06,
+        "input_pair_length_m": 2.073119248729199e-07,
+        "input_pair_width_m": 2.8206851135763866e-05,
+        "second_load_bias_v": 1.0435126080643387,
+        "second_load_length_m": 8.380163820460439e-07,
+        "second_load_width_m": 2.3640099309287085e-06,
+        "second_stage_length_m": 7.399360216688365e-07,
+        "second_stage_width_m": 1.7606271112627252e-06,
+        "tail_length_m": 4.373556318227201e-07,
+        "tail_width_m": 2.7731614339246107e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 55,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_056",
+      "parameters": {
+        "compensation_capacitance_f": 3.2624569238817797e-13,
+        "first_stage_load_length_m": 3.647478591185063e-07,
+        "first_stage_load_width_m": 1.6375097609932122e-05,
+        "input_pair_length_m": 8.996094550006092e-07,
+        "input_pair_width_m": 2.3813253034065906e-05,
+        "second_load_bias_v": 1.0003983884118497,
+        "second_load_length_m": 2.3551846956834194e-07,
+        "second_load_width_m": 4.51988131537155e-06,
+        "second_stage_length_m": 1.0605198021512478e-06,
+        "second_stage_width_m": 2.951335213109243e-05,
+        "tail_length_m": 6.668811250012368e-07,
+        "tail_width_m": 6.7631228286695735e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 56,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_057",
+      "parameters": {
+        "compensation_capacitance_f": 1.9862667097826773e-12,
+        "first_stage_load_length_m": 1.1379296498838812e-06,
+        "first_stage_load_width_m": 2.9064033757565096e-06,
+        "input_pair_length_m": 5.467827568762004e-07,
+        "input_pair_width_m": 1.037599693980808e-06,
+        "second_load_bias_v": 0.7070446394383907,
+        "second_load_length_m": 7.197654223535209e-07,
+        "second_load_width_m": 9.396458681764138e-06,
+        "second_stage_length_m": 6.171718200668693e-07,
+        "second_stage_width_m": 5.392098849111698e-06,
+        "tail_length_m": 1.1897195655852557e-06,
+        "tail_width_m": 1.2638760825610877e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 57,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_058",
+      "parameters": {
+        "compensation_capacitance_f": 8.182271324608478e-13,
+        "first_stage_load_length_m": 4.128987243399024e-07,
+        "first_stage_load_width_m": 1.321871403199361e-05,
+        "input_pair_length_m": 7.617421123664825e-07,
+        "input_pair_width_m": 2.164664211928263e-06,
+        "second_load_bias_v": 0.41473596123978496,
+        "second_load_length_m": 1.1798531917389482e-06,
+        "second_load_width_m": 3.325560504980813e-05,
+        "second_stage_length_m": 3.9100221111439166e-07,
+        "second_stage_width_m": 7.942757656818724e-06,
+        "tail_length_m": 7.451520096044988e-07,
+        "tail_width_m": 6.792912006181952e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 58,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_059",
+      "parameters": {
+        "compensation_capacitance_f": 1.5684070843299918e-13,
+        "first_stage_load_length_m": 6.939490950666367e-07,
+        "first_stage_load_width_m": 1.3654120153470073e-06,
+        "input_pair_length_m": 3.0436407509259877e-07,
+        "input_pair_width_m": 8.249448480181594e-06,
+        "second_load_bias_v": 0.8344063419848681,
+        "second_load_length_m": 5.648529008030891e-07,
+        "second_load_width_m": 1.657208649540191e-06,
+        "second_stage_length_m": 7.687407083809374e-07,
+        "second_stage_width_m": 2.295444220874275e-06,
+        "tail_length_m": 2.2539173774421213e-07,
+        "tail_width_m": 2.6439454613877056e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 59,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_060",
+      "parameters": {
+        "compensation_capacitance_f": 6.611821944204608e-14,
+        "first_stage_load_length_m": 8.47048283368349e-07,
+        "first_stage_load_width_m": 3.743900347400661e-06,
+        "input_pair_length_m": 6.693248061928898e-07,
+        "input_pair_width_m": 6.877162368233477e-06,
+        "second_load_bias_v": 0.340712880436331,
+        "second_load_length_m": 9.116123161744325e-07,
+        "second_load_width_m": 4.978846518343669e-05,
+        "second_stage_length_m": 2.1567510995082556e-07,
+        "second_stage_width_m": 1.317387327208269e-05,
+        "tail_length_m": 4.964311752934009e-07,
+        "tail_width_m": 1.6113284383555556e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 60,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_061",
+      "parameters": {
+        "compensation_capacitance_f": 1.0914665790359215e-12,
+        "first_stage_load_length_m": 5.989325822331011e-07,
+        "first_stage_load_width_m": 3.418990345721081e-05,
+        "input_pair_length_m": 1.837625666055828e-07,
+        "input_pair_width_m": 4.419094222425425e-06,
+        "second_load_bias_v": 0.8787563690915704,
+        "second_load_length_m": 3.1206944938749076e-07,
+        "second_load_width_m": 8.530254254917874e-07,
+        "second_stage_length_m": 9.215391157194972e-07,
+        "second_stage_width_m": 1.4293935727941857e-06,
+        "tail_length_m": 1.0320532067678867e-06,
+        "tail_width_m": 1.180981591924241e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 61,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_062",
+      "parameters": {
+        "compensation_capacitance_f": 4.708982407726109e-12,
+        "first_stage_load_length_m": 1.0592814312782137e-06,
+        "first_stage_load_width_m": 1.0934870938375573e-06,
+        "input_pair_length_m": 8.060374161228536e-07,
+        "input_pair_width_m": 1.8943834661129277e-06,
+        "second_load_bias_v": 1.1930989970453083,
+        "second_load_length_m": 5.047707089222968e-07,
+        "second_load_width_m": 3.0204740695290186e-06,
+        "second_stage_length_m": 1.1641009458806366e-06,
+        "second_stage_width_m": 5.151461010246277e-05,
+        "tail_length_m": 9.186801221687346e-07,
+        "tail_width_m": 2.1087290991710444e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 62,
+          "seed": 9200901
+        }
+      ]
+    },
+    {
+      "design_id": "sobol_063",
+      "parameters": {
+        "compensation_capacitance_f": 2.4470817582632746e-13,
+        "first_stage_load_length_m": 2.534253240097314e-07,
+        "first_stage_load_width_m": 6.53117864052541e-06,
+        "input_pair_length_m": 4.28373578749597e-07,
+        "input_pair_width_m": 1.7752275178223777e-05,
+        "second_load_bias_v": 0.5440460903570056,
+        "second_load_length_m": 9.71541515411809e-07,
+        "second_load_width_m": 1.824599340449476e-05,
+        "second_stage_length_m": 5.238784566521644e-07,
+        "second_stage_width_m": 2.9909673533279943e-06,
+        "tail_length_m": 3.799799180589616e-07,
+        "tail_width_m": 3.8256963115688e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 63,
+          "seed": 9200901
+        }
+      ]
+    }
+  ],
+  "schema_version": "task9_candidate_set_v1"
+}
