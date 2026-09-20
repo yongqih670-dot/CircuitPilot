@@ -1,0 +1,2520 @@
+{
+  "candidate_count": 64,
+  "candidate_set_hash": "8243cf5a1c9ee19df284976b7e0d9d985f0fe6d7a851ed8446cad6c398983902",
+  "designs": [
+    {
+      "design_id": "sobol_000",
+      "parameters": {
+        "compensation_capacitance_f": 1.672762815079795e-12,
+        "first_stage_load_length_m": 4.806227213703095e-07,
+        "first_stage_load_width_m": 2.7821071271823675e-05,
+        "input_pair_length_m": 6.50368187855929e-07,
+        "input_pair_width_m": 1.8389510445113257e-05,
+        "second_load_bias_v": 0.38249941952526567,
+        "second_load_length_m": 4.7679934180341655e-07,
+        "second_load_width_m": 1.1356710062942612e-06,
+        "second_stage_length_m": 6.35507742734626e-07,
+        "second_stage_width_m": 3.644973810528381e-05,
+        "tail_length_m": 2.465994026977569e-07,
+        "tail_width_m": 7.162600817079124e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 0,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.8631212376058102,
+        0.5886684563010931,
+        0.906015045940876,
+        0.3148787822574377,
+        0.1250471780076623,
+        0.09199943114072084,
+        0.8832406755536795,
+        0.46238832641392946,
+        0.07064848858863115,
+        0.3112374683842063,
+        0.1394730731844902,
+        0.7622321806848049
+      ]
+    },
+    {
+      "design_id": "sobol_001",
+      "parameters": {
+        "compensation_capacitance_f": 3.235157567720833e-13,
+        "first_stage_load_length_m": 7.575070163235069e-07,
+        "first_stage_load_width_m": 4.648975245637245e-06,
+        "input_pair_length_m": 1.5313013745471835e-07,
+        "input_pair_width_m": 1.95929180678445e-06,
+        "second_load_bias_v": 0.7942860576324164,
+        "second_load_length_m": 1.0097729220986364e-06,
+        "second_load_width_m": 3.902953128201822e-05,
+        "second_stage_length_m": 1.0452937063761055e-06,
+        "second_stage_width_m": 3.700701189661613e-06,
+        "tail_length_m": 7.609783745370804e-07,
+        "tail_width_m": 1.1165766253762478e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 1,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.23686881456524134,
+        0.003682514652609825,
+        0.4428933681920171,
+        0.5785781107842922,
+        0.7684669001027942,
+        0.581884166225791,
+        0.3473836090415716,
+        0.8526606727391481,
+        0.8992606187239289,
+        0.8188313543796539,
+        0.5729326922446489,
+        0.4054627167060971
+      ]
+    },
+    {
+      "design_id": "sobol_002",
+      "parameters": {
+        "compensation_capacitance_f": 1.1859715870362002e-13,
+        "first_stage_load_length_m": 3.0112584703601893e-07,
+        "first_stage_load_width_m": 8.018733963640077e-06,
+        "input_pair_length_m": 8.383320439141243e-07,
+        "input_pair_width_m": 4.029973876866137e-06,
+        "second_load_bias_v": 0.9843989960849284,
+        "second_load_length_m": 8.078270039521158e-07,
+        "second_load_width_m": 1.4396386977889744e-05,
+        "second_stage_length_m": 7.463196224067359e-07,
+        "second_stage_width_m": 1.6295699410030697e-05,
+        "tail_length_m": 1.1695352826733142e-06,
+        "tail_width_m": 5.521400689403186e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 2,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.43856551963835955,
+        0.8098024046048522,
+        0.5840015420690179,
+        0.14392937812954187,
+        0.6034936588257551,
+        0.9709859834983945,
+        0.6946508409455419,
+        0.5679234499111772,
+        0.6656199833378196,
+        0.6265019085258245,
+        0.7730515748262405,
+        0.18755214009433985
+      ]
+    },
+    {
+      "design_id": "sobol_003",
+      "parameters": {
+        "compensation_capacitance_f": 7.286236935072966e-13,
+        "first_stage_load_length_m": 1.0702697436790913e-06,
+        "first_stage_load_width_m": 8.797740547085794e-07,
+        "input_pair_length_m": 4.456712726037949e-07,
+        "input_pair_width_m": 6.2835965852282255e-06,
+        "second_load_bias_v": 0.6840856431983411,
+        "second_load_length_m": 4.056067383382469e-07,
+        "second_load_width_m": 4.045529114221499e-06,
+        "second_stage_length_m": 4.021741817705333e-07,
+        "second_stage_width_m": 1.01164564311641e-06,
+        "tail_length_m": 6.582344873808323e-07,
+        "tail_width_m": 3.4781613228246265e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 3,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.5627932697534561,
+        0.3478485560044646,
+        0.011975262314081192,
+        0.8764473749324679,
+        0.49523400142788887,
+        0.4840328451246023,
+        0.043557015247642994,
+        0.24016588740050793,
+        0.36825415026396513,
+        0.24343498889356852,
+        0.4569322559982538,
+        0.5817666426301003
+      ]
+    },
+    {
+      "design_id": "sobol_004",
+      "parameters": {
+        "compensation_capacitance_f": 9.713317581850053e-13,
+        "first_stage_load_length_m": 9.91621646331623e-07,
+        "first_stage_load_width_m": 2.212062454731619e-06,
+        "input_pair_length_m": 9.306066645774989e-07,
+        "input_pair_width_m": 8.421587246923618e-06,
+        "second_load_bias_v": 1.1478614760562778,
+        "second_load_length_m": 1.0801065989769994e-06,
+        "second_load_width_m": 7.3658300142277965e-06,
+        "second_stage_length_m": 9.195954103488475e-07,
+        "second_stage_width_m": 9.662511764577518e-06,
+        "tail_length_m": 4.0427396404556925e-07,
+        "tail_width_m": 1.9498854837643063e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 4,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.6446983572095633,
+        0.9183607818558812,
+        0.2506394889205694,
+        0.8015444250777364,
+        0.3596579637378454,
+        0.24216568004339933,
+        0.5722135994583368,
+        0.7329480098560452,
+        0.5086340503767133,
+        0.8858158085495234,
+        0.9451173432171345,
+        0.6441987920552492
+      ]
+    },
+    {
+      "design_id": "sobol_005",
+      "parameters": {
+        "compensation_capacitance_f": 5.002795320426577e-14,
+        "first_stage_load_length_m": 1.898034410085529e-07,
+        "first_stage_load_width_m": 2.1454104418392672e-05,
+        "input_pair_length_m": 5.662079154048114e-07,
+        "input_pair_width_m": 2.213102594247542e-06,
+        "second_load_bias_v": 0.49092123107984664,
+        "second_load_length_m": 6.625591014046221e-07,
+        "second_load_width_m": 6.017616208135855e-06,
+        "second_stage_length_m": 2.4732546256855126e-07,
+        "second_stage_width_m": 1.651901475981314e-06,
+        "tail_length_m": 9.314365189522503e-07,
+        "tail_width_m": 9.132193405719622e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 5,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.27093694638460875,
+        0.4896563710644841,
+        0.8387455521151423,
+        0.037908039055764675,
+        0.7213690243661404,
+        0.7442252561450005,
+        0.1584277991205454,
+        0.09269091673195362,
+        0.46127522084861994,
+        0.48815152514725924,
+        0.25360129587352276,
+        0.00012136530131101608
+      ]
+    },
+    {
+      "design_id": "sobol_006",
+      "parameters": {
+        "compensation_capacitance_f": 2.425441257706068e-13,
+        "first_stage_load_length_m": 9.106060833670198e-07,
+        "first_stage_load_width_m": 1.7956926629133868e-06,
+        "input_pair_length_m": 7.439791208133101e-07,
+        "input_pair_width_m": 9.62263022014638e-07,
+        "second_load_bias_v": 0.3376854756847024,
+        "second_load_length_m": 2.035123727750033e-07,
+        "second_load_width_m": 2.219577980654865e-06,
+        "second_stage_length_m": 5.298752857837825e-07,
+        "second_stage_width_m": 2.1233585464347265e-05,
+        "tail_length_m": 1.0149389076512307e-06,
+        "tail_width_m": 1.958752230390961e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 6,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.038004196248948574,
+        0.6987989656627178,
+        0.19666021969169378,
+        0.7243867460638285,
+        0.9001323962584138,
+        0.8237513406202197,
+        0.7566563794389367,
+        0.36178598646074533,
+        0.22762689646333456,
+        0.050964164547622204,
+        0.09230050072073936,
+        0.3429103782400489
+      ]
+    },
+    {
+      "design_id": "sobol_007",
+      "parameters": {
+        "compensation_capacitance_f": 3.9677445086156115e-12,
+        "first_stage_load_length_m": 6.666564501821994e-07,
+        "first_stage_load_width_m": 1.00988581700262e-05,
+        "input_pair_length_m": 2.7170790936797856e-07,
+        "input_pair_width_m": 2.2039753509162682e-05,
+        "second_load_bias_v": 0.8687729560770094,
+        "second_load_length_m": 7.538319384679198e-07,
+        "second_load_width_m": 2.6239652315053773e-05,
+        "second_stage_length_m": 1.1365367579273879e-06,
+        "second_stage_width_m": 6.561292296324466e-06,
+        "tail_length_m": 4.846981722861529e-07,
+        "tail_width_m": 4.40344714457638e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 7,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.913761654868722,
+        0.14318577572703362,
+        0.643703306093812,
+        0.4920537620782852,
+        0.011081400327384472,
+        0.3187601640820503,
+        0.48153816256672144,
+        0.9395588170737028,
+        0.8062470434233546,
+        0.5750780366361141,
+        0.6513399537652731,
+        0.9497868474572897
+      ]
+    },
+    {
+      "design_id": "sobol_008",
+      "parameters": {
+        "compensation_capacitance_f": 2.127322928300316e-12,
+        "first_stage_load_length_m": 2.682307379320264e-07,
+        "first_stage_load_width_m": 1.659157037788997e-06,
+        "input_pair_length_m": 8.544091886375099e-07,
+        "input_pair_width_m": 2.8789010454103293e-05,
+        "second_load_bias_v": 0.9378708799835295,
+        "second_load_length_m": 2.827762867324054e-07,
+        "second_load_width_m": 9.997407894045943e-06,
+        "second_stage_length_m": 8.17214688565582e-07,
+        "second_stage_width_m": 7.3805261542740335e-06,
+        "tail_length_m": 5.829767477698623e-07,
+        "tail_width_m": 1.471983005469594e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 8,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.9884762791916728,
+        0.8287166925147176,
+        0.17619001492857933,
+        0.11260070279240608,
+        0.8332039834931493,
+        0.41235880739986897,
+        0.5091009819880128,
+        0.6354425605386496,
+        0.5801954753696918,
+        0.1264536064118147,
+        0.7240746105089784,
+        0.8144317083060741
+      ]
+    },
+    {
+      "design_id": "sobol_009",
+      "parameters": {
+        "compensation_capacitance_f": 4.0711482356374044e-13,
+        "first_stage_load_length_m": 1.0373025367967784e-06,
+        "first_stage_load_width_m": 1.4236657109752296e-05,
+        "input_pair_length_m": 3.7045593471266326e-07,
+        "input_pair_width_m": 1.265677388767724e-06,
+        "second_load_bias_v": 0.2806697238702327,
+        "second_load_length_m": 9.310422273818404e-07,
+        "second_load_width_m": 4.208508012470661e-06,
+        "second_stage_length_m": 2.103168959263712e-07,
+        "second_stage_width_m": 2.160330019306611e-06,
+        "tail_length_m": 1.1135349097196012e-06,
+        "tail_width_m": 9.661607954699372e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 9,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.11465669982135296,
+        0.2593599231913686,
+        0.7325920099392533,
+        0.8450500350445509,
+        0.19515917357057333,
+        0.9176522949710488,
+        0.22128864470869303,
+        0.057444662787020206,
+        0.3775065839290619,
+        0.7438497403636575,
+        0.032283919863402843,
+        0.45537345577031374
+      ]
+    },
+    {
+      "design_id": "sobol_010",
+      "parameters": {
+        "compensation_capacitance_f": 9.445513089495157e-14,
+        "first_stage_load_length_m": 5.788704610895364e-07,
+        "first_stage_load_width_m": 3.545227417965019e-06,
+        "input_pair_length_m": 6.210050402209163e-07,
+        "input_pair_width_m": 2.6307372445825084e-06,
+        "second_load_bias_v": 0.602752905478701,
+        "second_load_length_m": 1.001337363710627e-06,
+        "second_load_width_m": 1.7779476931757433e-06,
+        "second_stage_length_m": 4.3531742328777905e-07,
+        "second_stage_width_m": 2.7684030990578347e-05,
+        "tail_length_m": 7.019099344499408e-07,
+        "tail_width_m": 2.6820704509137413e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 10,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.31928438134491444,
+        0.5541235767304897,
+        0.3727333443239331,
+        0.408448058180511,
+        0.4343454707413912,
+        0.5256285089999437,
+        0.8187998253852129,
+        0.2717308793216944,
+        0.17565382085740566,
+        0.8107974892482162,
+        0.37131884787231684,
+        0.13812777493149042
+      ]
+    },
+    {
+      "design_id": "sobol_011",
+      "parameters": {
+        "compensation_capacitance_f": 5.742182379435574e-13,
+        "first_stage_load_length_m": 8.55826853821054e-07,
+        "first_stage_load_width_m": 1.770170683506784e-05,
+        "input_pair_length_m": 2.41628254763782e-07,
+        "input_pair_width_m": 1.0080431072187726e-05,
+        "second_load_bias_v": 1.1334635362494736,
+        "second_load_length_m": 4.848501283675432e-07,
+        "second_load_width_m": 3.1224103714143506e-05,
+        "second_stage_length_m": 1.107855735020712e-06,
+        "second_stage_width_m": 5.038235154221184e-06,
+        "tail_length_m": 1.744259397033602e-07,
+        "tail_width_m": 4.302321341265062e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 11,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.6949836751446128,
+        0.10779794678092003,
+        0.7889802604913712,
+        0.6722160512581468,
+        0.5450503453612328,
+        0.023262799717485905,
+        0.41966174729168415,
+        0.9122435571625829,
+        0.8469898272305727,
+        0.31890488415956497,
+        0.9299616171047091,
+        0.5300534889101982
+      ]
+    },
+    {
+      "design_id": "sobol_012",
+      "parameters": {
+        "compensation_capacitance_f": 1.3620169145452547e-12,
+        "first_stage_load_length_m": 6.810642858501522e-07,
+        "first_stage_load_width_m": 6.818970743766684e-06,
+        "input_pair_length_m": 7.1296877739951e-07,
+        "input_pair_width_m": 5.379455256038007e-06,
+        "second_load_bias_v": 0.6474653288256377,
+        "second_load_length_m": 7.291986550670116e-07,
+        "second_load_width_m": 9.07603640566107e-07,
+        "second_stage_length_m": 6.065743795596063e-07,
+        "second_stage_width_m": 4.767211338049397e-05,
+        "tail_length_m": 4.2845059689134356e-07,
+        "tail_width_m": 7.075109556096299e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 12,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.5193439060822129,
+        0.662316208705306,
+        0.5420491117984056,
+        0.5057755103334785,
+        0.6615796033293009,
+        0.26519104465842247,
+        0.9461198793724179,
+        0.4348327424377203,
+        0.018133368343114853,
+        0.5516177667304873,
+        0.418384556658566,
+        0.7176062483340502
+      ]
+    },
+    {
+      "design_id": "sobol_013",
+      "parameters": {
+        "compensation_capacitance_f": 7.081366344325141e-14,
+        "first_stage_load_length_m": 4.3705857661552724e-07,
+        "first_stage_load_width_m": 1.2879360096442768e-06,
+        "input_pair_length_m": 3.6185320345684886e-07,
+        "input_pair_width_m": 3.4259074035954696e-06,
+        "second_load_bias_v": 1.0590490675065665,
+        "second_load_length_m": 2.2801773268729448e-07,
+        "second_load_width_m": 4.6357467221490755e-05,
+        "second_stage_length_m": 9.509881841484457e-07,
+        "second_stage_width_m": 2.8268570634553435e-06,
+        "tail_length_m": 9.399446581955999e-07,
+        "tail_width_m": 1.5392924457381037e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 13,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.3931477554142475,
+        0.24923906289041042,
+        0.11063126381486654,
+        0.27338912058621645,
+        0.30426688492298126,
+        0.7523282459005713,
+        0.28428315091878176,
+        0.7628458896651864,
+        0.9395688846707344,
+        0.07430260255932808,
+        0.8516305973753333,
+        0.07557352911680937
+      ]
+    },
+    {
+      "design_id": "sobol_014",
+      "parameters": {
+        "compensation_capacitance_f": 1.7173212804972258e-13,
+        "first_stage_load_length_m": 1.1558108132332563e-06,
+        "first_stage_load_width_m": 3.5825018390709396e-05,
+        "input_pair_length_m": 9.483309860806912e-07,
+        "input_pair_width_m": 1.4740783794702672e-06,
+        "second_load_bias_v": 0.7743069927673787,
+        "second_load_length_m": 5.55958402622491e-07,
+        "second_load_width_m": 1.957611646218364e-05,
+        "second_stage_length_m": 7.095633999444543e-07,
+        "second_stage_width_m": 1.2512011524917105e-05,
+        "tail_length_m": 8.595102740451693e-07,
+        "tail_width_m": 5.77791583280641e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 14,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.157286636531353,
+        0.9392129248008132,
+        0.9714661343023181,
+        0.9579150602221489,
+        0.07472032774239779,
+        0.6757240705192089,
+        0.6327555906027555,
+        0.5329175237566233,
+        0.7376168798655272,
+        0.3866270501166582,
+        0.5519020976498723,
+        0.2679407736286521
+      ]
+    },
+    {
+      "design_id": "sobol_015",
+      "parameters": {
+        "compensation_capacitance_f": 2.8359195407170836e-12,
+        "first_stage_load_length_m": 3.5404868395999073e-07,
+        "first_stage_load_width_m": 4.427112794620914e-06,
+        "input_pair_length_m": 4.893453817348927e-07,
+        "input_pair_width_m": 1.3738363802388723e-05,
+        "second_load_bias_v": 0.4739066789392382,
+        "second_load_length_m": 1.1868352212477476e-06,
+        "second_load_width_m": 2.8358425652964007e-06,
+        "second_stage_length_m": 2.995411158073693e-07,
+        "second_stage_width_m": 1.318902677162719e-06,
+        "tail_length_m": 3.4494204944930967e-07,
+        "tail_width_m": 2.6079633425925985e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 15,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.7815706627443433,
+        0.3992298608645797,
+        0.4302357863634825,
+        0.19433207996189594,
+        0.967193110845983,
+        0.1856590947136283,
+        0.1056887786835432,
+        0.14242011029273272,
+        0.2850266043096781,
+        0.9874621154740453,
+        0.23569124098867178,
+        0.8768619503825903
+      ]
+    },
+    {
+      "design_id": "sobol_016",
+      "parameters": {
+        "compensation_capacitance_f": 1.1171977431740715e-12,
+        "first_stage_load_length_m": 8.828063044231385e-07,
+        "first_stage_load_width_m": 1.2412519701647128e-05,
+        "input_pair_length_m": 9.988209296017884e-07,
+        "input_pair_width_m": 1.2638561355514937e-05,
+        "second_load_bias_v": 0.45084781139157715,
+        "second_load_length_m": 6.340751856565474e-07,
+        "second_load_width_m": 5.307174881176035e-06,
+        "second_stage_length_m": 6.935960127040743e-07,
+        "second_stage_width_m": 3.3507287418495274e-06,
+        "tail_length_m": 1.0024838267359881e-06,
+        "tail_width_m": 2.9997063536171418e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 16,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.7582345008850098,
+        0.9986128583550453,
+        0.6970998421311378,
+        0.6979107661172748,
+        0.460565491579473,
+        0.8118893587961793,
+        0.32411083206534386,
+        0.5177104882895947,
+        0.4318443387746811,
+        0.4610239863395691,
+        0.21141874883323908,
+        0.6745800226926804
+      ]
+    },
+    {
+      "design_id": "sobol_017",
+      "parameters": {
+        "compensation_capacitance_f": 5.811569468706946e-14,
+        "first_stage_load_length_m": 6.346905211452393e-07,
+        "first_stage_load_width_m": 1.4658000237802027e-06,
+        "input_pair_length_m": 5.016252342611551e-07,
+        "input_pair_width_m": 1.356272319602436e-06,
+        "second_load_bias_v": 0.7509872317779809,
+        "second_load_length_m": 1.1024281573947519e-06,
+        "second_load_width_m": 1.1077462589692305e-05,
+        "second_stage_length_m": 3.1637364509515463e-07,
+        "second_stage_width_m": 4.0239743176003626e-05,
+        "tail_length_m": 4.6448857868090266e-07,
+        "tail_width_m": 4.74212649278662e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 17,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.1339914919808507,
+        0.41367674618959427,
+        0.14411623496562243,
+        0.4616100201383233,
+        0.567851428873837,
+        0.2995129320770502,
+        0.9064142219722271,
+        0.15845109056681395,
+        0.604227814823389,
+        0.9070744356140494,
+        0.5273549808189273,
+        0.03266171459108591
+      ]
+    },
+    {
+      "design_id": "sobol_018",
+      "parameters": {
+        "compensation_capacitance_f": 2.790358689023292e-13,
+        "first_stage_load_length_m": 9.65845234505832e-07,
+        "first_stage_load_width_m": 1.5231142127881132e-05,
+        "input_pair_length_m": 7.023243602830916e-07,
+        "input_pair_width_m": 3.940863843633128e-06,
+        "second_load_bias_v": 1.023001975333318,
+        "second_load_length_m": 7.807837686035781e-07,
+        "second_load_width_m": 3.0280701912756574e-05,
+        "second_stage_length_m": 5.589519917964935e-07,
+        "second_stage_width_m": 8.568130394843399e-07,
+        "tail_length_m": 2.844576558563858e-07,
+        "tail_width_m": 1.3385530630951186e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 18,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.4323119530454278,
+        0.6497933650389314,
+        0.7500701257959008,
+        0.7769954614341259,
+        0.8109439760446548,
+        0.12805491033941507,
+        0.004642597399652004,
+        0.38947808742523193,
+        0.8398026842623949,
+        0.6007464462891221,
+        0.8136862898245454,
+        0.3733450146391988
+      ]
+    },
+    {
+      "design_id": "sobol_019",
+      "parameters": {
+        "compensation_capacitance_f": 4.610645448519985e-12,
+        "first_stage_load_length_m": 1.599890529178083e-07,
+        "first_stage_load_width_m": 3.102667115969475e-06,
+        "input_pair_length_m": 3.097310733515769e-07,
+        "input_pair_width_m": 6.188961726509825e-06,
+        "second_load_bias_v": 0.6111573432106525,
+        "second_load_length_m": 1.8270287280902267e-07,
+        "second_load_width_m": 1.5024400363116776e-06,
+        "second_stage_length_m": 1.0017828428652138e-06,
+        "second_stage_width_m": 1.9229810144063348e-05,
+        "tail_length_m": 8.214255125261842e-07,
+        "tail_width_m": 8.62257745931673e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 19,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.5585491172969341,
+        0.18791890982538462,
+        0.33821815624833107,
+        0.009513383731245995,
+        0.1685056034475565,
+        0.6394528690725565,
+        0.7334356075152755,
+        0.8112217551097274,
+        0.13621105812489986,
+        0.031145593151450157,
+        0.38016562443226576,
+        0.9823958612978458
+      ]
+    },
+    {
+      "design_id": "sobol_020",
+      "parameters": {
+        "compensation_capacitance_f": 1.943820224009304e-12,
+        "first_stage_load_length_m": 3.4283157885074614e-07,
+        "first_stage_load_width_m": 1.1649871212234223e-06,
+        "input_pair_length_m": 5.818270327057689e-07,
+        "input_pair_width_m": 1.1587886619261732e-05,
+        "second_load_bias_v": 1.097372906981036,
+        "second_load_length_m": 1.0499761689919978e-06,
+        "second_load_width_m": 5.8695559988959595e-05,
+        "second_stage_length_m": 4.5130083616822957e-07,
+        "second_stage_width_m": 1.4955792102949262e-06,
+        "tail_length_m": 1.0918881678488105e-06,
+        "tail_width_m": 4.958879418892861e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 20,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.7339606825262308,
+        0.5080318031832576,
+        0.08466055057942867,
+        0.18364912271499634,
+        0.03891005367040634,
+        0.8970363503322005,
+        0.1351388543844223,
+        0.2869531773030758,
+        0.9948507770895958,
+        0.8571201609447598,
+        0.8919714810326695,
+        0.7948430459946394
+      ]
+    },
+    {
+      "design_id": "sobol_021",
+      "parameters": {
+        "compensation_capacitance_f": 3.7219318218566706e-13,
+        "first_stage_load_length_m": 1.116013451758772e-06,
+        "first_stage_load_width_m": 6.087121447855417e-06,
+        "input_pair_length_m": 2.174171374645084e-07,
+        "input_pair_width_m": 3.023351145200487e-06,
+        "second_load_bias_v": 0.5664593661669641,
+        "second_load_length_m": 4.34539305511862e-07,
+        "second_load_width_m": 1.001610340345977e-06,
+        "second_stage_length_m": 1.0910071800928562e-06,
+        "second_stage_width_m": 1.066656015007155e-05,
+        "tail_length_m": 5.719356352463364e-07,
+        "tail_width_m": 2.1966894367093195e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 21,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.3581879651173949,
+        0.0793142793700099,
+        0.5126609681174159,
+        0.9200128111988306,
+        0.9269892442971468,
+        0.40184346213936806,
+        0.595372885465622,
+        0.8961973143741488,
+        0.04122157022356987,
+        0.27098981477320194,
+        0.3331151222810149,
+        0.43589920457452536
+      ]
+    },
+    {
+      "design_id": "sobol_022",
+      "parameters": {
+        "compensation_capacitance_f": 1.3777127768137558e-13,
+        "first_stage_load_length_m": 5.242802271153777e-07,
+        "first_stage_load_width_m": 4.027217776972209e-06,
+        "input_pair_length_m": 8.803076022304594e-07,
+        "input_pair_width_m": 1.1635795760282324e-06,
+        "second_load_bias_v": 0.2575674324762076,
+        "second_load_length_m": 3.6589416470378635e-07,
+        "second_load_width_m": 2.738385663784846e-06,
+        "second_stage_length_m": 8.64853086322546e-07,
+        "second_stage_width_m": 5.557468504094246e-06,
+        "tail_length_m": 1.9402591749094425e-07,
+        "tail_width_m": 8.384176689436092e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 22,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.09113406669348478,
+        0.8591854143887758,
+        0.40572991874068975,
+        0.35645735915750265,
+        0.7013489371165633,
+        0.04192944522947073,
+        0.4426399124786258,
+        0.6808124631643295,
+        0.2768342886120081,
+        0.20561349019408226,
+        0.007965718396008015,
+        0.22009434085339308
+      ]
+    },
+    {
+      "design_id": "sobol_023",
+      "parameters": {
+        "compensation_capacitance_f": 8.380490803023533e-13,
+        "first_stage_load_length_m": 8.053306721616535e-07,
+        "first_stage_load_width_m": 3.2040463302241066e-05,
+        "input_pair_length_m": 4.0794985676184293e-07,
+        "input_pair_width_m": 2.6459752919071733e-05,
+        "second_load_bias_v": 0.9145656785462052,
+        "second_load_length_m": 8.495843506883829e-07,
+        "second_load_width_m": 1.6613769072225786e-05,
+        "second_stage_length_m": 1.59506227215752e-07,
+        "second_stage_width_m": 2.5058309148201985e-05,
+        "tail_length_m": 7.150058375671506e-07,
+        "tail_width_m": 1.7976708415572672e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 23,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.9648802187293768,
+        0.30347041971981525,
+        0.9425662700086832,
+        0.6241244496777654,
+        0.3406173111870885,
+        0.5381007976830006,
+        0.7954554064199328,
+        0.009053549729287624,
+        0.6991792898625135,
+        0.6662708101794124,
+        0.6995428195223212,
+        0.6121497247368097
+      ]
+    },
+    {
+      "design_id": "sobol_024",
+      "parameters": {
+        "compensation_capacitance_f": 1.5791937273178756e-12,
+        "first_stage_load_length_m": 1.1954300923738629e-06,
+        "first_stage_load_width_m": 5.18586108705825e-06,
+        "input_pair_length_m": 7.781766453292219e-07,
+        "input_pair_width_m": 2.025766499929315e-05,
+        "second_load_bias_v": 0.8918762065470218,
+        "second_load_length_m": 2.565070854965597e-07,
+        "second_load_width_m": 4.02873869682777e-05,
+        "second_stage_length_m": 4.801100348588078e-07,
+        "second_stage_width_m": 1.955954039429774e-06,
+        "tail_length_m": 8.792273285798728e-07,
+        "tail_width_m": 3.5887788436325636e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 24,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.8901807954534888,
+        0.7390313474461436,
+        0.4711829088628292,
+        0.9956477070227265,
+        0.5025683669373393,
+        0.694502217695117,
+        0.1980068562552333,
+        0.3143905093893409,
+        0.9066914254799485,
+        0.10143531952053308,
+        0.6756591647863388,
+        0.7497327029705048
+      ]
+    },
+    {
+      "design_id": "sobol_025",
+      "parameters": {
+        "compensation_capacitance_f": 8.128702270384469e-14,
+        "first_stage_load_length_m": 3.8950181300751863e-07,
+        "first_stage_load_width_m": 3.0511624975729527e-05,
+        "input_pair_length_m": 2.9425885616801674e-07,
+        "input_pair_width_m": 8.845921378869351e-07,
+        "second_load_bias_v": 0.3609916432760656,
+        "second_load_length_m": 7.068516324274241e-07,
+        "second_load_width_m": 1.3453379582529212e-06,
+        "second_stage_length_m": 1.1851805191487073e-06,
+        "second_stage_width_m": 8.147731511270062e-06,
+        "tail_length_m": 3.5792997409589587e-07,
+        "tail_width_m": 2.2279860715253435e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 25,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.014466242864727974,
+        0.1697163013741374,
+        0.9299105936661363,
+        0.22809696476906538,
+        0.39089170936495066,
+        0.19802854675799608,
+        0.5322683779522777,
+        0.9858862087130547,
+        0.11033777613192797,
+        0.5303348880261183,
+        0.11683330871164799,
+        0.1055256063118577
+      ]
+    },
+    {
+      "design_id": "sobol_026",
+      "parameters": {
+        "compensation_capacitance_f": 1.9905226867301815e-13,
+        "first_stage_load_length_m": 7.186061206273733e-07,
+        "first_stage_load_width_m": 9.90674405691335e-07,
+        "input_pair_length_m": 9.096887023188173e-07,
+        "input_pair_width_m": 2.5435264835197817e-06,
+        "second_load_bias_v": 0.5270127061754465,
+        "second_load_length_m": 1.159889954701066e-06,
+        "second_load_width_m": 3.2114200619064846e-06,
+        "second_stage_length_m": 9.017334810923785e-07,
+        "second_stage_width_m": 4.267018284925148e-06,
+        "tail_length_m": 5.389621610753238e-07,
+        "tail_width_m": 1.120249843643191e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 26,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.3098557274788618,
+        0.8937514144927263,
+        0.04270621109753847,
+        0.5415296386927366,
+        0.2298247180879116,
+        0.3704401534050703,
+        0.38074108213186264,
+        0.7159366486594081,
+        0.31416292022913694,
+        0.9617999568581581,
+        0.2915923222899437,
+        0.29999856371432543
+      ]
+    },
+    {
+      "design_id": "sobol_027",
+      "parameters": {
+        "compensation_capacitance_f": 3.254552247610426e-12,
+        "first_stage_load_length_m": 4.705624351277947e-07,
+        "first_stage_load_width_m": 8.911111811946766e-06,
+        "input_pair_length_m": 5.303741321898996e-07,
+        "input_pair_width_m": 9.680444535270298e-06,
+        "second_load_bias_v": 1.1841558682732285,
+        "second_load_length_m": 5.767413118388504e-07,
+        "second_load_width_m": 1.3006257655405433e-05,
+        "second_stage_length_m": 2.622714685276151e-07,
+        "second_stage_width_m": 3.266738962750953e-05,
+        "tail_length_m": 1.0592361256945878e-06,
+        "tail_width_m": 1.7138940937372788e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 27,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.6836600480601192,
+        0.4474989790469408,
+        0.611315056681633,
+        0.3052975572645664,
+        0.8688489403575659,
+        0.8659391673281789,
+        0.8575754836201668,
+        0.10692520812153816,
+        0.6418313076719642,
+        0.4064202969893813,
+        0.9833219666033983,
+        0.9067606218159199
+      ]
+    },
+    {
+      "design_id": "sobol_028",
+      "parameters": {
+        "compensation_capacitance_f": 2.4413319642407333e-12,
+        "first_stage_load_length_m": 5.572584469802677e-07,
+        "first_stage_load_width_m": 2.4410461408191882e-05,
+        "input_pair_length_m": 7.895022582262753e-07,
+        "input_pair_width_m": 7.229555270967293e-06,
+        "second_load_bias_v": 0.7201336944475769,
+        "second_load_length_m": 8.908163951709866e-07,
+        "second_load_width_m": 6.238365034242702e-06,
+        "second_stage_length_m": 7.961009067948907e-07,
+        "second_stage_width_m": 2.559268149588463e-06,
+        "tail_length_m": 7.887093365192413e-07,
+        "tail_width_m": 2.8406034394430994e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 28,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.6020138012245297,
+        0.7523555979132652,
+        0.8721620757132769,
+        0.387865187600255,
+        0.9872102029621601,
+        0.6082946062088013,
+        0.26098701264709234,
+        0.615334196947515,
+        0.46971501503139734,
+        0.7055394239723682,
+        0.49487757310271263,
+        0.8443284165114164
+      ]
+    },
+    {
+      "design_id": "sobol_029",
+      "parameters": {
+        "compensation_capacitance_f": 4.718767391272472e-13,
+        "first_stage_load_length_m": 8.382528159767388e-07,
+        "first_stage_load_width_m": 2.5599810232821703e-06,
+        "input_pair_length_m": 4.3837189041078086e-07,
+        "input_pair_width_m": 4.635477056834172e-06,
+        "second_load_bias_v": 1.0207079478539525,
+        "second_load_length_m": 3.2504689204506577e-07,
+        "second_load_width_m": 8.688204129332051e-06,
+        "second_stage_length_m": 3.535143870860338e-07,
+        "second_stage_width_m": 5.2623975322022006e-05,
+        "tail_length_m": 2.515482216607779e-07,
+        "tail_width_m": 6.26722452517349e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 29,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.47771451622247696,
+        0.3392610475420952,
+        0.2884509628638625,
+        0.655478872358799,
+        0.09376373700797558,
+        0.09671259205788374,
+        0.9692710181698203,
+        0.1938232257962227,
+        0.5473143504932523,
+        0.1667113257572055,
+        0.8112715240567923,
+        0.4874292826279998
+      ]
+    },
+    {
+      "design_id": "sobol_030",
+      "parameters": {
+        "compensation_capacitance_f": 1.0842408908052918e-13,
+        "first_stage_load_length_m": 2.4446868491359053e-07,
+        "first_stage_load_width_m": 1.1468817598948506e-05,
+        "input_pair_length_m": 6.593524534720927e-07,
+        "input_pair_width_m": 1.8028069697705979e-06,
+        "second_load_bias_v": 0.8173457710072398,
+        "second_load_length_m": 5.245412432122975e-07,
+        "second_load_width_m": 2.0745431819410337e-05,
+        "second_stage_length_m": 6.533856898080557e-07,
+        "second_stage_width_m": 1.117082948248812e-06,
+        "tail_length_m": 6.28456737846136e-07,
+        "tail_width_m": 1.3668515338561039e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 30,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.21358898654580116,
+        0.5992381805554032,
+        0.6766315503045917,
+        0.08997017610818148,
+        0.276433358900249,
+        0.45567308366298676,
+        0.06678246334195137,
+        0.4794149426743388,
+        0.7512078611180186,
+        0.35670594591647387,
+        0.597206074744463,
+        0.16807788889855146
+      ]
+    },
+    {
+      "design_id": "sobol_031",
+      "parameters": {
+        "compensation_capacitance_f": 6.657726724467935e-13,
+        "first_stage_load_length_m": 1.0177066338714212e-06,
+        "first_stage_load_width_m": 2.066396606093326e-06,
+        "input_pair_length_m": 2.0027180355973542e-07,
+        "input_pair_width_m": 1.6916448747972736e-05,
+        "second_load_bias_v": 0.40582003341987727,
+        "second_load_length_m": 9.595894594676792e-07,
+        "second_load_width_m": 2.0133840832823216e-06,
+        "second_stage_length_m": 1.030331682600081e-06,
+        "second_stage_width_m": 1.4765303563303728e-05,
+        "tail_length_m": 1.1666412464808673e-06,
+        "tail_width_m": 6.308884881313608e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 31,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.8397698784247041,
+        0.05914329830557108,
+        0.23300684802234173,
+        0.8263872703537345,
+        0.6347273895516992,
+        0.9682297585532069,
+        0.6715475060045719,
+        0.8384111262857914,
+        0.20478617306798697,
+        0.7710375804454088,
+        0.16402108781039715,
+        0.5621779803186655
+      ]
+    },
+    {
+      "design_id": "sobol_032",
+      "parameters": {
+        "compensation_capacitance_f": 7.2359679380954e-14,
+        "first_stage_load_length_m": 7.821958819404244e-07,
+        "first_stage_load_width_m": 3.3540270235778136e-06,
+        "input_pair_length_m": 8.215342187788336e-07,
+        "input_pair_width_m": 1.5426902255124516e-05,
+        "second_load_bias_v": 0.5077516096644104,
+        "second_load_length_m": 4.228069547563791e-07,
+        "second_load_width_m": 1.1884992758070615e-05,
+        "second_stage_length_m": 1.1829968633595853e-06,
+        "second_stage_width_m": 9.264324136561444e-07,
+        "tail_length_m": 1.037009062618017e-06,
+        "tail_width_m": 4.643037995854327e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 32,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.8139910353347659,
+        0.7900402573868632,
+        0.35838251654058695,
+        0.6020913161337376,
+        0.02349296398460865,
+        0.844770535826683,
+        0.022943577729165554,
+        0.9838065365329385,
+        0.620711493305862,
+        0.25981614738702774,
+        0.27131748385727406,
+        0.08026331476867199
+      ]
+    },
+    {
+      "design_id": "sobol_033",
+      "parameters": {
+        "compensation_capacitance_f": 1.1938698507656931e-12,
+        "first_stage_load_length_m": 5.381902548484505e-07,
+        "first_stage_load_width_m": 1.857892590378767e-05,
+        "input_pair_length_m": 4.5551716177724295e-07,
+        "input_pair_width_m": 1.6472093792268588e-06,
+        "second_load_bias_v": 1.1570074830204247,
+        "second_load_length_m": 1.0551777878310531e-06,
+        "second_load_width_m": 4.9827797619106635e-06,
+        "second_stage_length_m": 5.099493063054978e-07,
+        "second_stage_width_m": 2.0357776321359463e-05,
+        "tail_length_m": 5.24171184701845e-07,
+        "tail_width_m": 1.841397016264955e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 33,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.1883446779102087,
+        0.3594319550320506,
+        0.8015000484883785,
+        0.36970500461757183,
+        0.8856588676571846,
+        0.35635350923985243,
+        0.7467889254912734,
+        0.3428088631480932,
+        0.41706893499940634,
+        0.862074083648622,
+        0.9547447189688683,
+        0.6889934903010726
+      ]
+    },
+    {
+      "design_id": "sobol_034",
+      "parameters": {
+        "compensation_capacitance_f": 3.228463721189012e-12,
+        "first_stage_load_length_m": 1.1277381896506993e-06,
+        "first_stage_load_width_m": 1.5786782082790914e-06,
+        "input_pair_length_m": 6.405482069589197e-07,
+        "input_pair_width_m": 4.801865959789997e-06,
+        "second_load_bias_v": 0.8554502262733876,
+        "second_load_length_m": 8.607939886394888e-07,
+        "second_load_width_m": 1.5985704385153903e-06,
+        "second_stage_length_m": 2.685410425532609e-07,
+        "second_stage_width_m": 3.529527414652898e-06,
+        "tail_length_m": 3.7707883715629574e-07,
+        "tail_width_m": 9.733235719100766e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 34,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.4875774625688791,
+        0.5771155375987291,
+        0.16331951320171356,
+        0.9311792282387614,
+        0.7363010914996266,
+        0.21626555919647217,
+        0.33628928288817406,
+        0.11289623100310564,
+        0.15073990914970636,
+        0.6769466558471322,
+        0.6373160276561975,
+        0.9050129530951381
+      ]
+    },
+    {
+      "design_id": "sobol_035",
+      "parameters": {
+        "compensation_capacitance_f": 1.676709647265697e-13,
+        "first_stage_load_length_m": 3.259761346969753e-07,
+        "first_stage_load_width_m": 1.5082856609337952e-05,
+        "input_pair_length_m": 1.6990199098363517e-07,
+        "input_pair_width_m": 7.477256183024341e-06,
+        "second_load_bias_v": 0.31760970428586005,
+        "second_load_length_m": 3.612272749654948e-07,
+        "second_load_width_m": 2.8193931861125007e-05,
+        "second_stage_length_m": 8.75947079155594e-07,
+        "second_stage_width_m": 4.3631421484879004e-05,
+        "tail_length_m": 8.888933330308645e-07,
+        "tail_width_m": 1.8456491307802508e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 35,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.611435673199594,
+        0.02341410703957081,
+        0.7475376920774579,
+        0.16759631875902414,
+        0.34678762312978506,
+        0.703707936219871,
+        0.9253713898360729,
+        0.6913781706243753,
+        0.8230753736570477,
+        0.2011688333004713,
+        0.07116810977458954,
+        0.2627439294010401
+      ]
+    },
+    {
+      "design_id": "sobol_036",
+      "parameters": {
+        "compensation_capacitance_f": 3.9773644002670966e-13,
+        "first_stage_load_length_m": 1.8094288534484804e-07,
+        "first_stage_load_width_m": 3.788741474433557e-05,
+        "input_pair_length_m": 7.606698360294103e-07,
+        "input_pair_width_m": 8.977590928696843e-06,
+        "second_load_bias_v": 0.811085653770715,
+        "second_load_length_m": 1.134036459820345e-06,
+        "second_load_width_m": 1.0745813699813473e-06,
+        "second_stage_length_m": 3.7212230362929404e-07,
+        "second_stage_width_m": 5.983648659897906e-06,
+        "tail_length_m": 1.1433665986172855e-06,
+        "tail_width_m": 3.215520011772444e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 36,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.6625790307298303,
+        0.718435101211071,
+        0.9859546488150954,
+        0.029469414614140987,
+        0.47684087324887514,
+        0.9460634272545576,
+        0.4599491311237216,
+        0.21154505107551813,
+        0.0576954735442996,
+        0.937177580781281,
+        0.5906164776533842,
+        0.45031268894672394
+      ]
+    },
+    {
+      "design_id": "sobol_037",
+      "parameters": {
+        "compensation_capacitance_f": 2.420244369517172e-12,
+        "first_stage_load_length_m": 9.500146020669489e-07,
+        "first_stage_load_width_m": 4.219818139648149e-06,
+        "input_pair_length_m": 2.6176159791648383e-07,
+        "input_pair_width_m": 2.3540995258875333e-06,
+        "second_load_bias_v": 0.39167622309178113,
+        "second_load_length_m": 6.169604142196477e-07,
+        "second_load_width_m": 5.511004700835336e-05,
+        "second_stage_length_m": 7.826538487337529e-07,
+        "second_stage_width_m": 2.663724769887293e-05,
+        "tail_length_m": 6.146649525035172e-07,
+        "tail_width_m": 5.919372274506649e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 37,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.2882106117904186,
+        0.1314842328429222,
+        0.41782245226204395,
+        0.7619186686351895,
+        0.6197981229051948,
+        0.4425380500033498,
+        0.809770087711513,
+        0.6025274749845266,
+        0.980084671638906,
+        0.44472420401871204,
+        0.1491328664124012,
+        0.8424446070566773
+      ]
+    },
+    {
+      "design_id": "sobol_038",
+      "parameters": {
+        "compensation_capacitance_f": 5.035787020371103e-13,
+        "first_stage_load_length_m": 6.248863879591226e-07,
+        "first_stage_load_width_m": 7.169560154483715e-06,
+        "input_pair_length_m": 9.40527055086568e-07,
+        "input_pair_width_m": 9.030494898919444e-07,
+        "second_load_bias_v": 0.6707357265986502,
+        "second_load_length_m": 1.506079064682126e-07,
+        "second_load_width_m": 1.7676351669112367e-05,
+        "second_stage_length_m": 1.007669895188883e-06,
+        "second_stage_width_m": 1.5953139061722637e-06,
+        "tail_length_m": 2.696979406289756e-07,
+        "tail_width_m": 1.0394692094262545e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 38,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.020241767168045044,
+        0.9300318295136094,
+        0.5550267826765776,
+        0.4522727504372597,
+        0.7517036590725183,
+        0.1139980386942625,
+        0.15026219189167023,
+        0.81682847160846,
+        0.7137026572600007,
+        0.0005789585411548615,
+        0.4428797122091055,
+        0.5015486748889089
+      ]
+    },
+    {
+      "design_id": "sobol_039",
+      "parameters": {
+        "compensation_capacitance_f": 9.647011889175593e-14,
+        "first_stage_load_length_m": 9.018427063710986e-07,
+        "first_stage_load_width_m": 1.2163218734993684e-06,
+        "input_pair_length_m": 5.495431591290979e-07,
+        "input_pair_width_m": 2.071094112027443e-05,
+        "second_load_bias_v": 0.9643504256382585,
+        "second_load_length_m": 7.984052311163394e-07,
+        "second_load_width_m": 2.549736906461226e-06,
+        "second_stage_length_m": 6.627478309907019e-07,
+        "second_stage_width_m": 1.1422612934652416e-05,
+        "tail_length_m": 7.99422972695902e-07,
+        "tail_width_m": 7.76281657205472e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 39,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.896369737572968,
+        0.4700507754459977,
+        0.09582255315035582,
+        0.7160406727343798,
+        0.1438988447189331,
+        0.6184980692341924,
+        0.6114155650138855,
+        0.4883312676101923,
+        0.2601129384711385,
+        0.617528791539371,
+        0.7519478164613247,
+        0.14271140471100807
+      ]
+    },
+    {
+      "design_id": "sobol_040",
+      "parameters": {
+        "compensation_capacitance_f": 5.755731078853915e-14,
+        "first_stage_load_length_m": 1.0294353752396999e-06,
+        "first_stage_load_width_m": 7.529254207440014e-06,
+        "input_pair_length_m": 6.043143186718224e-07,
+        "input_pair_width_m": 2.4533488864053375e-05,
+        "second_load_bias_v": 1.0798206750769168,
+        "second_load_length_m": 3.363857051823288e-07,
+        "second_load_width_m": 1.2631469301087506e-06,
+        "second_stage_length_m": 3.434457887895405e-07,
+        "second_stage_width_m": 4.570733619950137e-06,
+        "tail_length_m": 8.323974208440631e-07,
+        "tail_width_m": 2.4274001479235207e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 40,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.9437406100332737,
+        0.5344874337315559,
+        0.567697954364121,
+        0.8375575002282858,
+        0.9503849875181913,
+        0.6499023055657744,
+        0.3968486711382866,
+        0.18423408456146717,
+        0.0955700222402811,
+        0.17751019541174173,
+        0.8734954474493861,
+        0.03056524507701397
+      ]
+    },
+    {
+      "design_id": "sobol_041",
+      "parameters": {
+        "compensation_capacitance_f": 9.42596975430688e-13,
+        "first_stage_load_length_m": 2.2761724423617124e-07,
+        "first_stage_load_width_m": 9.445103964068017e-07,
+        "input_pair_length_m": 2.5157455988228317e-07,
+        "input_pair_width_m": 1.0771600963652924e-06,
+        "second_load_bias_v": 0.6600923215504735,
+        "second_load_length_m": 8.852512872777879e-07,
+        "second_load_width_m": 4.322286402595238e-05,
+        "second_stage_length_m": 6.880914781708269e-07,
+        "second_stage_width_m": 3.483849125830054e-05,
+        "tail_length_m": 3.023489462211728e-07,
+        "tail_width_m": 6.262480951815399e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 41,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.06955052260309458,
+        0.11949948221445084,
+        0.030354060232639313,
+        0.07392118498682976,
+        0.09358635917305946,
+        0.14509423449635506,
+        0.8726492896676064,
+        0.5124680744484067,
+        0.9231674503535032,
+        0.7002393212169409,
+        0.4316761279478669,
+        0.637678018771112
+      ]
+    },
+    {
+      "design_id": "sobol_042",
+      "parameters": {
+        "compensation_capacitance_f": 4.09826088827729e-12,
+        "first_stage_load_length_m": 8.151140222791582e-07,
+        "first_stage_load_width_m": 2.5879092061208927e-05,
+        "input_pair_length_m": 8.444887917954474e-07,
+        "input_pair_width_m": 3.085753792437162e-06,
+        "second_load_bias_v": 0.4645286888349801,
+        "second_load_length_m": 9.487533241510391e-07,
+        "second_load_width_m": 1.2110334317123894e-05,
+        "second_stage_length_m": 9.706578257493674e-07,
+        "second_stage_width_m": 2.0798426927569487e-06,
+        "tail_length_m": 4.5044249533675605e-07,
+        "tail_width_m": 1.4233307740186225e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 42,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.36390179861336946,
+        0.8170456374064088,
+        0.8872850574553013,
+        0.6334419259801507,
+        0.2859186390414834,
+        0.28613570984452963,
+        0.2123939571902156,
+        0.7815788816660643,
+        0.6251115873456001,
+        0.7607174515724182,
+        0.22581967245787382,
+        0.9568147985264659
+      ]
+    },
+    {
+      "design_id": "sobol_043",
+      "parameters": {
+        "compensation_capacitance_f": 2.1126460904529644e-13,
+        "first_stage_load_length_m": 5.711644712369889e-07,
+        "first_stage_load_width_m": 4.9626073424245036e-06,
+        "input_pair_length_m": 3.871206846553832e-07,
+        "input_pair_width_m": 1.1849648947438297e-05,
+        "second_load_bias_v": 0.7577084699179977,
+        "second_load_length_m": 5.296156895812601e-07,
+        "second_load_width_m": 3.416785122345947e-06,
+        "second_stage_length_m": 5.603706120047718e-07,
+        "second_stage_width_m": 8.770403909845727e-06,
+        "tail_length_m": 9.794635707512497e-07,
+        "tail_width_m": 7.5846042955834865e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 43,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.7402080968022346,
+        0.2789655113592744,
+        0.4597922870889306,
+        0.4011090202257037,
+        0.6778697026893497,
+        0.7899653054773808,
+        0.5495203165337443,
+        0.3908291542902589,
+        0.32868417724967003,
+        0.36153875198215246,
+        0.5344299683347344,
+        0.3129283729940653
+      ]
+    },
+    {
+      "design_id": "sobol_044",
+      "parameters": {
+        "compensation_capacitance_f": 2.8165607020275775e-13,
+        "first_stage_load_length_m": 4.607542984653264e-07,
+        "first_stage_load_width_m": 1.913450629786287e-06,
+        "input_pair_length_m": 9.651288048829882e-07,
+        "input_pair_width_m": 5.6452107745946045e-06,
+        "second_load_bias_v": 0.30141417295672,
+        "second_load_length_m": 6.753985365852713e-07,
+        "second_load_width_m": 8.157206211320724e-06,
+        "second_stage_length_m": 1.0803592932410538e-06,
+        "second_stage_width_m": 1.2115733094662027e-06,
+        "tail_length_m": 7.24926265189424e-07,
+        "tail_width_m": 4.586360532144649e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 44,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.5328300576657057,
+        0.9589750645682216,
+        0.21310173254460096,
+        0.2959564747288823,
+        0.5600272947922349,
+        0.5475488239899278,
+        0.08580442145466805,
+        0.8860564697533846,
+        0.5325406361371279,
+        0.5003795586526394,
+        0.05412018205970526,
+        0.37537455558776855
+      ]
+    },
+    {
+      "design_id": "sobol_045",
+      "parameters": {
+        "compensation_capacitance_f": 1.728646359386182e-12,
+        "first_stage_load_length_m": 7.376385190989822e-07,
+        "first_stage_load_width_m": 9.410547403182078e-06,
+        "input_pair_length_m": 4.794994862284511e-07,
+        "input_pair_width_m": 3.599907361273602e-06,
+        "second_load_bias_v": 0.9505250453483313,
+        "second_load_length_m": 2.7374302516691385e-07,
+        "second_load_width_m": 6.693070355366818e-06,
+        "second_stage_length_m": 4.731975879985839e-07,
+        "second_stage_width_m": 1.5549900796893518e-05,
+        "tail_length_m": 2.1292051384225487e-07,
+        "tail_width_m": 2.5385375242600693e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 45,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.40700345020741224,
+        0.3876464543864131,
+        0.6254307236522436,
+        0.5596557324752212,
+        0.42146076541393995,
+        0.0599242988973856,
+        0.6836763061583042,
+        0.307807226665318,
+        0.4861965235322714,
+        0.11785050015896559,
+        0.7373947845771909,
+        0.7693680757656693
+      ]
+    },
+    {
+      "design_id": "sobol_046",
+      "parameters": {
+        "compensation_capacitance_f": 7.066193649067287e-13,
+        "first_stage_load_length_m": 4.1045964891090985e-07,
+        "first_stage_load_width_m": 2.379043615876956e-06,
+        "input_pair_length_m": 7.227887519635259e-07,
+        "input_pair_width_m": 1.4052783770353993e-06,
+        "second_load_bias_v": 1.124054735386744,
+        "second_load_length_m": 6.087331343907862e-07,
+        "second_load_width_m": 1.8746196814326536e-06,
+        "second_stage_length_m": 1.7423902703449128e-07,
+        "second_stage_width_m": 2.7102266499609838e-06,
+        "tail_length_m": 5.568862615618854e-07,
+        "tail_width_m": 1.0185342904086321e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 46,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.1439187517389655,
+        0.6738691199570894,
+        0.2694768849760294,
+        0.24805680848658085,
+        0.20752585493028164,
+        0.3875107252970338,
+        0.2744128694757819,
+        0.023084787651896477,
+        0.18805715441703796,
+        0.43688869941979647,
+        0.9200576161965728,
+        0.5751077653840184
+      ]
+    },
+    {
+      "design_id": "sobol_047",
+      "parameters": {
+        "compensation_capacitance_f": 1.365319204042183e-13,
+        "first_stage_load_length_m": 1.1796034634113311e-06,
+        "first_stage_load_width_m": 2.010884460562568e-05,
+        "input_pair_length_m": 3.450813435949385e-07,
+        "input_pair_width_m": 1.306879875001661e-05,
+        "second_load_bias_v": 0.5861852075438947,
+        "second_load_length_m": 1.1421353154815733e-06,
+        "second_load_width_m": 2.207298927865163e-05,
+        "second_stage_length_m": 8.470102092716843e-07,
+        "second_stage_width_m": 5.6885994886853214e-05,
+        "tail_length_m": 1.0699194082058966e-06,
+        "tail_width_m": 1.3838765729592949e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 47,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.7675967086106539,
+        0.22950746305286884,
+        0.8219833662733436,
+        0.9805747270584106,
+        0.818744819611311,
+        0.8761137221008539,
+        0.9875148376449943,
+        0.6638192469254136,
+        0.7657388933002949,
+        0.9448907766491175,
+        0.3538791658356786,
+        0.21813209727406502
+      ]
+    },
+    {
+      "design_id": "sobol_048",
+      "parameters": {
+        "compensation_capacitance_f": 4.579152393770933e-13,
+        "first_stage_load_length_m": 6.424925944302231e-07,
+        "first_stage_load_width_m": 1.0412404014062489e-06,
+        "input_pair_length_m": 6.92352013895288e-07,
+        "input_pair_width_m": 1.5039540531547125e-05,
+        "second_load_bias_v": 0.55009465967305,
+        "second_load_length_m": 6.551915490534156e-07,
+        "second_load_width_m": 3.6682257413975584e-05,
+        "second_stage_length_m": 1.8712275959551334e-07,
+        "second_stage_width_m": 1.724650752040666e-05,
+        "tail_length_m": 1.5039032232016325e-07,
+        "tail_width_m": 1.7015654554596101e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 48,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.8068788116797805,
+        0.638061192817986,
+        0.055592321790754795,
+        0.469040566124022,
+        0.3277461342513561,
+        0.000371735543012619,
+        0.7079355539754033,
+        0.03535500913858414,
+        0.8847303371876478,
+        0.4811348086223006,
+        0.31588911544531584,
+        0.4809075463563204
+      ]
+    },
+    {
+      "design_id": "sobol_049",
+      "parameters": {
+        "compensation_capacitance_f": 2.808747367507227e-12,
+        "first_stage_load_length_m": 9.234868891071527e-07,
+        "first_stage_load_width_m": 8.410660976754337e-06,
+        "input_pair_length_m": 3.2624031663872295e-07,
+        "input_pair_width_m": 1.616060673810266e-06,
+        "second_load_bias_v": 1.0877612137701362,
+        "second_load_length_m": 1.0896429676562547e-06,
+        "second_load_width_m": 1.2197349903446059e-06,
+        "second_stage_length_m": 8.271089283283799e-07,
+        "second_stage_width_m": 1.0929558081134513e-06,
+        "tail_length_m": 6.888952655252068e-07,
+        "tail_width_m": 8.935883051898236e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 49,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.1830053422600031,
+        0.20734154898673296,
+        0.5963537655770779,
+        0.7366541801020503,
+        0.7162782605737448,
+        0.5132335862144828,
+        0.06166732031852007,
+        0.6448656460270286,
+        0.08737722970545292,
+        0.8948980644345284,
+        0.8818539092317224,
+        0.8747713370248675
+      ]
+    },
+    {
+      "design_id": "sobol_050",
+      "parameters": {
+        "compensation_capacitance_f": 5.799143833075053e-13,
+        "first_stage_load_length_m": 2.0050661964341997e-07,
+        "first_stage_load_width_m": 5.4811717131194676e-06,
+        "input_pair_length_m": 9.822857780382037e-07,
+        "input_pair_width_m": 3.3131275253537285e-06,
+        "second_load_bias_v": 0.9274227221030742,
+        "second_load_length_m": 7.606928075663745e-07,
+        "second_load_width_m": 3.770677188093164e-06,
+        "second_stage_length_m": 1.1269647041335702e-06,
+        "second_stage_width_m": 3.9515523892541426e-05,
+        "tail_length_m": 1.130394816957414e-06,
+        "tail_width_m": 2.0650881051283753e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 50,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.38378590904176235,
+        0.979159738868475,
+        0.48551882803440094,
+        0.04810154251754284,
+        0.9125167904421687,
+        0.9337093494832516,
+        0.9021596368402243,
+        0.930442575365305,
+        0.35177190229296684,
+        0.5816121976822615,
+        0.7130765495821834,
+        0.5321969380602241
+      ]
+    },
+    {
+      "design_id": "sobol_051",
+      "parameters": {
+        "compensation_capacitance_f": 1.1199112382654844e-13,
+        "first_stage_load_length_m": 9.737444864585994e-07,
+        "first_stage_load_width_m": 2.9072668238350666e-05,
+        "input_pair_length_m": 5.116235522553324e-07,
+        "input_pair_width_m": 5.191865045564098e-06,
+        "second_load_bias_v": 0.27810887596569955,
+        "second_load_length_m": 1.9446266018785536e-07,
+        "second_load_width_m": 1.5333544817356638e-05,
+        "second_stage_length_m": 4.2136906231753524e-07,
+        "second_stage_width_m": 3.895508671583244e-06,
+        "tail_length_m": 5.949640487786383e-07,
+        "tail_width_m": 5.228757810827698e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 51,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.5094170076772571,
+        0.4254394732415676,
+        0.9174057142809033,
+        0.7845185585319996,
+        0.05132459942251444,
+        0.42377528455108404,
+        0.3594017829746008,
+        0.25844672601670027,
+        0.6803939566016197,
+        0.042345390655100346,
+        0.029588290490210056,
+        0.17510679922997952
+      ]
+    },
+    {
+      "design_id": "sobol_052",
+      "parameters": {
+        "compensation_capacitance_f": 8.400228716701894e-14,
+        "first_stage_load_length_m": 1.092252641636878e-06,
+        "first_stage_load_width_m": 1.0906082277336267e-05,
+        "input_pair_length_m": 8.903868558816612e-07,
+        "input_pair_width_m": 1.0889159928922431e-05,
+        "second_load_bias_v": 0.7346496979240328,
+        "second_load_length_m": 1.0287952844984827e-06,
+        "second_load_width_m": 5.655935422042145e-06,
+        "second_stage_length_m": 9.577580597251652e-07,
+        "second_stage_width_m": 2.2567845021086686e-05,
+        "tail_length_m": 3.2398865120485424e-07,
+        "tail_width_m": 9.345180052549266e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 52,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.716566857881844,
+        0.8710433598607779,
+        0.6636084681376815,
+        0.8973834682255983,
+        0.1873583449050784,
+        0.16570347733795643,
+        0.7709328541532159,
+        0.7692933902144432,
+        0.4467542376369238,
+        0.8369478899985552,
+        0.5101575767621398,
+        0.11266055330634117
+      ]
+    },
+    {
+      "design_id": "sobol_053",
+      "parameters": {
+        "compensation_capacitance_f": 1.3748559557126536e-12,
+        "first_stage_load_length_m": 2.863244365900755e-07,
+        "first_stage_load_width_m": 2.188445013495414e-06,
+        "input_pair_length_m": 3.915412384085357e-07,
+        "input_pair_width_m": 2.837287755341269e-06,
+        "second_load_bias_v": 0.4412089596968144,
+        "second_load_length_m": 4.4713266869075595e-07,
+        "second_load_width_m": 7.910729134569755e-06,
+        "second_stage_length_m": 5.802879264112561e-07,
+        "second_stage_width_m": 7.0596200476973255e-06,
+        "tail_length_m": 8.434294859413058e-07,
+        "tail_width_m": 1.2461324862248128e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 53,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.3404236286878586,
+        0.28416616283357143,
+        0.2478609699755907,
+        0.12983279675245285,
+        0.7941837171092629,
+        0.660409034229815,
+        0.49868710432201624,
+        0.4097980251535773,
+        0.5253530163317919,
+        0.28298349399119616,
+        0.2012725891545415,
+        0.7196435974910855
+      ]
+    },
+    {
+      "design_id": "sobol_054",
+      "parameters": {
+        "compensation_capacitance_f": 3.746735700592389e-12,
+        "first_stage_load_length_m": 7.487244423944502e-07,
+        "first_stage_load_width_m": 2.3085796001917456e-05,
+        "input_pair_length_m": 5.982615720015018e-07,
+        "input_pair_width_m": 1.2377197587578172e-06,
+        "second_load_bias_v": 0.624045211682096,
+        "second_load_length_m": 3.8604965466074643e-07,
+        "second_load_width_m": 2.4457561186820206e-05,
+        "second_stage_length_m": 2.968243600800633e-07,
+        "second_stage_width_m": 1.0344367109803376e-05,
+        "tail_length_m": 9.598706376738846e-07,
+        "tail_width_m": 5.0839113932515915e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 54,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.10840963944792747,
+        0.5273665552958846,
+        0.8577197026461363,
+        0.5702137546613812,
+        0.5841550566256046,
+        0.7713053692132235,
+        0.5881876740604639,
+        0.1398327238857746,
+        0.7897707559168339,
+        0.22480919491499662,
+        0.3937318017706275,
+        0.937341527082026
+      ]
+    },
+    {
+      "design_id": "sobol_055",
+      "parameters": {
+        "compensation_capacitance_f": 1.9304175890076783e-13,
+        "first_stage_load_length_m": 5.006808390375227e-07,
+        "first_stage_load_width_m": 2.685259014425273e-06,
+        "input_pair_length_m": 2.073119248729199e-07,
+        "input_pair_width_m": 2.8206851135763866e-05,
+        "second_load_bias_v": 1.0435126080643387,
+        "second_load_length_m": 8.380163820460439e-07,
+        "second_load_width_m": 2.3640099309287085e-06,
+        "second_stage_length_m": 7.399360216688365e-07,
+        "second_stage_width_m": 1.7606271112627252e-06,
+        "tail_length_m": 4.373556318227201e-07,
+        "tail_width_m": 2.7731614339246107e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 55,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.9827627995982766,
+        0.06742579396814108,
+        0.3008181555196643,
+        0.3339817514643073,
+        0.4421696197241545,
+        0.27367203030735254,
+        0.17336046136915684,
+        0.5618438301607966,
+        0.24239538609981537,
+        0.6552536971867085,
+        0.835276429541409,
+        0.29334063082933426
+      ]
+    },
+    {
+      "design_id": "sobol_056",
+      "parameters": {
+        "compensation_capacitance_f": 3.2624569238817797e-13,
+        "first_stage_load_length_m": 3.647478591185063e-07,
+        "first_stage_load_width_m": 1.6375097609932122e-05,
+        "input_pair_length_m": 8.996094550006092e-07,
+        "input_pair_width_m": 2.3813253034065906e-05,
+        "second_load_bias_v": 1.0003983884118497,
+        "second_load_length_m": 2.3551846956834194e-07,
+        "second_load_width_m": 4.51988131537155e-06,
+        "second_stage_length_m": 1.0605198021512478e-06,
+        "second_stage_width_m": 2.951335213109243e-05,
+        "tail_length_m": 6.668811250012368e-07,
+        "tail_width_m": 6.7631228286695735e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 56,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.9354071244597435,
+        0.8818934764713049,
+        0.7688159765675664,
+        0.20452177058905363,
+        0.6510147452354431,
+        0.492267738096416,
+        0.833789648488164,
+        0.8671617163345218,
+        0.39422773476690054,
+        0.08144616149365902,
+        0.789893040433526,
+        0.40728739090263844
+      ]
+    },
+    {
+      "design_id": "sobol_057",
+      "parameters": {
+        "compensation_capacitance_f": 1.9862667097826773e-12,
+        "first_stage_load_length_m": 1.1379296498838812e-06,
+        "first_stage_load_width_m": 2.9064033757565096e-06,
+        "input_pair_length_m": 5.467827568762004e-07,
+        "input_pair_width_m": 1.037599693980808e-06,
+        "second_load_bias_v": 0.7070446394383907,
+        "second_load_length_m": 7.197654223535209e-07,
+        "second_load_width_m": 9.396458681764138e-06,
+        "second_stage_length_m": 6.171718200668693e-07,
+        "second_stage_width_m": 5.392098849111698e-06,
+        "tail_length_m": 1.1897195655852557e-06,
+        "tail_width_m": 1.2638760825610877e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 57,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.059085567481815815,
+        0.4668032433837652,
+        0.3213033750653267,
+        0.9408853808417916,
+        0.25808427669107914,
+        0.9902091100811958,
+        0.4355632830411196,
+        0.44492554292082787,
+        0.5656727878376842,
+        0.5426337355747819,
+        0.48109962046146393,
+        0.799533779732883
+      ]
+    },
+    {
+      "design_id": "sobol_058",
+      "parameters": {
+        "compensation_capacitance_f": 8.182271324608478e-13,
+        "first_stage_load_length_m": 4.128987243399024e-07,
+        "first_stage_load_width_m": 1.321871403199361e-05,
+        "input_pair_length_m": 7.617421123664825e-07,
+        "input_pair_width_m": 2.164664211928263e-06,
+        "second_load_bias_v": 0.41473596123978496,
+        "second_load_length_m": 1.1798531917389482e-06,
+        "second_load_width_m": 3.325560504980813e-05,
+        "second_stage_length_m": 3.9100221111439166e-07,
+        "second_stage_width_m": 7.942757656818724e-06,
+        "tail_length_m": 7.451520096044988e-07,
+        "tail_width_m": 6.792912006181952e-07
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 58,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.2647476429119706,
+        0.7196966027840972,
+        0.7133887745440006,
+        0.2503797374665737,
+        0.11263275053352118,
+        0.5668114377185702,
+        0.5262995744124055,
+        0.2295259153470397,
+        0.861756150610745,
+        0.9808125635609031,
+        0.17340627498924732,
+        0.606951936148107
+      ]
+    },
+    {
+      "design_id": "sobol_059",
+      "parameters": {
+        "compensation_capacitance_f": 1.5684070843299918e-13,
+        "first_stage_load_length_m": 6.939490950666367e-07,
+        "first_stage_load_width_m": 1.3654120153470073e-06,
+        "input_pair_length_m": 3.0436407509259877e-07,
+        "input_pair_width_m": 8.249448480181594e-06,
+        "second_load_bias_v": 0.8344063419848681,
+        "second_load_length_m": 5.648529008030891e-07,
+        "second_load_width_m": 1.657208649540191e-06,
+        "second_stage_length_m": 7.687407083809374e-07,
+        "second_stage_width_m": 2.295444220874275e-06,
+        "tail_length_m": 2.2539173774421213e-07,
+        "tail_width_m": 2.6439454613877056e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 59,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.6389224715530872,
+        0.18160479422658682,
+        0.12575209233909845,
+        0.5180467572063208,
+        0.9704031543806195,
+        0.07180165499448776,
+        0.23550032917410135,
+        0.5892768651247025,
+        0.15917922649532557,
+        0.3950980007648468,
+        0.6151645705103874,
+        0.2482443954795599
+      ]
+    },
+    {
+      "design_id": "sobol_060",
+      "parameters": {
+        "compensation_capacitance_f": 6.611821944204608e-14,
+        "first_stage_load_length_m": 8.47048283368349e-07,
+        "first_stage_load_width_m": 3.743900347400661e-06,
+        "input_pair_length_m": 6.693248061928898e-07,
+        "input_pair_width_m": 6.877162368233477e-06,
+        "second_load_bias_v": 0.340712880436331,
+        "second_load_length_m": 9.116123161744325e-07,
+        "second_load_width_m": 4.978846518343669e-05,
+        "second_stage_length_m": 2.1567510995082556e-07,
+        "second_stage_width_m": 1.317387327208269e-05,
+        "tail_length_m": 4.964311752934009e-07,
+        "tail_width_m": 1.6113284383555556e-05
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 60,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.5880379397422075,
+        0.6109703602269292,
+        0.38684733491390944,
+        0.6638555079698563,
+        0.8543927585706115,
+        0.3299344526603818,
+        0.6448310445994139,
+        0.06254772376269102,
+        0.9562955191358924,
+        0.7253450630232692,
+        0.09548724256455898,
+        0.060675572603940964
+      ]
+    },
+    {
+      "design_id": "sobol_061",
+      "parameters": {
+        "compensation_capacitance_f": 1.0914665790359215e-12,
+        "first_stage_load_length_m": 5.989325822331011e-07,
+        "first_stage_load_width_m": 3.418990345721081e-05,
+        "input_pair_length_m": 1.837625666055828e-07,
+        "input_pair_width_m": 4.419094222425425e-06,
+        "second_load_bias_v": 0.8787563690915704,
+        "second_load_length_m": 3.1206944938749076e-07,
+        "second_load_width_m": 8.530254254917874e-07,
+        "second_stage_length_m": 9.215391157194972e-07,
+        "second_stage_width_m": 1.4293935727941857e-06,
+        "tail_length_m": 1.0320532067678867e-06,
+        "tail_width_m": 1.180981591924241e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 61,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.46434472408145666,
+        0.03972066659480333,
+        0.9593736436218023,
+        0.4275548402220011,
+        0.24219247419387102,
+        0.8400506731122732,
+        0.1245353203266859,
+        0.7347991578280926,
+        0.0036047203466296196,
+        0.154351856559515,
+        0.6618488095700741,
+        0.6695202188566327
+      ]
+    },
+    {
+      "design_id": "sobol_062",
+      "parameters": {
+        "compensation_capacitance_f": 4.708982407726109e-12,
+        "first_stage_load_length_m": 1.0592814312782137e-06,
+        "first_stage_load_width_m": 1.0934870938375573e-06,
+        "input_pair_length_m": 8.060374161228536e-07,
+        "input_pair_width_m": 1.8943834661129277e-06,
+        "second_load_bias_v": 1.1930989970453083,
+        "second_load_length_m": 5.047707089222968e-07,
+        "second_load_width_m": 3.0204740695290186e-06,
+        "second_stage_length_m": 1.1641009458806366e-06,
+        "second_stage_width_m": 5.151461010246277e-05,
+        "tail_length_m": 9.186801221687346e-07,
+        "tail_width_m": 2.1087290991710444e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 62,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.2274465886875987,
+        0.7718087248504162,
+        0.06826540268957615,
+        0.8659823155030608,
+        0.3780042603611946,
+        0.7320763068273664,
+        0.9642797159031034,
+        0.9658104246482253,
+        0.2998027028515935,
+        0.33787686564028263,
+        0.9927357863634825,
+        0.9869785318151116
+      ]
+    },
+    {
+      "design_id": "sobol_063",
+      "parameters": {
+        "compensation_capacitance_f": 2.4470817582632746e-13,
+        "first_stage_load_length_m": 2.534253240097314e-07,
+        "first_stage_load_width_m": 6.53117864052541e-06,
+        "input_pair_length_m": 4.28373578749597e-07,
+        "input_pair_width_m": 1.7752275178223777e-05,
+        "second_load_bias_v": 0.5440460903570056,
+        "second_load_length_m": 9.71541515411809e-07,
+        "second_load_width_m": 1.824599340449476e-05,
+        "second_stage_length_m": 5.238784566521644e-07,
+        "second_stage_width_m": 2.9909673533279943e-06,
+        "tail_length_m": 3.799799180589616e-07,
+        "tail_width_m": 3.8256963115688e-06
+      },
+      "sources": [
+        {
+          "generator": "scipy.stats.qmc.Sobol",
+          "index": 63,
+          "seed": 9200901
+        }
+      ],
+      "unit_coordinates": [
+        0.8532579373568296,
+        0.32749832794070244,
+        0.5308871855959296,
+        0.09850030858069658,
+        0.5175444800406694,
+        0.21902849338948727,
+        0.2975029544904828,
+        0.356074720621109,
+        0.7211329871788621,
+        0.7824204908683896,
+        0.30952220037579536,
+        0.3448392376303673
+      ]
+    }
+  ],
+  "dimensions": 12,
+  "generator": "scipy.stats.qmc.Sobol",
+  "random_base2_m": 6,
+  "schema_version": "task9_sobol_calibration_candidates_v1",
+  "scipy_version": "1.13.1",
+  "scramble": true,
+  "search_dimensions": [
+    [
+      "input_pair_width_m",
+      8.4e-07,
+      3e-05,
+      true
+    ],
+    [
+      "input_pair_length_m",
+      1.5e-07,
+      1e-06,
+      false
+    ],
+    [
+      "first_stage_load_width_m",
+      8.4e-07,
+      4e-05,
+      true
+    ],
+    [
+      "first_stage_load_length_m",
+      1.5e-07,
+      1.2e-06,
+      false
+    ],
+    [
+      "tail_width_m",
+      4.2e-07,
+      3e-05,
+      true
+    ],
+    [
+      "tail_length_m",
+      1.5e-07,
+      1.2e-06,
+      false
+    ],
+    [
+      "second_stage_width_m",
+      8.4e-07,
+      6e-05,
+      true
+    ],
+    [
+      "second_stage_length_m",
+      1.5e-07,
+      1.2e-06,
+      false
+    ],
+    [
+      "second_load_width_m",
+      8.4e-07,
+      6e-05,
+      true
+    ],
+    [
+      "second_load_length_m",
+      1.5e-07,
+      1.2e-06,
+      false
+    ],
+    [
+      "second_load_bias_v",
+      0.25,
+      1.2,
+      false
+    ],
+    [
+      "compensation_capacitance_f",
+      5e-14,
+      5e-12,
+      true
+    ]
+  ],
+  "seed": 9200901,
+  "task7_search_space_hash": "36e72bd54d2b1850af1ce1c8a69dbe7de22f552d49713edfbb0d3de83cd4f6db"
+}
