@@ -163,6 +163,10 @@ def _paired_statistics(summaries: dict[str, list[dict[str, Any]]]) -> list[dict[
             "full_minus_hierarchical_positive_favors_hierarchical",
             lambda full, hier: float(full["ngspice_process_calls"]) - float(hier["ngspice_process_calls"]),
         ),
+        "total_analyses_saved": (
+            "full_minus_hierarchical_positive_favors_hierarchical",
+            lambda full, hier: float(full["logical_high_fidelity_calls"]) - float(hier["logical_high_fidelity_calls"]),
+        ),
         "ngspice_seconds_saved": (
             "full_minus_hierarchical_positive_favors_hierarchical",
             lambda full, hier: float(full["accumulated_ngspice_seconds"]) - float(hier["accumulated_ngspice_seconds"]),
@@ -504,6 +508,7 @@ def _report(
     ac = _effect(effects, "equal_candidate", "ac_analyses_saved")
     tran = _effect(effects, "equal_candidate", "transient_analyses_saved")
     proc = _effect(effects, "equal_candidate", "process_calls_saved")
+    analyses = _effect(effects, "equal_candidate", "total_analyses_saved")
     seconds = _effect(effects, "equal_candidate", "ngspice_seconds_saved")
     percent = _effect(effects, "equal_candidate", "ngspice_percent_saved")
     stage_counts = {
@@ -520,6 +525,38 @@ def _report(
         for design in DESIGNS for row in evaluations[design]
     )
     h3 = decisions["H3"]
+    equal_time_budget = 90.0
+    strict_budget = {}
+    method_successes = {}
+    for policy in POLICIES:
+        observations = [
+            _observation(row, "accumulated_ngspice_seconds")
+            for row in summaries["equal_simulation_time"]
+            if row["policy"] == policy
+        ]
+        strict_estimate = kaplan_meier(observations, horizon=equal_time_budget)
+        strict_budget[policy] = {
+            "successes": sum(
+                event and time <= equal_time_budget for time, event in observations
+            ),
+            "rmst": strict_estimate.rmst,
+        }
+        method_successes[policy] = {
+            method: sum(
+                bool(row["event_observed"])
+                for row in summaries["equal_simulation_time"]
+                if row["policy"] == policy and row["method"] == method
+            )
+            for method in METHODS
+        }
+    method_labels = {"random": "Random", "de": "DE", "tpe": "TPE", "bo": "BO"}
+    method_success_text = {
+        policy: ", ".join(
+            f"{method_labels[method]} {method_successes[policy][method]}/10"
+            for method in METHODS
+        )
+        for policy in POLICIES
+    }
     lines = [
         "# Task 8 Hierarchical Evaluation Report",
         "",
@@ -567,7 +604,7 @@ def _report(
         "",
         "## 11. Equal Simulation-Time results",
         "",
-        f"At the frozen 90 s per-run budget and 300-candidate cap, Full evaluated {et_full['candidate_count']} candidates in {et_full['ngspice_process_calls']} processes; Hierarchical evaluated {et_hier['candidate_count']} candidates in {et_hier['ngspice_process_calls']} processes. Successful runs were {et_full['successful_runs']}/40 versus {et_hier['successful_runs']}/40. Maximum post-analysis overshoot was {max(et_full['maximum_budget_overshoot_seconds'], et_hier['maximum_budget_overshoot_seconds']):.3f} s.",
+        f"At the frozen 90 s per-run budget and 300-candidate cap, Full evaluated {et_full['candidate_count']} candidates in {et_full['ngspice_process_calls']} processes; Hierarchical evaluated {et_hier['candidate_count']} candidates in {et_hier['ngspice_process_calls']} processes. Successful runs were {et_full['successful_runs']}/40 versus {et_hier['successful_runs']}/40. The pre-registered implementation completes an in-flight candidate before stopping, so maximum overshoot was {max(et_full['maximum_budget_overshoot_seconds'], et_hier['maximum_budget_overshoot_seconds']):.3f} s. This candidate-terminal rule is slightly broader than a literal stop immediately after the first analysis crossing the budget.",
         "",
         "## 12. AC savings",
         "",
@@ -579,7 +616,7 @@ def _report(
         "",
         "## 14. Process-count savings",
         "",
-        f"Pooled process savings: median {proc['median_difference']:.3f}, mean {proc['mean_difference']:.3f}, bootstrap 95% CI [{proc['ci95_low']:.3f}, {proc['ci95_high']:.3f}] processes per run.",
+        f"Pooled total-analysis savings: median {analyses['median_difference']:.3f}, mean {analyses['mean_difference']:.3f}, bootstrap 95% CI [{analyses['ci95_low']:.3f}, {analyses['ci95_high']:.3f}] analyses per run. Pooled process savings are numerically identical in this benchmark because every OP, AC, or transient analysis launches one ngspice process: median {proc['median_difference']:.3f}, mean {proc['mean_difference']:.3f}, 95% CI [{proc['ci95_low']:.3f}, {proc['ci95_high']:.3f}].",
         "",
         "## 15. ngspice-time savings",
         "",
@@ -615,7 +652,7 @@ def _report(
         "",
         "## 23. Limitations",
         "",
-        "Results are limited to the frozen nominal SKY130A two-stage OTA, ten seeds, four optimizers, and one machine/runtime environment. They do not cover PVT, mismatch, learned surrogates, topology generation, layout parasitics, or adaptive stage ordering.",
+        f"Results are limited to the frozen nominal SKY130A two-stage OTA, ten seeds, four optimizers, and one machine/runtime environment. They do not cover PVT, mismatch, learned surrogates, topology generation, layout parasitics, or adaptive stage ordering. H3 is a pooled pre-registered decision and is not uniform by method: Full equal-time successes were {method_success_text['full']}; Hierarchical successes were {method_success_text['hierarchical']}. A strict 90.0 s administrative sensitivity analysis still favors Hierarchical ({strict_budget['hierarchical']['successes']}/40 successes, RMST {strict_budget['hierarchical']['rmst']:.3f} s) over Full ({strict_budget['full']['successes']}/40, RMST {strict_budget['full']['rmst']:.3f} s), so the candidate-terminal overshoot does not drive H3. All accepted raw run directories remain locally available, while the versioned result package contains consolidated candidate records and {len(evidence)} canonical feasible raw-evidence directories rather than every raw waveform.",
         "",
         "## 24. Hypothesis decisions",
         "",
@@ -642,6 +679,8 @@ def _report(
             name: value["supported"] for name, value in decisions.items()
         },
         "best_raw_evidence_count": len(evidence),
+        "strict_90_second_sensitivity": strict_budget,
+        "equal_time_successes_by_method": method_successes,
     }
     _write_json(RESULTS / "task8_summary.json", summary)
 

@@ -44,6 +44,11 @@ def test_task8_final_statistics_artifacts_are_complete() -> None:
             encoding="utf-8"
         )
     )
+    effects = json.loads(
+        (TASK8 / "results" / "statistics" / "paired_effects.json").read_text(
+            encoding="utf-8"
+        )
+    )
     assert summary["status"] == "complete"
     assert summary["simulation_failure_count"] == 0
     assert all(summary["hypothesis_decisions"].values())
@@ -51,6 +56,15 @@ def test_task8_final_statistics_artifacts_are_complete() -> None:
     assert decisions["H4"]["replay_candidates"] == 2000
     assert decisions["H4"]["replay_false_rejections"] == 0
     assert decisions["H4"]["shadow_false_rejections"] == 0
+    pooled = {
+        row["outcome"]: row
+        for row in effects
+        if row["experiment_design"] == "equal_candidate"
+        and row["method"] == "pooled_descriptive"
+    }
+    assert pooled["total_analyses_saved"]["paired_differences"] == pooled[
+        "process_calls_saved"
+    ]["paired_differences"]
 
     statistics = TASK8 / "results" / "statistics"
     with (statistics / "stage_distribution.csv").open(

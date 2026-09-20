@@ -1,5 +1,19 @@
 {
   "best_raw_evidence_count": 10,
+  "equal_time_successes_by_method": {
+    "full": {
+      "bo": 0,
+      "de": 1,
+      "random": 0,
+      "tpe": 3
+    },
+    "hierarchical": {
+      "bo": 1,
+      "de": 6,
+      "random": 1,
+      "tpe": 2
+    }
+  },
   "hypothesis_decisions": {
     "H1": true,
     "H2": true,
@@ -8,6 +22,16 @@
   },
   "simulation_failure_count": 0,
   "status": "complete",
+  "strict_90_second_sensitivity": {
+    "full": {
+      "rmst": 87.87437499997904,
+      "successes": 3
+    },
+    "hierarchical": {
+      "rmst": 78.55265000001235,
+      "successes": 10
+    }
+  },
   "task7_benchmark_hash": "144100e168ca5f550c6ca0bd5a29788f669d0e34cd9008c5a7fe2099e8cb8c1c",
   "task8_protocol_hash": "d60ad33791a59bf418b0378e653e4e3bc10aa032dc98cde583d649260844dc2d",
   "totals": {

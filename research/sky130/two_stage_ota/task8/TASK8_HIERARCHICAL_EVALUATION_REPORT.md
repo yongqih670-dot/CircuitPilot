@@ -44,7 +44,7 @@ Each policy evaluated 2,000 candidates (4 methods × 10 seeds × 50). Full used 
 
 ## 11. Equal Simulation-Time results
 
-At the frozen 90 s per-run budget and 300-candidate cap, Full evaluated 1392 candidates in 4176 processes; Hierarchical evaluated 5349 candidates in 5484 processes. Successful runs were 4/40 versus 10/40. Maximum post-analysis overshoot was 2.746 s.
+At the frozen 90 s per-run budget and 300-candidate cap, Full evaluated 1392 candidates in 4176 processes; Hierarchical evaluated 5349 candidates in 5484 processes. Successful runs were 4/40 versus 10/40. The pre-registered implementation completes an in-flight candidate before stopping, so maximum overshoot was 2.746 s. This candidate-terminal rule is slightly broader than a literal stop immediately after the first analysis crossing the budget.
 
 ## 12. AC savings
 
@@ -56,7 +56,7 @@ Pooled transient savings: median 50.000, mean 49.825, bootstrap 95% CI [49.650, 
 
 ## 14. Process-count savings
 
-Pooled process savings: median 100.000, mean 99.400, bootstrap 95% CI [99.000, 99.725] processes per run.
+Pooled total-analysis savings: median 100.000, mean 99.400, bootstrap 95% CI [99.000, 99.725] analyses per run. Pooled process savings are numerically identical in this benchmark because every OP, AC, or transient analysis launches one ngspice process: median 100.000, mean 99.400, 95% CI [99.000, 99.725].
 
 ## 15. ngspice-time savings
 
@@ -92,7 +92,7 @@ The 24 Task 8 tests pass and cover frozen Task 7 bytes, Full equivalence, all ga
 
 ## 23. Limitations
 
-Results are limited to the frozen nominal SKY130A two-stage OTA, ten seeds, four optimizers, and one machine/runtime environment. They do not cover PVT, mismatch, learned surrogates, topology generation, layout parasitics, or adaptive stage ordering.
+Results are limited to the frozen nominal SKY130A two-stage OTA, ten seeds, four optimizers, and one machine/runtime environment. They do not cover PVT, mismatch, learned surrogates, topology generation, layout parasitics, or adaptive stage ordering. H3 is a pooled pre-registered decision and is not uniform by method: Full equal-time successes were Random 0/10, DE 1/10, TPE 3/10, BO 0/10; Hierarchical successes were Random 1/10, DE 6/10, TPE 2/10, BO 1/10. A strict 90.0 s administrative sensitivity analysis still favors Hierarchical (10/40 successes, RMST 78.553 s) over Full (3/40, RMST 87.874 s), so the candidate-terminal overshoot does not drive H3. All accepted raw run directories remain locally available, while the versioned result package contains consolidated candidate records and 10 canonical feasible raw-evidence directories rather than every raw waveform.
 
 ## 24. Hypothesis decisions
 
