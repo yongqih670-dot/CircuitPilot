@@ -4,6 +4,18 @@
 
 研究冻结版本：`v0.5-research-baseline`。
 
+Research Task 9 已完成：在冻结的 Task 7 OTA 与 Task 8 分阶段评估语义上，
+建立真实 SKY130A TT/SS/FF/FS/SF x 三组电压/温度的 15-corner PVT 基准，
+并实现 corner 内 OP -> AC -> transient、corner 间基于已测 hard failure 的
+exact safe short-circuit。64 点 replay 与 120 个 smoke shadow candidate 均为
+零 false rejection；等候选正式实验节省约 98% ngspice 时间。但等模拟时间
+实验两种策略均为 0/40 PVT 成功，故不支持鲁棒可行性改善假设。冻结 PVT
+benchmark hash 为 ec2d4de0e0c5694598cc7444b4fa9b63a8d8b533fa68bdd504e5262ebd5e2d61。
+完整报告与统计见
+[research/sky130/two_stage_ota/task9/TASK9_PVT_ROBUST_OPTIMIZATION_REPORT.md](research/sky130/two_stage_ota/task9/TASK9_PVT_ROBUST_OPTIMIZATION_REPORT.md)
+和
+[research/sky130/two_stage_ota/task9/results/](research/sky130/two_stage_ota/task9/results/)。
+
 Research Task 7 已完成并冻结：新增真实 SKY130 七管 Two-Stage
 Miller-Compensated OTA、12 维 role-matched 搜索空间、严格 UGF/相位裕度与
 双向 slew 语义，以及每候选 OP+AC+transient 三进程 Full-only 成本基线。
@@ -36,8 +48,11 @@ Task 3 与 Task 4 的冻结配置、结果和哈希均保持不变。
 
 CircuitPilot 是一个采用 `src/` 目录结构的参数化 ngspice 电路仿真与自动优化平台。它可以从 YAML 读取单次仿真、离散参数扫描或连续优化配置，并将仿真过程与设计结果归档到 SQLite。
 
-当前第七阶段支持：
+当前第九阶段支持：
 
+- 冻结 15-corner SKY130 PVT 基准、Full-PVT 与 exact-safe Hierarchical-PVT；
+- analysis-level 等模拟时间预算、checkpoint/resume、partial-null 证据语义；
+- 六条成本轴的 KM/RMST、worst-corner 与多标签 failure taxonomy；
 - 冻结 Task 7 SKY130 两级 Miller OTA Full-only 高成本基准；
 - 真实 OP、开环差模 AC、unity-follower transient 与逐分析成本记录；
 - 严格 UGF/PM/双向 slew 状态、12 维 role matching 与逐候选状态分类；
@@ -62,7 +77,7 @@ CircuitPilot 是一个采用 `src/` 目录结构的参数化 ngspice 电路仿�
 - 每一次优化评估的 CSV/运行目录、JSON 摘要和收敛曲线；
 - 单组失败隔离、ngspice 缺失预检和每组独立运行目录。
 
-前六阶段的 API、冻结基准和命令行方式继续保留。
+前八阶段的 API、冻结基准和命令行方式继续保留。
 
 ## 项目结构
 
