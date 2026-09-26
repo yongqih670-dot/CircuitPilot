@@ -18,6 +18,7 @@ SOURCES = {
     "task8": ("research/sky130/two_stage_ota/task8/results",),
     "task9": ("research/sky130/two_stage_ota/task9/results",),
     "task9_5": ("research_runs/task9_5_feasibility",),
+    "task9_5_full": ("research_runs/task9_5_full_characterization",),
 }
 
 

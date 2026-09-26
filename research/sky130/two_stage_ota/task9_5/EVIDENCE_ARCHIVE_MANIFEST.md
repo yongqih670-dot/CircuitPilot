@@ -25,6 +25,9 @@ the source roots/counts are also in its adjacent, local-only
 `taskN_archive_manifest.json`.
 All four archives passed a complete `zipfile.ZipFile.testzip()` CRC readback
 (returned `None` for each archive).
+The associated commit identifies the source-tree state captured in each ZIP;
+the archive-generation script itself was committed later (starting at
+`e45ac02`), so checking out `d6bfddb` alone will not provide that script.
 
 Archived source roots:
 
@@ -49,3 +52,25 @@ the locked SKY130 PDK/model tree, ngspice environment and documented runner.
 The user should copy the ZIPs to durable independent storage before relying
 on this workstation as the sole raw-evidence archive. No historical file was
 deleted or rewritten during this audit.
+
+## Task 9.5 additive diagnostic raw evidence
+
+The new diagnosis is separate from Task 6--9 historical data. Its complete
+attempt ledgers are losslessly compressed and Git-tracked under
+`task9_5/feasibility/`, with both compressed and original SHA-256 recorded in
+`diagnostic_ledger_manifest.json`. Two more local-only, CRC-verified archives
+preserve the underlying ngspice files:
+
+| Archive | SHA-256 | ZIP bytes | Source files | Associated commit |
+| --- | --- | ---: | ---: | --- |
+| `task9_5_raw_evidence.zip` | `bacb11c6881f85dd98b924316be3b59a5967513bee8af23902cddeb1a7752006` | 10,099,582 | 13,155 | `71ead7230746e5bd9be0895aeec0b4a1c33c4348` |
+| `task9_5_full_raw_evidence.zip` | `a14e6e5a76654f563ffe95d4e6a971b032c19821184b32084f7a84ba026b5ff2` | 338,104 | 151 | `9ab7669ba035e1a1f0f75af3fa48c198d8f3507e` |
+
+They were generated with the same script, passing `task9_5` and
+`task9_5_full` respectively, from
+`research_runs/task9_5_feasibility/` and
+`research_runs/task9_5_full_characterization/`. Both remain in the local
+storage base above and have no public URL. The complete negative Full-PVT
+matrix itself is also in a Git-tracked, losslessly compressed JSON artifact.
+For the first Task 9.5 archive, `71ead72` likewise denotes the source state;
+the `task9_5` archive-script option was committed in `9ab7669`.

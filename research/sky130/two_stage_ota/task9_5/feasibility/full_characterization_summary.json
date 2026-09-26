@@ -1,0 +1,42 @@
+{
+  "accumulated_ngspice_seconds": 23.12699999997858,
+  "all_vdd_and_temperature_checks_passed": true,
+  "benchmark_v2_hash": "8f622a92370e33ea6f608d7a31077096b8188b868dc070cebbf3ce67f9059708",
+  "complete_full_matrix": true,
+  "constraint_failure_corner_counts": {
+    "negative_slew_min": 1,
+    "operating_region": 3
+  },
+  "environment_fingerprint": {
+    "circuitpilot_version": "0.5.0",
+    "git_commit_hash": "9ab7669ba035e1a1f0f75af3fa48c198d8f3507e",
+    "git_worktree_dirty": false,
+    "ngspice_executable_path": "F:\\\u82af\u7247\u8bbe\u8ba1\\CircuitPilot\uff1aAgentic Circuit Simulation and Optimization Platform\\tools\\ngspice\\bin\\ngspice_con.exe",
+    "ngspice_executable_sha256": "86c9ea5f645ca919e305639fa7bdb522355364c424d14e197f1ade617feb3453",
+    "ngspice_version_string": "ngspice-46 : Circuit level simulation program",
+    "numpy_version": "1.26.4",
+    "optuna_version": "4.9.0",
+    "os_information": {
+      "machine": "AMD64",
+      "platform": "Windows-11-10.0.26100-SP0",
+      "release": "11",
+      "system": "Windows",
+      "version": "10.0.26100"
+    },
+    "python_implementation": "CPython",
+    "python_version": "3.12.7",
+    "pyyaml_version": "6.0.1",
+    "research_baseline_version": "v0.5-research-baseline",
+    "scipy_version": "1.13.1"
+  },
+  "first_failure": {
+    "constraint": "operating_region",
+    "corner_id": "ss__high_v_low_t",
+    "stage": "op"
+  },
+  "full_matrix_sha256": "5bab8f3d1a792f5e374ee66f9264b3bb419d67f6533a18551adf1044e4be9ad7",
+  "is_feasible": false,
+  "passing_corners_all_constraints": 12,
+  "process_calls": 45,
+  "raw_directory": "research_runs/task9_5_full_characterization/raw"
+}
