@@ -246,22 +246,16 @@ def _de_scalar(feedback: dict) -> float | None:
 
 
 def _attention_subset() -> tuple[str, ...]:
-    summary = read_json(OUT / "sensitivity/summary.json")
-    baseline = read_json(OUT / "audit/summary.json")["baseline_parameters"]
-    by_name = {}
-    for row in summary["rows"]:
-        improvement = -row["diagnostic_order"][0]
-        by_name[row["parameter"]] = max(by_name.get(row["parameter"], -1), improvement)
-    # Frozen rule: four largest measured five-corner pass-progress values,
-    # ties resolved by variable name. Bounds remain the original 12-D bounds.
-    return tuple(name for name, _ in sorted(by_name.items(),
-                 key=lambda pair: (-pair[1], pair[0]))[:4])
+    analysis = read_json(TRACKED / "sensitivity_analysis.json")
+    if (analysis.get("five_corner_partial_only") is not True
+            or analysis.get("candidate_count") != 48):
+        raise RuntimeError("verified five-corner sensitivity analysis missing")
+    return tuple(analysis["diagnostic_attention_subset"])
 
 
 def _local_proposals() -> list[dict]:
     frozen = load_experiment_config(FROZEN_TASK7_CONFIG)
-    summary = read_json(OUT / "sensitivity/summary.json")
-    anchor_index = summary["best_diagnostic_index"]
+    anchor_index = read_json(TRACKED / "sensitivity_analysis.json")["best_five_corner_candidate_index"]
     anchor = read_json(PROPOSALS)["candidates"][anchor_index]["parameters"]
     focus = _attention_subset()
     rng = random.Random(96002)
@@ -273,7 +267,12 @@ def _local_proposals() -> list[dict]:
             item = by_name[name]
             position = normalized_position(item, float(candidate[name]))
             delta = rng.choice((-0.08, -0.04, -0.02, 0.02, 0.04, 0.08))
-            candidate[name] = from_normalized(item, min(1.0, max(0.0, position + delta)))
+            shifted = position + delta
+            if not 0.0 <= shifted <= 1.0:
+                shifted = position - delta  # one-sided inward move, never clip
+            if not 0.0 <= shifted <= 1.0:
+                raise RuntimeError("local proposal cannot stay within frozen bounds")
+            candidate[name] = from_normalized(item, shifted)
         digest = parameter_hash(candidate)
         if digest in seen:
             continue
@@ -363,7 +362,7 @@ def phase_search(ledger: BudgetLedger, executable: str) -> None:
     local = _local_proposals()
     focus = _attention_subset()
     write_json(OUT / "search/prior_diagnosis.json", {"attention_subset": focus,
-               "local_anchor_index": read_json(OUT / "sensitivity/summary.json")["best_diagnostic_index"],
+               "local_anchor_index": read_json(TRACKED / "sensitivity_analysis.json")["best_five_corner_candidate_index"],
                "seed_de": 96001, "seed_local": 96002,
                "de_internal_feedback": "bounded scalar encoding of frozen partial ordering; promotions use exact tuple"})
     batch, promoted, promotions, seen = [], set(), [], set()
