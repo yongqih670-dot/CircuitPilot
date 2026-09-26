@@ -1,0 +1,37 @@
+{
+  "schema_version": "task9_6_phase_b_budget_v1",
+  "phase_b_approved": false,
+  "benchmark_v2_hash": "8f622a92370e33ea6f608d7a31077096b8188b868dc070cebbf3ce67f9059708",
+  "global_limits": {
+    "maximum_ngspice_processes": 6500,
+    "maximum_accumulated_simulator_seconds": 6000,
+    "maximum_wall_seconds": 36000
+  },
+  "activity_process_allocations": {
+    "device_audit_probes": 30,
+    "fresh_baseline_full": 45,
+    "sensitivity_48_candidates": 960,
+    "hierarchical_search_96_candidates": 4320,
+    "full_promotion_8_candidates": 360,
+    "fresh_witness_full_confirmation": 45,
+    "positive_hierarchical_validation": 45,
+    "six_neighbor_full_and_hierarchical": 540,
+    "failed_analysis_retry_reserve": 100
+  },
+  "allocated_maximum_ngspice_processes": 6445,
+  "sensitivity_candidate_count": 48,
+  "near_constraint_corner_count": 5,
+  "search_candidate_count": 96,
+  "search_methods": {
+    "differential_evolution": {"candidates": 64, "seed": 96001, "restarts": 0},
+    "local_trust_region": {"candidates": 32, "seed": 96002, "restarts": 0}
+  },
+  "promotion_full_pvt_maximum": 8,
+  "fresh_full_witness_verification_maximum": 1,
+  "neighborhood_candidate_count": 6,
+  "retry_process_maximum": 100,
+  "search_batch_size": 12,
+  "promotion_per_batch_maximum": 1,
+  "stop_after_confirmed_witness": true,
+  "auto_extend_budget": false
+}

@@ -1,0 +1,285 @@
+{
+  "corners": [
+    {
+      "baseline_hard_failure": false,
+      "corner_id": "tt__nominal",
+      "minimum_device_on_margin_v": 0.026358669999999806,
+      "minimum_model_vdsat_headroom_v": 0.06784865600000001,
+      "minimum_normalized_hard_margin": 0.31885997058823523,
+      "normalized_hard_margins": {
+        "dc_gain_db_min": 5.223167216666667,
+        "dc_power_w_max": 0.8870619895599999,
+        "negative_slew_v_per_s_min": 1.4721238448368088,
+        "output_dc_voltage_max": 0.31885997058823523,
+        "output_dc_voltage_min": 10.5793805,
+        "phase_margin_deg_min": 1.3785010041388537,
+        "positive_slew_v_per_s_min": 1.642967610811957,
+        "ugf_hz_min": 4.044382611368283
+      },
+      "selected": false
+    },
+    {
+      "baseline_hard_failure": false,
+      "corner_id": "tt__low_v_high_t",
+      "minimum_device_on_margin_v": 0.04676131800000005,
+      "minimum_model_vdsat_headroom_v": 0.024848838999999984,
+      "minimum_normalized_hard_margin": 0.5856753576470588,
+      "normalized_hard_margins": {
+        "dc_gain_db_min": 5.0476328,
+        "dc_power_w_max": 0.909246862792,
+        "negative_slew_v_per_s_min": 1.9932743616109,
+        "output_dc_voltage_max": 0.5856753576470588,
+        "output_dc_voltage_min": 6.04351892,
+        "phase_margin_deg_min": 1.303136118927377,
+        "positive_slew_v_per_s_min": 2.28908764096816,
+        "ugf_hz_min": 4.507476375890725
+      },
+      "selected": false
+    },
+    {
+      "baseline_hard_failure": false,
+      "corner_id": "tt__high_v_low_t",
+      "minimum_device_on_margin_v": 0.007931880000000113,
+      "minimum_model_vdsat_headroom_v": 0.09967742480000001,
+      "minimum_normalized_hard_margin": 0.7237586029520187,
+      "normalized_hard_margins": {
+        "dc_gain_db_min": 4.800986791666666,
+        "dc_power_w_max": 0.77659390456,
+        "negative_slew_v_per_s_min": 0.7237586029520187,
+        "output_dc_voltage_max": 0.8184606241176471,
+        "output_dc_voltage_min": 2.08616939,
+        "phase_margin_deg_min": 1.461152575102331,
+        "positive_slew_v_per_s_min": 0.8142708162249972,
+        "ugf_hz_min": 2.8999630567398604
+      },
+      "selected": true
+    },
+    {
+      "baseline_hard_failure": false,
+      "corner_id": "ss__nominal",
+      "minimum_device_on_margin_v": 0.012078869999999853,
+      "minimum_model_vdsat_headroom_v": 0.010660096000000008,
+      "minimum_normalized_hard_margin": 0.09509878235294113,
+      "normalized_hard_margins": {
+        "dc_gain_db_min": 4.4046662083333326,
+        "dc_power_w_max": 0.9260382120399999,
+        "negative_slew_v_per_s_min": 0.8122979802831118,
+        "output_dc_voltage_max": 0.09509878235294113,
+        "output_dc_voltage_min": 14.383320699999999,
+        "phase_margin_deg_min": 1.3875602300032857,
+        "positive_slew_v_per_s_min": 0.9353828594488134,
+        "ugf_hz_min": 2.63115500312177
+      },
+      "selected": false
+    },
+    {
+      "baseline_hard_failure": false,
+      "corner_id": "ss__low_v_high_t",
+      "minimum_device_on_margin_v": 0.035399725999999965,
+      "minimum_model_vdsat_headroom_v": 0.034373505,
+      "minimum_normalized_hard_margin": 0.2586953823529411,
+      "normalized_hard_margins": {
+        "dc_gain_db_min": 4.696785541666666,
+        "dc_power_w_max": 0.938515947328,
+        "negative_slew_v_per_s_min": 1.3354257074055895,
+        "output_dc_voltage_max": 0.2586953823529411,
+        "output_dc_voltage_min": 11.602178499999999,
+        "phase_margin_deg_min": 1.2948120278105608,
+        "positive_slew_v_per_s_min": 1.5693146470855246,
+        "ugf_hz_min": 3.3044610303746786
+      },
+      "selected": false
+    },
+    {
+      "baseline_hard_failure": true,
+      "corner_id": "ss__high_v_low_t",
+      "minimum_device_on_margin_v": -0.007097200000000026,
+      "minimum_model_vdsat_headroom_v": 0.10677154750000001,
+      "minimum_normalized_hard_margin": 0.1626187213363028,
+      "normalized_hard_margins": {
+        "dc_gain_db_min": 5.3103958916666665,
+        "dc_power_w_max": 0.8407308380799999,
+        "negative_slew_v_per_s_min": 0.1626187213363028,
+        "output_dc_voltage_max": 0.6811710470588236,
+        "output_dc_voltage_min": 4.420092199999999,
+        "phase_margin_deg_min": 1.472593575105496,
+        "positive_slew_v_per_s_min": 0.22316946585407038,
+        "ugf_hz_min": 1.763473435958053
+      },
+      "selected": true
+    },
+    {
+      "baseline_hard_failure": false,
+      "corner_id": "ff__nominal",
+      "minimum_device_on_margin_v": 0.04083375999999994,
+      "minimum_model_vdsat_headroom_v": 0.05950034000000001,
+      "minimum_normalized_hard_margin": 0.6520757529411764,
+      "normalized_hard_margins": {
+        "dc_gain_db_min": 5.146706383333334,
+        "dc_power_w_max": 0.8390317,
+        "negative_slew_v_per_s_min": 2.2765952441523574,
+        "output_dc_voltage_max": 0.6520757529411764,
+        "output_dc_voltage_min": 4.914712199999999,
+        "phase_margin_deg_min": 1.3715215137665553,
+        "positive_slew_v_per_s_min": 2.505074001452279,
+        "ugf_hz_min": 5.499758362588375
+      },
+      "selected": false
+    },
+    {
+      "baseline_hard_failure": false,
+      "corner_id": "ff__low_v_high_t",
+      "minimum_device_on_margin_v": 0.05878021500000008,
+      "minimum_model_vdsat_headroom_v": 0.015722948999999986,
+      "minimum_normalized_hard_margin": 0.8369452117647058,
+      "normalized_hard_margins": {
+        "dc_gain_db_min": 4.191925125,
+        "dc_power_w_max": 0.87611755564,
+        "negative_slew_v_per_s_min": 2.748605465303281,
+        "output_dc_voltage_max": 0.8369452117647058,
+        "output_dc_voltage_min": 1.7719314,
+        "phase_margin_deg_min": 1.3051275017548989,
+        "positive_slew_v_per_s_min": 3.108709182501861,
+        "ugf_hz_min": 5.473372965947611
+      },
+      "selected": false
+    },
+    {
+      "baseline_hard_failure": false,
+      "corner_id": "ff__high_v_low_t",
+      "minimum_device_on_margin_v": 0.023044580000000092,
+      "minimum_model_vdsat_headroom_v": 0.034645588000000005,
+      "minimum_normalized_hard_margin": 0.70461897208,
+      "normalized_hard_margins": {
+        "dc_gain_db_min": 3.9014516333333336,
+        "dc_power_w_max": 0.70461897208,
+        "negative_slew_v_per_s_min": 1.474601268209715,
+        "output_dc_voltage_max": 0.8760454188235294,
+        "output_dc_voltage_min": 1.1072278799999997,
+        "phase_margin_deg_min": 1.4531434355064188,
+        "positive_slew_v_per_s_min": 1.6050723493745238,
+        "ugf_hz_min": 3.9332157838489032
+      },
+      "selected": false
+    },
+    {
+      "baseline_hard_failure": true,
+      "corner_id": "fs__nominal",
+      "minimum_device_on_margin_v": -0.010217861999999966,
+      "minimum_model_vdsat_headroom_v": 0.08034381000000002,
+      "minimum_normalized_hard_margin": 0.3798223529411764,
+      "normalized_hard_margins": {
+        "dc_gain_db_min": 5.103239475,
+        "dc_power_w_max": 0.8479241476,
+        "negative_slew_v_per_s_min": 0.5745008793346563,
+        "output_dc_voltage_max": 0.3798223529411764,
+        "output_dc_voltage_min": 9.54302,
+        "phase_margin_deg_min": 1.4461191525738761,
+        "positive_slew_v_per_s_min": 0.669652126273737,
+        "ugf_hz_min": 2.3922761540165594
+      },
+      "selected": true
+    },
+    {
+      "baseline_hard_failure": false,
+      "corner_id": "fs__low_v_high_t",
+      "minimum_device_on_margin_v": 0.0025995480000000626,
+      "minimum_model_vdsat_headroom_v": 0.03891408499999999,
+      "minimum_normalized_hard_margin": 0.655451474117647,
+      "normalized_hard_margins": {
+        "dc_gain_db_min": 4.891559266666667,
+        "dc_power_w_max": 0.88060596544,
+        "negative_slew_v_per_s_min": 1.0613755730672028,
+        "output_dc_voltage_max": 0.655451474117647,
+        "output_dc_voltage_min": 4.857324940000001,
+        "phase_margin_deg_min": 1.391900517999546,
+        "positive_slew_v_per_s_min": 1.2187675272081866,
+        "ugf_hz_min": 3.0043395469249488
+      },
+      "selected": true
+    },
+    {
+      "baseline_hard_failure": true,
+      "corner_id": "fs__high_v_low_t",
+      "minimum_device_on_margin_v": -0.02446628999999989,
+      "minimum_model_vdsat_headroom_v": 0.11030448869999998,
+      "minimum_normalized_hard_margin": -0.022504755067623918,
+      "normalized_hard_margins": {
+        "dc_gain_db_min": 4.972876058333333,
+        "dc_power_w_max": 0.7075429872400001,
+        "negative_slew_v_per_s_min": -0.022504755067623918,
+        "output_dc_voltage_max": 0.7095389794117647,
+        "output_dc_voltage_min": 3.9378373499999997,
+        "phase_margin_deg_min": 1.498354576636462,
+        "positive_slew_v_per_s_min": 0.02648101157127018,
+        "ugf_hz_min": 1.3539358498676912
+      },
+      "selected": true
+    },
+    {
+      "baseline_hard_failure": false,
+      "corner_id": "sf__nominal",
+      "minimum_device_on_margin_v": 0.06387224000000002,
+      "minimum_model_vdsat_headroom_v": 0.05527869499999999,
+      "minimum_normalized_hard_margin": 0.1559542176470588,
+      "normalized_hard_margins": {
+        "dc_gain_db_min": 5.0230953000000005,
+        "dc_power_w_max": 0.91897700944,
+        "negative_slew_v_per_s_min": 2.7380162517778643,
+        "output_dc_voltage_max": 0.1559542176470588,
+        "output_dc_voltage_min": 13.3487783,
+        "phase_margin_deg_min": 1.2532441997783537,
+        "positive_slew_v_per_s_min": 3.1133792151826594,
+        "ugf_hz_min": 6.04029082795142
+      },
+      "selected": false
+    },
+    {
+      "baseline_hard_failure": false,
+      "corner_id": "sf__low_v_high_t",
+      "minimum_device_on_margin_v": 0.09306059700000002,
+      "minimum_model_vdsat_headroom_v": 0.011180222000000017,
+      "minimum_normalized_hard_margin": 0.33276899411764704,
+      "normalized_hard_margins": {
+        "dc_gain_db_min": 4.87194995,
+        "dc_power_w_max": 0.9324560389240001,
+        "negative_slew_v_per_s_min": 3.274884094744646,
+        "output_dc_voltage_max": 0.33276899411764704,
+        "output_dc_voltage_min": 10.342927099999999,
+        "phase_margin_deg_min": 1.1362825097350882,
+        "positive_slew_v_per_s_min": 4.113576267131462,
+        "ugf_hz_min": 6.226695555787371
+      },
+      "selected": false
+    },
+    {
+      "baseline_hard_failure": false,
+      "corner_id": "sf__high_v_low_t",
+      "minimum_device_on_margin_v": 0.037667328999999916,
+      "minimum_model_vdsat_headroom_v": 0.066246204,
+      "minimum_normalized_hard_margin": 0.8374795091199999,
+      "normalized_hard_margins": {
+        "dc_gain_db_min": 4.4402462,
+        "dc_power_w_max": 0.8374795091199999,
+        "negative_slew_v_per_s_min": 1.8663240928642442,
+        "output_dc_voltage_max": 0.8821333088235294,
+        "output_dc_voltage_min": 1.0037337499999999,
+        "phase_margin_deg_min": 1.3968052808536828,
+        "positive_slew_v_per_s_min": 2.0349968000010494,
+        "ugf_hz_min": 4.91200542401288
+      },
+      "selected": false
+    }
+  ],
+  "device_margin_threshold_v": 0.01,
+  "normalized_hard_margin_threshold": 0.02,
+  "schema_version": "task9_6_near_constraint_selection_v1",
+  "selected_corner_ids": [
+    "tt__high_v_low_t",
+    "ss__high_v_low_t",
+    "fs__nominal",
+    "fs__low_v_high_t",
+    "fs__high_v_low_t"
+  ],
+  "source_full_matrix_sha256": "5bab8f3d1a792f5e374ee66f9264b3bb419d67f6533a18551adf1044e4be9ad7"
+}

@@ -1,5 +1,17 @@
 # CircuitPilot
 
+## Current Research Status
+
+Task 9.5 integrity audit is complete. Corrected operating-region semantics
+require [Benchmark v2](research/sky130/two_stage_ota/task9_5/benchmark_v2_manifest.json)
+(`8f622a92370e33ea6f608d7a31077096b8188b868dc070cebbf3ce67f9059708`);
+the old Task 9 hash must not be used for corrected work. **Decision C remains
+active:** no real 15/15-corner PVT-feasible witness has been verified, so
+Task 10 formal Agent experiments are blocked. Task 9.6 Phase A is the current
+feasibility-diagnosis and execution-preregistration stage; Phase B awaits
+explicit approval. See the [Task 9.5 decision](research/sky130/two_stage_ota/task9_5/DECISION_FOR_TASK10.md)
+and [Task 6 RMST wording addendum](research/sky130/two_stage_ota/task9_6/STATISTICS_CORRECTION_ADDENDUM.md).
+
 > 研究审计状态和真实测试证据见 [RESEARCH_READINESS_REPORT.md](RESEARCH_READINESS_REPORT.md)。
 
 研究冻结版本：`v0.5-research-baseline`。
@@ -30,7 +42,8 @@ hash 为 144100e168ca5f550c6ca0bd5a29788f669d0e34cd9008c5a7fe2099e8cb8c1c。
 Research Task 6 已完成并冻结：在不修改 Task 5 基准的前提下，加入透明的
 OP-first 分阶段评估策略，并以 Random/DE/TPE/BO、10 个配对 seed、等候选与
 等逻辑 AC 两种正式设计完成公平比较。Formal A 的配对 AC 节省中位数为
-81.5%；Formal B 中 Screened 的 pooled AC-RMST 为 34.74（Full 119.85），
+81.5%；Formal B 中 Screened 的 pooled AC-RMST 为 34.74（Full 在相同
+92-AC 截断下为 76.10；旧报告的 119.85 使用 200-AC horizon），
 成功率为 92.5%（Full 70%）。墙钟时间因额外进程与更多候选而增加，因此不
 宣称主机时间加速。完整报告、统计和原始 SPICE 证据见
 [`research/sky130/differential_amplifier/TASK6_PHYSICS_AWARE_REPORT.md`](research/sky130/differential_amplifier/TASK6_PHYSICS_AWARE_REPORT.md)
