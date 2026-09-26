@@ -1,0 +1,29 @@
+{
+  "by_task": {
+    "task6": {
+      "changed_historical_rows": 28,
+      "rows": 60
+    },
+    "task7": {
+      "changed_historical_rows": 0,
+      "rows": 60
+    },
+    "task8": {
+      "changed_historical_rows": 20,
+      "rows": 120
+    },
+    "task9": {
+      "changed_historical_rows": 0,
+      "rows": 180
+    }
+  },
+  "changed_historical_rows": 48,
+  "rows": 420,
+  "schema_version": "task9_5_supported_rmst_v1",
+  "simulator_time_availability": {
+    "task6": "not recorded per analysis in frozen evaluation tables; wall time is not substituted",
+    "task7": "sum of saved OP, AC, transient runtime columns",
+    "task8": "saved accumulated ngspice seconds",
+    "task9": "saved accumulated ngspice seconds"
+  }
+}
