@@ -150,6 +150,30 @@ def phase_audit(ledger: BudgetLedger, executable: str) -> None:
     print(f"Audit complete: {failed}, {ledger.summary()['process_count']} total processes", flush=True)
 
 
+def phase_baseline_sensitivity_probes(ledger: BudgetLedger, executable: str) -> None:
+    """Complete the two near-corner baseline Id probes absent from failure audit."""
+    if not (OUT / "sensitivity/summary.json").is_file():
+        raise RuntimeError("finish the already-running sensitivity batch first")
+    baseline = read_json(OUT / "audit/summary.json")["baseline_parameters"]
+    failed = set(read_json(OUT / "audit/device_probes.json"))
+    corners = read_json(NEAR)["selected_corner_ids"]
+    remaining = [corner for corner in corners if corner not in failed]
+    if len(remaining) != 2:
+        raise RuntimeError("unexpected frozen baseline probe inventory")
+    probes = {}
+    for corner_id in remaining:
+        ledger.require_capacity(ACTIVITY["audit"])
+        probes[corner_id] = run_diagnostic_op(
+            parameters=baseline, corner_id=corner_id,
+            directory=OUT / "audit_extra" / corner_id,
+            executable=executable, ledger=ledger, activity=ACTIVITY["audit"],
+            candidate_id="best12_near_corner_completion")
+        write_json(OUT / "audit_extra/device_probes.json", probes)
+    archive_activity("baseline_sensitivity_probes", OUT / "audit_extra",
+                     command="C:/Anaconda/python.exe scripts/task9_6_run_phase_b.py audit_extra")
+    print(f"Completed {len(probes)} near-corner baseline probes", flush=True)
+
+
 def _diagnostic_score(result: dict) -> tuple:
     """Only five-corner descriptive ranking, never the exact robust score."""
     components = {name: [] for name in CONSTRAINT_NAMES}
@@ -395,7 +419,7 @@ def phase_search(ledger: BudgetLedger, executable: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("phase", choices=("audit", "sensitivity", "search"))
+    parser.add_argument("phase", choices=("audit", "sensitivity", "audit_extra", "search"))
     args = parser.parse_args()
     if not AUTH.is_file():
         raise RuntimeError("Phase B has no separate authorization record")
@@ -407,6 +431,8 @@ def main() -> None:
         phase_audit(ledger, executable)
     elif args.phase == "sensitivity":
         phase_sensitivity(ledger, executable)
+    elif args.phase == "audit_extra":
+        phase_baseline_sensitivity_probes(ledger, executable)
     else:
         phase_search(ledger, executable)
     write_json(OUT / "ledger_summary.json", ledger.summary())
