@@ -45,3 +45,19 @@ continuous margin score. Any 15/15 OP candidate receives fresh 45-analysis
 Full-PVT verification. Stop immediately if verified feasible. Log every
 attempt and all raw evidence in a separate append-only run. This remains
 benchmark diagnosis, not a formal optimizer comparison.
+
+## Fixed-bias bottleneck diagnostic (not a benchmark change)
+
+The 169-attempt refinement ended at 12/15 OP-passing corners. Remaining
+failures are solely first-stage load/input devices turning off by 6--25 mV
+in SS/FS nominal or high-VDD/cold corners; the best input-pair length is at
+its original 1.0 µm upper bound. Before proposing an expanded benchmark,
+perform a one-dimensional *out-of-benchmark diagnostic only* at the best
+fixed-bound parameter vector, sweeping tail-bias voltage at 0.60, 0.64,
+0.68, 0.72, 0.76, 0.80, 0.84 V. Every point gets fresh 15-corner OP with
+v2 semantics and unchanged OP constraints. These points cannot establish
+feasibility of the original Task 9 or semantics-only Benchmark v2 because
+tail bias is fixed at 0.72 V in those benchmarks. Record all attempts and
+raw OP evidence; if promising, describe a technology-legal, matching-safe
+search-space proposal without changing hard specifications or launching
+Task 10.

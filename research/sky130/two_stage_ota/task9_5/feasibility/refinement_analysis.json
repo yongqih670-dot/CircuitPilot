@@ -1,0 +1,272 @@
+{
+  "attempts": 169,
+  "best_attempt": 159,
+  "best_op_all_constraints_passing_corners": 12,
+  "best_op_score": 34.24725687999999,
+  "best_op_valid_corners": 12,
+  "best_origin": "r2_d5_s-0.06:promoted",
+  "best_parameters": {
+    "compensation_capacitance_f": 5.000000000000001e-12,
+    "first_stage_load_length_m": 9.273348570592429e-07,
+    "first_stage_load_width_m": 1.864358339007341e-05,
+    "input_pair_length_m": 1e-06,
+    "input_pair_width_m": 5.0121007166131395e-06,
+    "second_load_bias_v": 0.5595394705124764,
+    "second_load_length_m": 3.3145966871231404e-07,
+    "second_load_width_m": 9.106361958189247e-06,
+    "second_stage_length_m": 6.831212889547224e-07,
+    "second_stage_width_m": 1.5561521599403218e-05,
+    "tail_length_m": 1.026464978813786e-06,
+    "tail_width_m": 4.0218892472036e-06
+  },
+  "bound_positions": {
+    "compensation_capacitance_f": {
+      "at_high_1pct": true,
+      "at_low_1pct": false,
+      "high": 5e-12,
+      "low": 5e-14,
+      "value": 5.000000000000001e-12
+    },
+    "first_stage_load_length_m": {
+      "at_high_1pct": false,
+      "at_low_1pct": false,
+      "high": 1.2e-06,
+      "low": 1.5e-07,
+      "value": 9.273348570592429e-07
+    },
+    "first_stage_load_width_m": {
+      "at_high_1pct": false,
+      "at_low_1pct": false,
+      "high": 4e-05,
+      "low": 8.4e-07,
+      "value": 1.864358339007341e-05
+    },
+    "input_pair_length_m": {
+      "at_high_1pct": true,
+      "at_low_1pct": false,
+      "high": 1e-06,
+      "low": 1.5e-07,
+      "value": 1e-06
+    },
+    "input_pair_width_m": {
+      "at_high_1pct": false,
+      "at_low_1pct": false,
+      "high": 3e-05,
+      "low": 8.4e-07,
+      "value": 5.0121007166131395e-06
+    },
+    "second_load_bias_v": {
+      "at_high_1pct": false,
+      "at_low_1pct": false,
+      "high": 1.2,
+      "low": 0.25,
+      "value": 0.5595394705124764
+    },
+    "second_load_length_m": {
+      "at_high_1pct": false,
+      "at_low_1pct": false,
+      "high": 1.2e-06,
+      "low": 1.5e-07,
+      "value": 3.3145966871231404e-07
+    },
+    "second_load_width_m": {
+      "at_high_1pct": false,
+      "at_low_1pct": false,
+      "high": 6e-05,
+      "low": 8.4e-07,
+      "value": 9.106361958189247e-06
+    },
+    "second_stage_length_m": {
+      "at_high_1pct": false,
+      "at_low_1pct": false,
+      "high": 1.2e-06,
+      "low": 1.5e-07,
+      "value": 6.831212889547224e-07
+    },
+    "second_stage_width_m": {
+      "at_high_1pct": false,
+      "at_low_1pct": false,
+      "high": 6e-05,
+      "low": 8.4e-07,
+      "value": 1.5561521599403218e-05
+    },
+    "tail_length_m": {
+      "at_high_1pct": false,
+      "at_low_1pct": false,
+      "high": 1.2e-06,
+      "low": 1.5e-07,
+      "value": 1.026464978813786e-06
+    },
+    "tail_width_m": {
+      "at_high_1pct": false,
+      "at_low_1pct": false,
+      "high": 3e-05,
+      "low": 4.2e-07,
+      "value": 4.0218892472036e-06
+    }
+  },
+  "complete_15_corner_op_attempts": 37,
+  "constraint_failure_counts": {
+    "operating_region": 3.0
+  },
+  "device_failure_counts": {
+    "input_minus": 1,
+    "input_plus": 1,
+    "load_first": 3,
+    "load_mirror": 3
+  },
+  "failed_corners": [
+    {
+      "constraints": {
+        "operating_region": 1.0
+      },
+      "corner_id": "ss__high_v_low_t",
+      "failing_devices": {
+        "load_first": {
+          "device_quantities": {
+            "gds": 6.90551958e-08,
+            "gm": 4.04850397e-05,
+            "vds": 1.1540693,
+            "vdsat": 0.058028006,
+            "vgs": 1.1540693,
+            "vth": 1.1611665
+          },
+          "on_margin_v": -0.007097200000000026,
+          "status": "off",
+          "vdsat_headroom_v": 1.096041294
+        },
+        "load_mirror": {
+          "device_quantities": {
+            "gds": 6.90551958e-08,
+            "gm": 4.04850397e-05,
+            "vds": 1.1540693,
+            "vdsat": 0.058028006,
+            "vgs": 1.1540693,
+            "vth": 1.1611665
+          },
+          "on_margin_v": -0.007097200000000026,
+          "status": "off",
+          "vdsat_headroom_v": 1.096041294
+        }
+      },
+      "metrics": {
+        "dc_power_w": 0.00023890374288,
+        "operating_region_valid": 0.0,
+        "output_dc_voltage": 0.54200922,
+        "stage1_dc_voltage": 0.825930696,
+        "supply_current_a": 0.000120658456
+      }
+    },
+    {
+      "constraints": {
+        "operating_region": 1.0
+      },
+      "corner_id": "fs__nominal",
+      "failing_devices": {
+        "load_first": {
+          "device_quantities": {
+            "gds": 1.09100066e-07,
+            "gm": 4.84485366e-05,
+            "vds": 0.98521008,
+            "vdsat": 0.076384113,
+            "vgs": 0.98521008,
+            "vth": 0.995427942
+          },
+          "on_margin_v": -0.010217861999999966,
+          "status": "off",
+          "vdsat_headroom_v": 0.908825967
+        },
+        "load_mirror": {
+          "device_quantities": {
+            "gds": 1.09100066e-07,
+            "gm": 4.84485366e-05,
+            "vds": 0.98521008,
+            "vdsat": 0.076384113,
+            "vgs": 0.98521008,
+            "vth": 0.995427942
+          },
+          "on_margin_v": -0.010217861999999966,
+          "status": "off",
+          "vdsat_headroom_v": 0.908825967
+        }
+      },
+      "metrics": {
+        "dc_power_w": 0.00022811377860000001,
+        "operating_region_valid": 0.0,
+        "output_dc_voltage": 1.054302,
+        "stage1_dc_voltage": 0.81478992,
+        "supply_current_a": 0.000126729877
+      }
+    },
+    {
+      "constraints": {
+        "operating_region": 1.0
+      },
+      "corner_id": "fs__high_v_low_t",
+      "failing_devices": {
+        "input_minus": {
+          "device_quantities": {
+            "gds": 2.59033399e-07,
+            "gm": 3.83531747e-05,
+            "vds": 0.720106379,
+            "vdsat": 0.0524678913,
+            "vgs": 0.716017752,
+            "vth": 0.722211071
+          },
+          "on_margin_v": -0.006193319000000086,
+          "status": "off",
+          "vdsat_headroom_v": 0.6676384877
+        },
+        "input_plus": {
+          "device_quantities": {
+            "gds": 2.59033399e-07,
+            "gm": 3.83531747e-05,
+            "vds": 0.720106379,
+            "vdsat": 0.0524678913,
+            "vgs": 0.716017752,
+            "vth": 0.722211071
+          },
+          "on_margin_v": -0.006193319000000086,
+          "status": "off",
+          "vdsat_headroom_v": 0.6676384877
+        },
+        "load_first": {
+          "device_quantities": {
+            "gds": 6.45701187e-08,
+            "gm": 3.48740147e-05,
+            "vds": 1.07591137,
+            "vdsat": 0.053715353,
+            "vgs": 1.07591137,
+            "vth": 1.10037766
+          },
+          "on_margin_v": -0.02446628999999989,
+          "status": "off",
+          "vdsat_headroom_v": 1.022196017
+        },
+        "load_mirror": {
+          "device_quantities": {
+            "gds": 6.45701187e-08,
+            "gm": 3.48740147e-05,
+            "vds": 1.07591137,
+            "vdsat": 0.053715353,
+            "vgs": 1.07591137,
+            "vth": 1.10037766
+          },
+          "on_margin_v": -0.02446628999999989,
+          "status": "off",
+          "vdsat_headroom_v": 1.022196017
+        }
+      },
+      "metrics": {
+        "dc_power_w": 0.00043868551914,
+        "operating_region_valid": 0.0,
+        "output_dc_voltage": 0.493783735,
+        "stage1_dc_voltage": 0.904088627,
+        "supply_current_a": 0.000221558343
+      }
+    }
+  ],
+  "full_pvt_verifications": 0,
+  "ledger_sha256": "15a0a1ae9b5ddb06ee819684022e891a0cab3b96d32a76e7726ced72c518ecc6",
+  "run": "research_runs/task9_5_feasibility/refine_20260926_b"
+}

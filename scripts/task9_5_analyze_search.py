@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter
+import argparse
 from hashlib import sha256
 import json
 from pathlib import Path
@@ -13,13 +14,21 @@ from circuitpilot.task9_5_region import V2_SEMANTICS, classify_device
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RUN = ROOT / "research_runs/task9_5_feasibility/run_20260926_a"
-OUT = ROOT / "research/sky130/two_stage_ota/task9_5/feasibility/search_analysis.json"
+RUNS = {
+    "initial": (ROOT / "research_runs/task9_5_feasibility/run_20260926_a",
+                ROOT / "research/sky130/two_stage_ota/task9_5/feasibility/search_analysis.json"),
+    "refinement": (ROOT / "research_runs/task9_5_feasibility/refine_20260926_b",
+                   ROOT / "research/sky130/two_stage_ota/task9_5/feasibility/refinement_analysis.json"),
+}
 CONFIG = ROOT / "research/sky130/two_stage_ota/task7_frozen.yaml"
 
 
 def main() -> None:
-    ledger = RUN / "attempts.jsonl"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--run", choices=RUNS, default="initial")
+    args = parser.parse_args()
+    run, output_path = RUNS[args.run]
+    ledger = run / "attempts.jsonl"
     rows = [json.loads(line) for line in ledger.read_text(encoding="utf-8").splitlines()]
     full_op = [row for row in rows if row["result"]["mode"] == "op_only"
                and sum("op" in corner["completed_analyses"]
@@ -70,7 +79,7 @@ def main() -> None:
             "at_high_1pct": value >= parameter.high - .01 * (parameter.high - parameter.low),
         }
     output = {
-        "run": str(RUN.relative_to(ROOT)).replace("\\", "/"),
+        "run": str(run.relative_to(ROOT)).replace("\\", "/"),
         "ledger_sha256": sha256(ledger.read_bytes()).hexdigest(),
         "attempts": len(rows),
         "complete_15_corner_op_attempts": len(full_op),
@@ -86,7 +95,7 @@ def main() -> None:
         "device_failure_counts": dict(device_failures),
         "constraint_failure_counts": dict(constraint_failures),
     }
-    OUT.write_text(json.dumps(output, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    output_path.write_text(json.dumps(output, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps({key: value for key, value in output.items()
                       if key not in {"bound_positions", "failed_corners", "best_parameters"}},
                      indent=2))
