@@ -1,0 +1,60 @@
+{
+  "counts": {
+    "compensation_capacitance_f": {
+      "lower_5pct": 0,
+      "upper_5pct": 5
+    },
+    "first_stage_load_length_m": {
+      "lower_5pct": 2,
+      "upper_5pct": 0
+    },
+    "first_stage_load_width_m": {
+      "lower_5pct": 0,
+      "upper_5pct": 0
+    },
+    "input_pair_length_m": {
+      "lower_5pct": 0,
+      "upper_5pct": 4
+    },
+    "input_pair_width_m": {
+      "lower_5pct": 0,
+      "upper_5pct": 2
+    },
+    "second_load_bias_v": {
+      "lower_5pct": 1,
+      "upper_5pct": 0
+    },
+    "second_load_length_m": {
+      "lower_5pct": 2,
+      "upper_5pct": 0
+    },
+    "second_load_width_m": {
+      "lower_5pct": 0,
+      "upper_5pct": 0
+    },
+    "second_stage_length_m": {
+      "lower_5pct": 0,
+      "upper_5pct": 0
+    },
+    "second_stage_width_m": {
+      "lower_5pct": 0,
+      "upper_5pct": 1
+    },
+    "tail_length_m": {
+      "lower_5pct": 0,
+      "upper_5pct": 0
+    },
+    "tail_width_m": {
+      "lower_5pct": 0,
+      "upper_5pct": 0
+    }
+  },
+  "near_bound_rule": "normalized position <=0.05 or >=0.95; log sampled parameters in log coordinate",
+  "ranked_by": [
+    "exact_robust_violation",
+    "worst_power_w",
+    "parameter_sha256"
+  ],
+  "schema_version": "task9_6_boundary_concentration_v1",
+  "top_unique_full_count": 8
+}

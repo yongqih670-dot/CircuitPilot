@@ -1,0 +1,441 @@
+{
+  "archive_count": 21,
+  "benchmark_v2_hash": "8f622a92370e33ea6f608d7a31077096b8188b868dc070cebbf3ce67f9059708",
+  "benchmark_v3_implemented": false,
+  "best_exact_candidate": {
+    "exact_robust_violation": 1.0,
+    "failed_corner_ids": [
+      "ss__high_v_low_t",
+      "fs__nominal",
+      "fs__high_v_low_t"
+    ],
+    "is_feasible": false,
+    "matrix_path": "research_runs/task9_6_phase_b/promotions/batch_07/evaluation.json",
+    "matrix_sha256": "6b489cff5c3c70779f8cbfe99ae961a06379193f39a65887f520abc5708d67a7",
+    "origin": "promotion_07",
+    "parameter_sha256": "e718434a0b50bd9c1a0542bf3a43b071a677d50fc9a4613682e466999005fa14",
+    "parameters": {
+      "compensation_capacitance_f": 4.560054196779551e-12,
+      "first_stage_load_length_m": 9.273348570592429e-07,
+      "first_stage_load_width_m": 1.864358339007341e-05,
+      "input_pair_length_m": 1e-06,
+      "input_pair_width_m": 5.0121007166131395e-06,
+      "second_load_bias_v": 0.5595394705124764,
+      "second_load_length_m": 3.3145966871231404e-07,
+      "second_load_width_m": 9.106361958189247e-06,
+      "second_stage_length_m": 6.831212889547224e-07,
+      "second_stage_width_m": 1.5561521599403218e-05,
+      "tail_length_m": 1.026464978813786e-06,
+      "tail_width_m": 4.0218892472036e-06
+    },
+    "passed_corners": 12,
+    "performance_failed_components": [],
+    "worst_power_w": 0.00044307154188000003
+  },
+  "best_partial_candidate": {
+    "candidate_id": 72,
+    "measured_analysis_count": 22,
+    "measured_robust_violation_lower_bound": 1.0,
+    "parameter_sha256": "e718434a0b50bd9c1a0542bf3a43b071a677d50fc9a4613682e466999005fa14",
+    "unknown_analysis_count": 23,
+    "was_promoted_to_full": true
+  },
+  "boundary_top_count": 8,
+  "complete_full_matrix_count": 9,
+  "de_candidate_count": 64,
+  "decision": "B",
+  "fresh_witness_verification_count": 0,
+  "full_candidates_ranked": [
+    {
+      "exact_robust_violation": 1.0,
+      "failed_corner_ids": [
+        "ss__high_v_low_t",
+        "fs__nominal",
+        "fs__high_v_low_t"
+      ],
+      "is_feasible": false,
+      "matrix_path": "research_runs/task9_6_phase_b/promotions/batch_07/evaluation.json",
+      "matrix_sha256": "6b489cff5c3c70779f8cbfe99ae961a06379193f39a65887f520abc5708d67a7",
+      "origin": "promotion_07",
+      "parameter_sha256": "e718434a0b50bd9c1a0542bf3a43b071a677d50fc9a4613682e466999005fa14",
+      "parameters": {
+        "compensation_capacitance_f": 4.560054196779551e-12,
+        "first_stage_load_length_m": 9.273348570592429e-07,
+        "first_stage_load_width_m": 1.864358339007341e-05,
+        "input_pair_length_m": 1e-06,
+        "input_pair_width_m": 5.0121007166131395e-06,
+        "second_load_bias_v": 0.5595394705124764,
+        "second_load_length_m": 3.3145966871231404e-07,
+        "second_load_width_m": 9.106361958189247e-06,
+        "second_stage_length_m": 6.831212889547224e-07,
+        "second_stage_width_m": 1.5561521599403218e-05,
+        "tail_length_m": 1.026464978813786e-06,
+        "tail_width_m": 4.0218892472036e-06
+      },
+      "passed_corners": 12,
+      "performance_failed_components": [],
+      "worst_power_w": 0.00044307154188000003
+    },
+    {
+      "exact_robust_violation": 1.006637434792993,
+      "failed_corner_ids": [
+        "ss__high_v_low_t",
+        "fs__nominal",
+        "fs__high_v_low_t"
+      ],
+      "is_feasible": false,
+      "matrix_path": "research_runs/task9_6_phase_b/promotions/batch_08/evaluation.json",
+      "matrix_sha256": "a0ebb8da230f87aa547db55bcdc40265cd2bfed87c40cbd0e3a5566cba06e93d",
+      "origin": "promotion_08",
+      "parameter_sha256": "1bf62bbc3d0d112417128bc8e14702e4e5a2b7827884eea1fbce15af0416fdae",
+      "parameters": {
+        "compensation_capacitance_f": 5e-12,
+        "first_stage_load_length_m": 9.273348570592429e-07,
+        "first_stage_load_width_m": 1.864358339007341e-05,
+        "input_pair_length_m": 1e-06,
+        "input_pair_width_m": 5.782737362359134e-06,
+        "second_load_bias_v": 0.5595394705124764,
+        "second_load_length_m": 3.3145966871231404e-07,
+        "second_load_width_m": 9.106361958189247e-06,
+        "second_stage_length_m": 6.831212889547224e-07,
+        "second_stage_width_m": 1.5561521599403218e-05,
+        "tail_length_m": 1.026464978813786e-06,
+        "tail_width_m": 4.0218892472036e-06
+      },
+      "passed_corners": 12,
+      "performance_failed_components": [
+        "negative_slew_min"
+      ],
+      "worst_power_w": 0.00044307908765999995
+    },
+    {
+      "exact_robust_violation": 1.018279956187836,
+      "failed_corner_ids": [
+        "ss__high_v_low_t",
+        "fs__nominal",
+        "fs__low_v_high_t",
+        "fs__high_v_low_t"
+      ],
+      "is_feasible": false,
+      "matrix_path": "research_runs/task9_6_phase_b/promotions/batch_06/evaluation.json",
+      "matrix_sha256": "4f8b602605d42331916392e1f5d69da6989fa602e2c5bd23eb75fd1761eb62e1",
+      "origin": "promotion_06",
+      "parameter_sha256": "47992d8ab5da7747d4621c270cf928d4e55650f62d91eb2dcbeaef720193e650",
+      "parameters": {
+        "compensation_capacitance_f": 4.560054196779551e-12,
+        "first_stage_load_length_m": 9.273348570592429e-07,
+        "first_stage_load_width_m": 1.864358339007341e-05,
+        "input_pair_length_m": 1e-06,
+        "input_pair_width_m": 5.0121007166131395e-06,
+        "second_load_bias_v": 0.5595394705124764,
+        "second_load_length_m": 3.3145966871231404e-07,
+        "second_load_width_m": 9.106361958189247e-06,
+        "second_stage_length_m": 6.831212889547224e-07,
+        "second_stage_width_m": 1.5561521599403218e-05,
+        "tail_length_m": 1.026464978813786e-06,
+        "tail_width_m": 3.6927734759883444e-06
+      },
+      "passed_corners": 11,
+      "performance_failed_components": [
+        "negative_slew_min"
+      ],
+      "worst_power_w": 0.00044361562608
+    },
+    {
+      "exact_robust_violation": 1.0225047550676238,
+      "failed_corner_ids": [
+        "ss__high_v_low_t",
+        "fs__nominal",
+        "fs__high_v_low_t"
+      ],
+      "is_feasible": false,
+      "matrix_path": "research_runs/task9_6_phase_b/baseline/evaluation.json",
+      "matrix_sha256": "1c393ca6b80f7c28dde4f229dfbee3bbf48b014d680388deba4d9965a51d43f9",
+      "origin": "baseline",
+      "parameter_sha256": "0c5ced26da9599ae6782fcf3afee260469fff9c1e940096dec9cb36e6d11aa04",
+      "parameters": {
+        "compensation_capacitance_f": 5e-12,
+        "first_stage_load_length_m": 9.273348570592429e-07,
+        "first_stage_load_width_m": 1.864358339007341e-05,
+        "input_pair_length_m": 1e-06,
+        "input_pair_width_m": 5.0121007166131395e-06,
+        "second_load_bias_v": 0.5595394705124764,
+        "second_load_length_m": 3.3145966871231404e-07,
+        "second_load_width_m": 9.106361958189247e-06,
+        "second_stage_length_m": 6.831212889547224e-07,
+        "second_stage_width_m": 1.5561521599403218e-05,
+        "tail_length_m": 1.026464978813786e-06,
+        "tail_width_m": 4.0218892472036e-06
+      },
+      "passed_corners": 12,
+      "performance_failed_components": [
+        "negative_slew_min"
+      ],
+      "worst_power_w": 0.00044307154188000003
+    },
+    {
+      "exact_robust_violation": 1.6149515985121152,
+      "failed_corner_ids": [
+        "tt__nominal",
+        "tt__low_v_high_t",
+        "tt__high_v_low_t",
+        "ss__nominal",
+        "ss__low_v_high_t",
+        "ss__high_v_low_t",
+        "ff__nominal",
+        "ff__low_v_high_t",
+        "ff__high_v_low_t",
+        "fs__nominal",
+        "fs__low_v_high_t",
+        "fs__high_v_low_t",
+        "sf__nominal",
+        "sf__low_v_high_t",
+        "sf__high_v_low_t"
+      ],
+      "is_feasible": false,
+      "matrix_path": "research_runs/task9_6_phase_b/promotions/batch_02/evaluation.json",
+      "matrix_sha256": "2f2adf1fefea1cd2d53ef47c3c1f094799dbd406db68d7b0e3dfb6b6cf9bc721",
+      "origin": "promotion_02",
+      "parameter_sha256": "1a7ce473b0e881f7441aefeb9afe79e1eabc1e20311d30c8aa419d8c933b7c65",
+      "parameters": {
+        "compensation_capacitance_f": 1.3720708387458779e-12,
+        "first_stage_load_length_m": 3.310899198461182e-07,
+        "first_stage_load_width_m": 1.2041617323566474e-06,
+        "input_pair_length_m": 7.845840318689748e-07,
+        "input_pair_width_m": 1.4454189665280464e-05,
+        "second_load_bias_v": 0.3525587111276124,
+        "second_load_length_m": 5.814202775399458e-07,
+        "second_load_width_m": 2.2870081216664724e-05,
+        "second_stage_length_m": 7.627320121068989e-07,
+        "second_stage_width_m": 5.096092365994062e-05,
+        "tail_length_m": 6.439326339514552e-07,
+        "tail_width_m": 1.6353858133160872e-06
+      },
+      "passed_corners": 0,
+      "performance_failed_components": [
+        "output_low",
+        "ugf_min"
+      ],
+      "worst_power_w": 0.00112068767646
+    },
+    {
+      "exact_robust_violation": 2.00244932754933,
+      "failed_corner_ids": [
+        "tt__nominal",
+        "tt__low_v_high_t",
+        "tt__high_v_low_t",
+        "ss__nominal",
+        "ss__low_v_high_t",
+        "ss__high_v_low_t",
+        "ff__nominal",
+        "ff__low_v_high_t",
+        "ff__high_v_low_t",
+        "fs__nominal",
+        "fs__low_v_high_t",
+        "fs__high_v_low_t",
+        "sf__nominal",
+        "sf__low_v_high_t",
+        "sf__high_v_low_t"
+      ],
+      "is_feasible": false,
+      "matrix_path": "research_runs/task9_6_phase_b/promotions/batch_01/evaluation.json",
+      "matrix_sha256": "b49617a0447b6b6a71a68377e98f5063b8e0e41df1e69bd8266803c65fd4737c",
+      "origin": "promotion_01",
+      "parameter_sha256": "962b80788ac351b59ab9849d48838dae88629fa78defa06ba32d3abb76954eee",
+      "parameters": {
+        "compensation_capacitance_f": 1.3668393705556625e-12,
+        "first_stage_load_length_m": 4.787708251186281e-07,
+        "first_stage_load_width_m": 4.8277034002353905e-06,
+        "input_pair_length_m": 5.260614927608756e-07,
+        "input_pair_width_m": 3e-05,
+        "second_load_bias_v": 0.4948190925088267,
+        "second_load_length_m": 6.053901270097977e-07,
+        "second_load_width_m": 3.466301716703346e-06,
+        "second_stage_length_m": 1.1462777329313157e-06,
+        "second_stage_width_m": 2.628756794959452e-06,
+        "tail_length_m": 8.633577840125569e-07,
+        "tail_width_m": 8.24814302875087e-07
+      },
+      "passed_corners": 0,
+      "performance_failed_components": [
+        "negative_slew_min",
+        "positive_slew_min"
+      ],
+      "worst_power_w": 9.5823523818e-05
+    },
+    {
+      "exact_robust_violation": 2.2478752061525284,
+      "failed_corner_ids": [
+        "tt__nominal",
+        "tt__low_v_high_t",
+        "tt__high_v_low_t",
+        "ss__nominal",
+        "ss__low_v_high_t",
+        "ss__high_v_low_t",
+        "ff__nominal",
+        "ff__low_v_high_t",
+        "ff__high_v_low_t",
+        "fs__nominal",
+        "fs__low_v_high_t",
+        "fs__high_v_low_t",
+        "sf__nominal",
+        "sf__high_v_low_t"
+      ],
+      "is_feasible": false,
+      "matrix_path": "research_runs/task9_6_phase_b/promotions/batch_04/evaluation.json",
+      "matrix_sha256": "d1e996b8eefad8fc25ee6a05406c675898c8d4772d7bfbc9fed7ed1422173a3b",
+      "origin": "promotion_04",
+      "parameter_sha256": "9d01e8427371af08f49fa97ab38908d99624378c5b03a0039e48dc62b7f6c4b2",
+      "parameters": {
+        "compensation_capacitance_f": 4.861547288502548e-13,
+        "first_stage_load_length_m": 1.5e-07,
+        "first_stage_load_width_m": 1.1941921175945242e-06,
+        "input_pair_length_m": 7.766161901840393e-07,
+        "input_pair_width_m": 1.4454189665280464e-05,
+        "second_load_bias_v": 0.5484139851346738,
+        "second_load_length_m": 1.5e-07,
+        "second_load_width_m": 6.863112489098359e-06,
+        "second_stage_length_m": 9.223746408321668e-07,
+        "second_stage_width_m": 1.1149250665248601e-05,
+        "tail_length_m": 3.5927368693998173e-07,
+        "tail_width_m": 5.652676691168933e-07
+      },
+      "passed_corners": 1,
+      "performance_failed_components": [
+        "negative_slew_min",
+        "positive_slew_min",
+        "power_max"
+      ],
+      "worst_power_w": 0.0019224129771
+    },
+    {
+      "exact_robust_violation": 4.0915072318766,
+      "failed_corner_ids": [
+        "tt__nominal",
+        "tt__low_v_high_t",
+        "tt__high_v_low_t",
+        "ss__nominal",
+        "ss__low_v_high_t",
+        "ss__high_v_low_t",
+        "ff__nominal",
+        "ff__low_v_high_t",
+        "ff__high_v_low_t",
+        "fs__nominal",
+        "fs__low_v_high_t",
+        "fs__high_v_low_t",
+        "sf__nominal",
+        "sf__low_v_high_t",
+        "sf__high_v_low_t"
+      ],
+      "is_feasible": false,
+      "matrix_path": "research_runs/task9_6_phase_b/promotions/batch_03/evaluation.json",
+      "matrix_sha256": "eacf7addd83e9a831385dcb25b8a7391eed2b2db9874abebc85cb61af5db6cab",
+      "origin": "promotion_03",
+      "parameter_sha256": "f91fd9c47ca93218a888eed50a336b887778f5cf0ce35d96df877ba384ad8fbe",
+      "parameters": {
+        "compensation_capacitance_f": 5e-12,
+        "first_stage_load_length_m": 1.5e-07,
+        "first_stage_load_width_m": 4.878135471064039e-06,
+        "input_pair_length_m": 5.360212948670449e-07,
+        "input_pair_width_m": 3e-05,
+        "second_load_bias_v": 0.25,
+        "second_load_length_m": 1.7625323445133096e-07,
+        "second_load_width_m": 1.5606287359434126e-05,
+        "second_stage_length_m": 9.467244470247309e-07,
+        "second_stage_width_m": 1.7568711949093777e-05,
+        "tail_length_m": 3.090014240562735e-07,
+        "tail_width_m": 3.1121733741596376e-06
+      },
+      "passed_corners": 0,
+      "performance_failed_components": [
+        "negative_slew_min",
+        "output_high",
+        "positive_slew_min",
+        "power_max",
+        "ugf_min"
+      ],
+      "worst_power_w": 0.0026239327884
+    },
+    {
+      "exact_robust_violation": 4.581321878850006,
+      "failed_corner_ids": [
+        "tt__nominal",
+        "tt__low_v_high_t",
+        "tt__high_v_low_t",
+        "ss__nominal",
+        "ss__low_v_high_t",
+        "ss__high_v_low_t",
+        "ff__nominal",
+        "ff__low_v_high_t",
+        "ff__high_v_low_t",
+        "fs__nominal",
+        "fs__low_v_high_t",
+        "fs__high_v_low_t",
+        "sf__nominal",
+        "sf__low_v_high_t",
+        "sf__high_v_low_t"
+      ],
+      "is_feasible": false,
+      "matrix_path": "research_runs/task9_6_phase_b/promotions/batch_05/evaluation.json",
+      "matrix_sha256": "cf6b2b44726b29507fb8351d448d8f77543c36100ef8868761a18766bef026d1",
+      "origin": "promotion_05",
+      "parameter_sha256": "57cc050fffca0e0d49f8efa1de06953714c775d5799f6e6cf8ee427b28f86db9",
+      "parameters": {
+        "compensation_capacitance_f": 1.7278249396607882e-13,
+        "first_stage_load_length_m": 1.5e-07,
+        "first_stage_load_width_m": 4.8277034002353905e-06,
+        "input_pair_length_m": 6.042834156792191e-07,
+        "input_pair_width_m": 2.7976159288729177e-05,
+        "second_load_bias_v": 0.27544433450970385,
+        "second_load_length_m": 4.5631617935594903e-07,
+        "second_load_width_m": 3.1725924209532326e-06,
+        "second_stage_length_m": 1.1462777329313157e-06,
+        "second_stage_width_m": 2.628756794959452e-06,
+        "tail_length_m": 1.5e-07,
+        "tail_width_m": 4.721014595108347e-07
+      },
+      "passed_corners": 0,
+      "performance_failed_components": [
+        "gain_min",
+        "negative_slew_min",
+        "phase_margin_min",
+        "positive_slew_min",
+        "ugf_min"
+      ],
+      "worst_power_w": 0.00028146151242
+    }
+  ],
+  "full_promotion_count": 8,
+  "ledger": {
+    "accumulated_simulator_seconds": 884.8690000016359,
+    "activity_process_counts": {
+      "device_audit_probes": 5,
+      "failed_analysis_retry_reserve": 0,
+      "fresh_baseline_full": 45,
+      "fresh_witness_full_confirmation": 0,
+      "full_promotion_8_candidates": 360,
+      "hierarchical_search_96_candidates": 225,
+      "positive_hierarchical_validation": 0,
+      "sensitivity_48_candidates": 960,
+      "six_neighbor_full_and_hierarchical": 0
+    },
+    "first_process_utc": "2026-09-26T13:24:29.571142+00:00",
+    "frozen_plan_sha256": "aa0bb79380e4f22b5e11b03acc13cf0b04a9edfe4dd47e2271f45272c501ee90",
+    "orphaned_process_starts": [],
+    "process_count": 1595,
+    "remaining_global": {
+      "activity_processes": 4095,
+      "global_processes": 4905,
+      "simulator_seconds": 5115.130999998364,
+      "wall_seconds": 34488.161958
+    }
+  },
+  "local_candidate_count": 32,
+  "neighborhood_validation_count": 0,
+  "no_witness_within_preregistered_budget": true,
+  "positive_hierarchical_validation_count": 0,
+  "schema_version": "task9_6_phase_b_result_v1",
+  "search_candidate_count": 96,
+  "task10_unlocked": false,
+  "verified_real_pvt_witness": false
+}

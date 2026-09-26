@@ -2,14 +2,17 @@
 
 ## Current Research Status
 
-Task 9.5 integrity audit is complete. Corrected operating-region semantics
-require [Benchmark v2](research/sky130/two_stage_ota/task9_5/benchmark_v2_manifest.json)
+Task 9.5 integrity audit and approved Task 9.6 feasibility diagnosis are
+complete. Corrected operating-region semantics require
+[Benchmark v2](research/sky130/two_stage_ota/task9_5/benchmark_v2_manifest.json)
 (`8f622a92370e33ea6f608d7a31077096b8188b868dc070cebbf3ce67f9059708`);
-the old Task 9 hash must not be used for corrected work. **Decision C remains
-active:** no real 15/15-corner PVT-feasible witness has been verified, so
-Task 10 formal Agent experiments are blocked. Task 9.6 Phase A is the current
-feasibility-diagnosis and execution-preregistration stage; Phase B awaits
-explicit approval. See the [Task 9.5 decision](research/sky130/two_stage_ota/task9_5/DECISION_FOR_TASK10.md)
+the old Task 9 hash must not be used for corrected work. **Task 9.6 Decision B:**
+no real 15/15-corner v2 PVT-feasible witness was found within the frozen
+budget. A physically motivated Benchmark-v3 proposal exists but is neither
+approved nor implemented. Task 10 formal Agent experiments remain blocked
+by a machine-readable guard. See the
+[final Task 9.6 report](research/sky130/two_stage_ota/task9_6/TASK9_6_FEASIBILITY_DIAGNOSIS_REPORT.md),
+[decision](research/sky130/two_stage_ota/task9_6/DECISION_AFTER_TASK9_6.md),
 and [Task 6 RMST wording addendum](research/sky130/two_stage_ota/task9_6/STATISTICS_CORRECTION_ADDENDUM.md).
 
 > 研究审计状态和真实测试证据见 [RESEARCH_READINESS_REPORT.md](RESEARCH_READINESS_REPORT.md)。
