@@ -61,3 +61,13 @@ tail bias is fixed at 0.72 V in those benchmarks. Record all attempts and
 raw OP evidence; if promising, describe a technology-legal, matching-safe
 search-space proposal without changing hard specifications or launching
 Task 10.
+
+## Complete negative characterization of the best in-bounds candidate
+
+The best corrected-semantic candidate still fails OP in three corners. Run a
+fresh complete 15 × (OP, AC, transient) matrix for this same in-bounds design
+even though it is already known infeasible, solely to diagnose secondary
+gain/UGF/PM/slew/power/output bottlenecks. This is not a witness, must not be
+counted as a positive-path screening validation, and does not alter the
+original search outcome. Save all logs, waveforms, per-corner metrics and
+VDD/temperature application checks under a separate diagnostic directory.

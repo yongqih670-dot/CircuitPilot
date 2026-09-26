@@ -17,6 +17,7 @@ SOURCES = {
     "task7": ("research_runs/task7", "research/sky130/two_stage_ota/results"),
     "task8": ("research/sky130/two_stage_ota/task8/results",),
     "task9": ("research/sky130/two_stage_ota/task9/results",),
+    "task9_5": ("research_runs/task9_5_feasibility",),
 }
 
 
