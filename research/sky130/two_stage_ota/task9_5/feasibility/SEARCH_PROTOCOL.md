@@ -24,3 +24,24 @@ append-only JSONL ledger and per-attempt raw files under
 `research_runs/task9_5_feasibility/`. A finite run with no witness is not a
 proof that the design space is empty; it triggers physical bottleneck analysis
 and a Task 10 no-go until the feasibility gate is resolved.
+
+## Pre-registered targeted continuation after initial 268 logged attempts
+
+The initial run found a best design with 11/15 OP corners passing all OP
+constraints. Four failures are narrow: input/first-load device-off margins
+of 5--26 mV in SS/FS nominal or high-VDD/cold corners, and second-load
+VDSAT headroom of -12 mV at SS nominal. Only the compensation capacitor is
+on a bound, and that capacitor cannot affect OP. This motivates a targeted
+fixed-bound local diagnostic before any search-space proposal.
+
+Starting from that measured best parameter vector, run three deterministic
+coordinate-sweep rounds over the 11 OP-relevant variables (all except the
+compensation capacitor), using normalized shifts of ±0.06 and ±0.15 of each
+frozen parameter range. Screen the four previously failing corners plus
+SS/FS low-VDD/hot. Promote the eight lowest continuous OP-margin scores per
+round to fresh 15-corner OP, plus four deterministic diversity choices. A
+new champion is chosen by the number of complete OP-passing corners, then
+continuous margin score. Any 15/15 OP candidate receives fresh 45-analysis
+Full-PVT verification. Stop immediately if verified feasible. Log every
+attempt and all raw evidence in a separate append-only run. This remains
+benchmark diagnosis, not a formal optimizer comparison.
